@@ -1,5 +1,5 @@
 import cjcLogo from "./assets/cjc-logo.png";
-import "./index.css";
+import "./styles/index.css";
 
 function App() {
   return (
