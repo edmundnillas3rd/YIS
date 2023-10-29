@@ -1,9 +1,10 @@
+import React from "react";
 import { NavLink } from "react-router-dom";
 
 interface CollegeItemProps {
     src: string;
     url: string;
-    children?: JSX.Element[] | JSX.Element;
+    children?: React.JSX.Element[] | React.JSX.Element;
 }
 
 const CollegeItem = ({ src, url, children }: CollegeItemProps) => (
