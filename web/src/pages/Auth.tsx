@@ -1,6 +1,16 @@
+import { SyntheticEvent } from "react";
+import { useNavigate } from "react-router-dom";
+
 import cjcLogo from "../assets/cjc-logo.png";
 
 export default function Auth() {
+    const navigate = useNavigate();
+    const onSubmitHandler = (e: SyntheticEvent) => {
+        e.preventDefault();
+
+        navigate("/home")
+    };
+
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -9,7 +19,7 @@ export default function Auth() {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form action="#" method="POST">
+                <form onSubmit={onSubmitHandler} method="POST">
                     <input id="email" name="email" type="email" autoComplete="email" required className="block w-full rounded-t-md border-1 border-gray-300  border-b-gray-50 py-1.5 text-gray-700 shadow-sm ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Email" />
                     <input id="password" name="password" type="password" autoComplete="current-password" required className="block w-full rounded-b-md border-1 border-gray-300  border-t-gray-50 py-1.5 text-gray-700 shadow-sm ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Password" />
                     <div className="mt-4">
