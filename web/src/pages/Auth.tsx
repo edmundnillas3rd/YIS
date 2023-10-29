@@ -8,14 +8,14 @@ export default function Auth() {
     const onSubmitHandler = (e: SyntheticEvent) => {
         e.preventDefault();
 
-        navigate("/home")
+        navigate("/home");
     };
 
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img className="mx-auto h-32 w-auto" src={cjcLogo} alt="cor jesu logo" />
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
+                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Cor Jesu College<br/>Yearbook Information System</h2>
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -34,6 +34,17 @@ export default function Auth() {
                     Not a member?
                     <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Start a 14 day free trial</a>
                 </p> */}
+
+                <section>
+                    <figure className="flex flex-row justify-center gap-10 mt-4">
+                        <img className="w-10 h-10 max-w-none" src="/assets/cabe.png" alt="cabe" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/ccis.png" alt="ccis" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/cedas.png" alt="cedas" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/chs.png" alt="chs" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/coe.png" alt="coe" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/csp.png" alt="csp" />
+                    </figure>
+                </section>
             </div>
         </div>
     );
