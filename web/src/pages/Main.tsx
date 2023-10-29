@@ -71,7 +71,7 @@ export default function Main() {
                 <Selection index={3} src="/assets/yearbook.png" url="/yearbook-photos" callbackFn={i => setIndex(i)}>YEARBOOK PHOTOS</Selection>
                 <Selection index={4} src="/assets/yearbook-2.png" url="/yearbook-released" callbackFn={i => setIndex(i)} disabled={disabled}>YEARBOOK RELEASED</Selection>
                 {disabled &&
-                    <p className="text-slate-500">(Please get the claim stub)</p>
+                    <p className="font-bold text-slate-500">(Please get the claim stub)</p>
                 }
             </section>
         </article>
