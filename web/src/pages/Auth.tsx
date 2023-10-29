@@ -1,7 +1,7 @@
 import { SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-import cjcLogo from "../assets/cjc-logo.png";
+import cjcLogo from "/assets/cjc-logo.png";
 
 export default function Auth() {
     const navigate = useNavigate();

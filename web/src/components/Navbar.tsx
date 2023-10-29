@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 
-import cjcLogo from "../assets/cjc-logo.png";
+import cjcLogo from "/assets/cjc-logo.png";
 
 export default function Navbar() {
     const [title, setTitle] = useState("");
