@@ -78,7 +78,7 @@ export default function Auth() {
                 </p> */}
 
                 <section>
-                    <figure className="flex flex-row justify-center gap-10 mt-4">
+                    <figure className="flex flex-wrap flex-row justify-center gap-1 md:gap-5 mt-4">
                         <img className="w-10 h-10 max-w-none" src="/assets/cabe.png" alt="cabe" />
                         <img className="w-10 h-10 max-w-none" src="/assets/ccis.png" alt="ccis" />
                         <img className="w-10 h-10 max-w-none" src="/assets/cedas.png" alt="cedas" />
