@@ -46,7 +46,7 @@ export default function Navbar() {
     return (
         <nav className="bg-red-600 p-4 flex flex-row items-center">
             <section className="flex flex-row items-center gap-10">
-                <NavLink to="/home">
+                <NavLink className="hidden md:block" to="/home">
                     <img src={cjcLogo} alt="cjc-logo" className="w-8 h-8 ml-3" />
                 </NavLink>
                 {display ? (
