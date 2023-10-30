@@ -23,7 +23,7 @@ export default function Navbar() {
                     break;
                 case "section":
                     const foundSection = parseUrl.find(s => {
-                        return s === "colleges" || s === "solicitation";
+                        return s === "colleges" || s === "solicitation" || s === "yearbook-photos";
                     });
 
                     if (foundSection !== undefined) {
@@ -34,7 +34,8 @@ export default function Navbar() {
                     setDisplay(true);
                     break;
                 case "division":
-                    setTitle("Department");
+                    const name = parseUrl[parseUrl.length - 1].toUpperCase();
+                    setTitle(name);
                     setDisplay(true);
                     break;
             }
