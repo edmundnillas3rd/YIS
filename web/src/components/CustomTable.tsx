@@ -8,16 +8,18 @@ import {
     Cell,
 } from "@table-library/react-table-library/table";
 import { AiOutlinePlusCircle } from "react-icons/ai";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 interface CustomerTableProps {
     nodes: any[];
     columns: string[];
+    mode: string;
 }
 
-export default function CustomTable({ nodes, columns }: CustomerTableProps) {
+export default function CustomTable({ nodes, columns, mode}: CustomerTableProps) {
     const [data, setData] = useState({ nodes });
     const [cellColumns, setCellCollumns] = useState<string[]>([...columns]);
+    const [inputDisabled, setInputDisabled] = useState(true);
 
     const handleUpdate = (value: any, id: string, property: any) => {
         setData((state) => ({
@@ -49,6 +51,11 @@ export default function CustomTable({ nodes, columns }: CustomerTableProps) {
             })
         }));
     };
+
+    useEffect(() => {
+        if (mode == "edit") setInputDisabled(false)
+        if (mode == "save") setInputDisabled(true)
+    }, [mode])
 
     return (
         <>
@@ -91,6 +98,7 @@ export default function CustomTable({ nodes, columns }: CustomerTableProps) {
                                                 onChange={(event) =>
                                                     handleUpdate(event.target.value, item.id, `${item?.organization !== undefined ? "organization" : "awardsSeminar"}`)
                                                 }
+                                                disabled={inputDisabled}
                                             />
                                         </Cell>
                                         <Cell>
@@ -111,6 +119,7 @@ export default function CustomTable({ nodes, columns }: CustomerTableProps) {
                                                         `${item?.position !== undefined ? "position" : "awardName"}`
                                                     )
                                                 }
+                                                disabled={inputDisabled}
                                             />
                                         </Cell>
                                         <Cell>
@@ -126,6 +135,7 @@ export default function CustomTable({ nodes, columns }: CustomerTableProps) {
                                                 onChange={(event) =>
                                                     handleUpdate(event.target.value, item.id, `${item?.yearElected !== undefined ? "yearElected" : "year"}`)
                                                 }
+                                                disabled={inputDisabled}
                                             />
                                         </Cell>
                                     </Row>

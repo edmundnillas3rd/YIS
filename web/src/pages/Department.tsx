@@ -99,7 +99,7 @@ export default function Department() {
                         {/* Year Elected */}
                         <YearRange label="Year Elected" />
                     </Display>
-                    <MembersTable nodes={nodes} columns={["Club & Organization", "Position", "Year Elected"]} />
+                    <MembersTable nodes={nodes} columns={["Club & Organization", "Position", "Year Elected"]} mode={mode} />
                     <hr className="my-5"/>
                     <Display>
                         {/* Awards & Seminars*/}
@@ -109,7 +109,7 @@ export default function Department() {
                         {/* Year */}
                         <YearRange label="Year" />
                     </Display>
-                    <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} />
+                    <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} mode={mode} />
                     <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                         {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
                         {(mode === "save") && <p className="text-slate-600 font-bold">(SAVED SUCCESSFULLY)</p>}
