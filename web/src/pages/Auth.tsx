@@ -8,14 +8,16 @@ export default function Auth() {
     const [password, setPassword] = useState<string | null>(null);
     const [errMessage, setErrMessage] = useState<string | null>(null);
 
-    const adminEmail = import.meta.env.VITE_ADMIN_ACCOUNT;
-    const adminPassword = import.meta.env.VITE_BASE_ADMIN_PASSWORD;
-
+    
     const navigate = useNavigate();
-
+    
     const onSubmitHandler = (e: SyntheticEvent) => {
         e.preventDefault();
-
+        
+        const adminEmail = import.meta.env.VITE_ADMIN_ACCOUNT;
+        const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+        console.log(adminEmail, adminPassword);
+        
         if (email === adminEmail && password === adminPassword) {
             navigate("/home");
         } else {
