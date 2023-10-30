@@ -5,11 +5,13 @@ import Auth from "../pages/Auth";
 import Main from "../pages/Main";
 import Colleges from "../pages/Colleges";
 import Department from "../pages/Department";
+import ErrorPage from "../pages/Error";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Auth />
+        element: <Auth />,
+        errorElement: <ErrorPage />
     },
     {
         path: "/home",
