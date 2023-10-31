@@ -61,10 +61,10 @@ export default function Department() {
 
     return (
         <article className="flex flex-col p-10 gap-10">
+            {/* General Information Section */}
             <section>
                 <h1 className="font-bold">GENERAL INFORMATION</h1>
             </section>
-            {/* General Information Section */}
             <section>
                 <section>
                     <h1 className="md:pl-10 pt-5 font-bold">Student Name</h1>
