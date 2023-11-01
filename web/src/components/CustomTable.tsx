@@ -16,7 +16,7 @@ interface CustomerTableProps {
     mode: string;
 }
 
-export default function CustomTable({ nodes, columns, mode}: CustomerTableProps) {
+export default function CustomTable({ nodes, columns, mode }: CustomerTableProps) {
     const [data, setData] = useState({ nodes });
     const [cellColumns, setCellCollumns] = useState<string[]>([...columns]);
     const [inputDisabled, setInputDisabled] = useState(true);
@@ -53,9 +53,9 @@ export default function CustomTable({ nodes, columns, mode}: CustomerTableProps)
     };
 
     useEffect(() => {
-        if (mode == "edit") setInputDisabled(false)
-        if (mode == "save") setInputDisabled(true)
-    }, [mode])
+        if (mode == "edit") setInputDisabled(false);
+        if (mode == "save") setInputDisabled(true);
+    }, [mode]);
 
     return (
         <>
