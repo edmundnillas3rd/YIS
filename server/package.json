@@ -1,0 +1,25 @@
+{
+  "name": "yis-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Edmund Nillas III",
+  "contributors": [
+    {
+      "name": "Nicki Pecision"
+    }
+  ],
+  "scripts": {
+    "build": "npx tsc",
+    "start": "yarn build && node dist/index.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "@types/node": "^20.8.10",
+    "dotenv": "^16.3.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -16,7 +16,6 @@ export default function Auth() {
         
         const adminEmail = import.meta.env.VITE_ADMIN_ACCOUNT;
         const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-        console.log(adminEmail, adminPassword);
         
         if (email === adminEmail && password === adminPassword) {
             navigate("/home");

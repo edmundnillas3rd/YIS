@@ -1,0 +1,9 @@
+**/.vscode/
+**/dist/
+**/node_modules
+
+# Environment Files
+.env
+.env.local
+.env.development
+.env.production
