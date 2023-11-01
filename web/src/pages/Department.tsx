@@ -110,8 +110,13 @@ export default function Department() {
                         {/* Year Elected */}
                         <YearRange label="Year Elected" />
                     </Display>
+
+                    <MembersTable nodes={nodes} columns={["Club & Organization", "Position", "Year Elected"]} mode={mode} />
+                    <hr className="my-5"/>
+
                     <MembersTable nodes={nodes} columns={["Club & Organization", "Position", "Year Elected"]} />
                     <hr className="my-5" />
+
                     <Display>
                         {/* Awards & Seminars*/}
                         <Dropdown label="Awards & Seminars" items={["Sample Seminar Held @ Davao City"]} />
@@ -120,7 +125,48 @@ export default function Department() {
                         {/* Year */}
                         <YearRange label="Year" />
                     </Display>
+
+                    <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} mode={mode} />
+                    <section className="flex flex-row pt-5 gap-2 justify-end items-center">
+                        {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
+                        {(mode === "save") && <p className="text-slate-600 font-bold">(SAVED SUCCESSFULLY)</p>}
+                        <button
+                            className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                            onClick={handleEdit}
+                            onMouseEnter={e => {
+                                e.preventDefault();
+                                setHighlight("#f1f5f9");
+                            }}
+                            onMouseLeave={e => {
+                                e.preventDefault();
+                                setHighlight("#475569");
+                            }}
+                        >
+                            <p>Edit</p>
+                            <AiFillEdit style={{
+                                color: highlight
+                            }} />
+                        </button>
+                        <button
+                            className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                            onClick={handleSave}
+                            onMouseEnter={e => {
+                                e.preventDefault();
+                                setAnotherHightlight("#f1f5f9");
+                            }}
+                            onMouseLeave={e => {
+                                setAnotherHightlight("#475569");
+                            }}
+                        >
+                            <p>Save</p>
+                            <AiFillSave style={{
+                                color: anotherHighlight
+                            }} />
+                        </button>
+                    </section>
+
                     <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} />
+
                 </section>
             </section>
 
