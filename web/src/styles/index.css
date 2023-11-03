@@ -10,3 +10,17 @@
 body {
     font-family: 'Montserrat', sans-serif;
 }
+
+.fade-in {
+    animation: 0.2s ease-in 0s fadeIn;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0%;
+    }
+
+    to {
+        opacity: 100%;
+    }
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 interface SelectionProps {
@@ -49,8 +49,10 @@ const Selection = ({ index, src, url, callbackFn, children, disabled = false }: 
 );
 
 export default function Main() {
-    const [currentIndex, setIndex] = useState(0);
-    const [disabled, setDisable] = useState(true);
+    const [currentIndex, setIndex] = useState<number>(0);
+    const [disabled, setDisable] = useState<boolean>(true);
+    const [previousIndex, setPreviousIndex] = useState<number>(currentIndex);
+    const [backgroundClassStyle, setBackgroundStyle] = useState<String>("bg-no-repeat");
 
     const images = [
         "/assets/cjc-logo.png",
@@ -60,16 +62,25 @@ export default function Main() {
         "/assets/yearbook-stock.jpg"
     ];
 
+    useEffect(() => {
+        setBackgroundStyle(currentIndex !== previousIndex && currentIndex !== 0 ? "fade-in bg-cover" : "bg-no-repeat");
+    } , [currentIndex])
+
+    const callbackFn = (i: number) => {
+        setPreviousIndex(currentIndex);
+        setIndex(i);
+    }
+
     return (
         <article className="flex flex-col md:flex-row h-36 py-10 md:p-0 md:h-screen">
-            <figure className={`flex w-1/2 bg-center ${currentIndex !== 0 ? "bg-cover": "bg-no-repeat"} hidden md:block md:h-screen`} style={{
+            {<figure key={currentIndex} className={`${backgroundClassStyle} w-1/2 bg-center hidden md:block md:h-screen`} style={{
                 backgroundImage: `url(${images[currentIndex]})`
-            }} />
+            }} />}
             <section className="flex flex-auto flex-col gap-0 justify-center items-center">
-                <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={i => setIndex(i)}>COLLEGES</Selection>
-                <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={i => setIndex(i)}>SOLICITATION</Selection>
-                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={i => setIndex(i)}>YEARBOOK PHOTOS</Selection>
-                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={i => setIndex(i)} disabled={disabled}>YEARBOOK RELEASED</Selection>
+                <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>COLLEGES</Selection>
+                <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn}>SOLICITATION</Selection>
+                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>YEARBOOK PHOTOS</Selection>
+                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={disabled}>YEARBOOK RELEASED</Selection>
                 {disabled &&
                     <p className="font-bold text-slate-500">(Please get the claim stub)</p>
                 }
