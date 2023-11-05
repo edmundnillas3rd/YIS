@@ -96,6 +96,12 @@ export default function Department() {
         }
     };
 
+    const onInputHandler = (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.currentTarget as HTMLInputElement;
+        target.setCustomValidity("");
+    }
+
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
 
@@ -128,11 +134,12 @@ export default function Department() {
                                 id="student-id"
                                 className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 onChange={onChangeHandler}
+                                onInput={onInputHandler}
                                 pattern="(\d{4}-\d{4}-\d)"
                                 required
                                 autoComplete="off"
                             />
-                            <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT: 2018-4024-2)</p>
+                            <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT EXAMPLE: 2018-4024-2)</p>
                         </section>
                         <section className="flex flex-col">
                             <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
@@ -142,6 +149,7 @@ export default function Department() {
                                 id="family-name"
                                 className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 onChange={onChangeHandler}
+                                onInput={onInputHandler}
                                 pattern={regexInvalidSymbols}
                                 maxLength={50}
                                 required
@@ -156,6 +164,7 @@ export default function Department() {
                                 id="first-name"
                                 className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 onChange={onChangeHandler}
+                                onInput={onInputHandler}
                                 pattern={regexInvalidSymbols}
                                 maxLength={50}
                                 required
@@ -170,6 +179,7 @@ export default function Department() {
                                 id="middle-name"
                                 className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 onChange={onChangeHandler}
+                                onInput={onInputHandler}
                                 pattern={`[A-Za-z]${regexInvalidSymbols}`}
                                 maxLength={50}
                                 required
@@ -187,6 +197,7 @@ export default function Department() {
                                 maxLength={4}
                                 pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
                                 onChange={onChangeHandler}
+                                onInput={onInputHandler}
                                 autoComplete="off"
                             />
                             <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(E.G. SR, JR, III, IV, V)</p>
