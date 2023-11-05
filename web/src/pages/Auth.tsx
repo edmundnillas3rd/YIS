@@ -1,8 +1,6 @@
 import { SyntheticEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import cjcLogo from "/assets/cjc-logo.png";
-
 export default function Auth() {
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
@@ -27,7 +25,7 @@ export default function Auth() {
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <section className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img className="mx-auto h-32 w-auto" src={cjcLogo} alt="cor jesu logo" />
+                <img className="mx-auto h-32 w-auto" src="/assets/cjc-logo.png" alt="cor jesu logo" />
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Cor Jesu College<br />Yearbook Information System</h2>
             </section>
             <section className="flex p-2 flex-row justify-center items-center">
@@ -84,6 +82,8 @@ export default function Auth() {
                         <img className="w-10 h-10 max-w-none" src="/assets/chs.png" alt="chs" />
                         <img className="w-10 h-10 max-w-none" src="/assets/coe.png" alt="coe" />
                         <img className="w-10 h-10 max-w-none" src="/assets/csp.png" alt="csp" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/graduate-school.png" alt="gs" />
+                        <img className="w-10 h-10 max-w-none" src="/assets/law-school.png" alt="law" />
                     </figure>
                 </section>
             </div>

@@ -10,7 +10,7 @@ interface CollegeItemProps {
 const CollegeItem = ({ src, url, children }: CollegeItemProps) => (
     <NavLink className="flex flex-row md:border-0 border-2 border-zinc-400 md:px-5 py-3 justify-center items-center gap-5 rounded w-9/12 md:w-8/12 transition-all ease-in bg-transparent hover:bg-zinc-200" to={url}>
         <figure>
-            <img className="max-w-none w-16 h-16" src={src} alt="cabe" />
+            <img className="max-w-none w-16 h-16" src={src} alt="college" />
         </figure>
         <section className="w-1/2 flex-col justify-center items-center">
             {children}

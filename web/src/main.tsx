@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { IconContext } from "react-icons";
 
-import cjcLogo from "./assets/cjc-logo.png";
 import "./styles/index.css";
 
 import router from './routes/router.tsx';
