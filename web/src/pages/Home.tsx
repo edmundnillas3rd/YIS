@@ -64,8 +64,8 @@ export default function Main() {
 
     const images = [
         "/assets/cjc-logo.png",
-        "/assets/norbert-building.png",
         "/assets/envelope.png",
+        "/assets/norbert-building.png",
         "/assets/graduation-photo.png",
         "/assets/yearbook-stock.jpg"
     ];
@@ -80,27 +80,29 @@ export default function Main() {
     };
 
     return (
-        <article className="flex flex-col md:flex-row h-36 py-10 md:p-0 md:h-screen">
+        <article className="flex flex-col md:flex-row py-10 md:p-0 md:h-full">
             {<figure key={currentIndex} className={`${backgroundClassStyle} w-1/2 bg-center hidden md:block md:h-screen`} style={{
                 backgroundImage: `url(${images[currentIndex]})`
             }} />}
             <section className="flex flex-auto flex-col gap-0 justify-center items-center">
-                <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}><p>COLLEGES</p></Selection>
-                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}><p>YEARBOOK PHOTOS</p></Selection>
-                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={claimed !== "claimed"}>
-                    <p>YEARBOOK RELEASED</p>
-                    <p className="font-bold text-slate-500">(Please get the claim stub)</p>
-                </Selection>
                 {!disabled && (role === "admin") &&
                     (
                         <>
                             <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
                             <h3 className="font-bold w-3/5 text-left mb-3">Admin Section</h3>
-                            <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                            <Selection index={1} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
                                 <p>SOLICITATION</p>
                             </Selection>
+                            <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
+                            <h3 className="font-bold w-3/5 text-left mb-3">Student Section</h3>
                         </>
                     )}
+                <Selection index={2} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}><p>COLLEGES</p></Selection>
+                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}><p>YEARBOOK PHOTOS</p></Selection>
+                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={claimed !== "claimed"}>
+                    <p>YEARBOOK RELEASED</p>
+                    <p className="font-bold text-slate-500">(Please get the claim stub)</p>
+                </Selection>
             </section>
         </article>
     );

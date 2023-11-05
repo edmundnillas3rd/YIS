@@ -5,6 +5,7 @@ import MembersTable from "../components/CustomTable";
 import Dropdown from "../components/Dropdown";
 import YearRange from "../components/YearRange";
 import Display from "../components/Display";
+import Container from "../components/Container";
 
 export default function Department() {
     const [highlight, setHighlight] = useState("#475569");
@@ -209,7 +210,7 @@ export default function Department() {
                     <section>
                         <h1 className="pt-5 font-bold">Clubs, Seminars, and Achievements</h1>
                     </section>
-                    <section className="py-5 px-2 flex flex-col w-full border border-zinc-400 rounded">
+                    <Container>
                         <Display>
                             {/* Clubs & Organizations */}
                             <Dropdown label="Clubs & Organization" items={["Association of Student Assistants"]} />
@@ -229,8 +230,7 @@ export default function Department() {
                             <YearRange label="Year" />
                         </Display>
                         <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} mode={mode} />
-
-                    </section>
+                    </Container>
                     <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                         {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
                         {(mode === "save") && <p className="text-slate-600 font-bold">(SAVED SUCCESSFULLY)</p>}
