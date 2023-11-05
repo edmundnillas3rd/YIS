@@ -32,7 +32,7 @@ export default function Dropdown({ label, items }: DropdownProps) {
             </button>
             {show && items.length !== 0 && (
                 <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabIndex={1} role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
-                    {items.map(item => <li className="text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option">{item}</li>)}
+                    {items.map((item, i) => <li key={i} className="text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option">{item}</li>)}
                 </ul>
             )}
         </section>
