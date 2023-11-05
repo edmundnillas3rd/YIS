@@ -2,10 +2,11 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Layout from "../layouts/Main";
 import Auth from "../pages/Auth";
-import Main from "../pages/Main";
+import Home from "../pages/Home";
 import Colleges from "../pages/Colleges";
 import Department from "../pages/Department";
 import ErrorPage from "../pages/Error";
+import SoliciationFormPage from "../pages/SolciitationForm";
 
 const router = createBrowserRouter([
     {
@@ -19,7 +20,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Main />
+                element: <Home />
             }
         ]
     },
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
             {
                 path: "colleges",
                 element: <Colleges />,
+            },
+            {
+                path: "solicitation",
+                element: <SoliciationFormPage />
             }
         ]
     },

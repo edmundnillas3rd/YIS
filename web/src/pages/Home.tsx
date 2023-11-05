@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 interface SelectionProps {
     index: number;
     src: string;
     url: string;
     callbackFn: (num: number) => void;
-    children: string;
+    children: JSX.Element[] | JSX.Element;
     disabled?: boolean;
 };
 
@@ -53,6 +53,14 @@ export default function Main() {
     const [disabled, setDisable] = useState<boolean>(true);
     const [previousIndex, setPreviousIndex] = useState<number>(currentIndex);
     const [backgroundClassStyle, setBackgroundStyle] = useState<String>("bg-no-repeat");
+    const role = import.meta.env.VITE_USER_ROLE;
+    const claimed = import.meta.env.VITE_STUB_CLAIM;
+
+    useEffect(() => {
+        if (role === "admin") {
+            setDisable(false);
+        }
+    }, []);
 
     const images = [
         "/assets/cjc-logo.png",
@@ -64,12 +72,12 @@ export default function Main() {
 
     useEffect(() => {
         setBackgroundStyle(currentIndex !== previousIndex && currentIndex !== 0 ? "fade-in bg-cover" : "bg-no-repeat");
-    } , [currentIndex])
+    }, [currentIndex]);
 
     const callbackFn = (i: number) => {
         setPreviousIndex(currentIndex);
         setIndex(i);
-    }
+    };
 
     return (
         <article className="flex flex-col md:flex-row h-36 py-10 md:p-0 md:h-screen">
@@ -77,13 +85,22 @@ export default function Main() {
                 backgroundImage: `url(${images[currentIndex]})`
             }} />}
             <section className="flex flex-auto flex-col gap-0 justify-center items-center">
-                <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>COLLEGES</Selection>
-                <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn}>SOLICITATION</Selection>
-                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>YEARBOOK PHOTOS</Selection>
-                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={disabled}>YEARBOOK RELEASED</Selection>
-                {disabled &&
+                <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}><p>COLLEGES</p></Selection>
+                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}><p>YEARBOOK PHOTOS</p></Selection>
+                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={claimed !== "claimed"}>
+                    <p>YEARBOOK RELEASED</p>
                     <p className="font-bold text-slate-500">(Please get the claim stub)</p>
-                }
+                </Selection>
+                {!disabled && (role === "admin") &&
+                    (
+                        <>
+                            <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
+                            <h3 className="font-bold w-3/5 text-left mb-3">Admin Section</h3>
+                            <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                                <p>SOLICITATION</p>
+                            </Selection>
+                        </>
+                    )}
             </section>
         </article>
     );
