@@ -6,15 +6,15 @@ export default function Auth() {
     const [password, setPassword] = useState<string | null>(null);
     const [errMessage, setErrMessage] = useState<string | null>(null);
 
-    
+
     const navigate = useNavigate();
-    
+
     const onSubmitHandler = (e: SyntheticEvent) => {
         e.preventDefault();
-        
+
         const adminEmail = import.meta.env.VITE_ADMIN_ACCOUNT;
         const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
-        
+
         if (email === adminEmail && password === adminPassword) {
             navigate("/home");
         } else {
@@ -23,7 +23,7 @@ export default function Auth() {
     };
 
     return (
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+        <section className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <section className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img className="mx-auto h-32 w-auto" src="/assets/cjc-logo.png" alt="cor jesu logo" />
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Cor Jesu College<br />Yearbook Information System</h2>
@@ -31,7 +31,7 @@ export default function Auth() {
             <section className="flex p-2 flex-row justify-center items-center">
                 <p className={`text-red-400 text-sm font-bold my-2 h-2 ${errMessage ? "visible" : "invisible"}`}>{errMessage}</p>
             </section>
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+            <section className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <form onSubmit={onSubmitHandler} method="POST">
                     <input
                         id="email"
@@ -86,7 +86,8 @@ export default function Auth() {
                         <img className="w-10 h-10 max-w-none" src="/assets/law-school.png" alt="law" />
                     </figure>
                 </section>
-            </div>
-        </div>
+            </section>
+            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III and Nick Pecision</p></section>
+        </section>
     );
 }
