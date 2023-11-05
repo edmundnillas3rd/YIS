@@ -6,7 +6,7 @@ import Home from "../pages/Home";
 import Colleges from "../pages/Colleges";
 import Department from "../pages/Department";
 import ErrorPage from "../pages/Error";
-import SoliciationFormPage from "../pages/SolciitationForm";
+import SoliciationFormPage from "../pages/SolcitationForm";
 
 const router = createBrowserRouter([
     {
