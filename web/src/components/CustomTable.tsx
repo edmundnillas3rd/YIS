@@ -14,9 +14,10 @@ interface CustomerTableProps {
     nodes: any[];
     columns: string[];
     mode: string;
+    onClickCallback?: (i: any) => void;
 }
 
-export default function CustomTable({ nodes, columns, mode }: CustomerTableProps) {
+export default function CustomTable({ nodes, columns, mode, onClickCallback }: CustomerTableProps) {
     const [data, setData] = useState({ nodes });
     const [cellColumns, setCellCollumns] = useState<string[]>([...columns]);
     const [inputDisabled, setInputDisabled] = useState(true);
@@ -76,17 +77,25 @@ export default function CustomTable({ nodes, columns, mode }: CustomerTableProps
                         <>
                             <Header>
                                 <HeaderRow>
-                                    {cellColumns.map((cell, i) => (<HeaderCell key={i}>{cell}</HeaderCell>))}
+                                    {cellColumns.map((cell, i) => (<HeaderCell key={i}><p className="text-xs text-center whitespace-normal">{cell}</p></HeaderCell>))}
                                 </HeaderRow>
                             </Header>
 
                             <Body>
                                 {
-                                    tableList.map(item => (
-                                        <Row key={item.id} item={item}>
+                                    tableList.map((item, i) => (
+                                        <Row key={item.id} item={item} onClick={(item, event) => {
+                                            if (onClickCallback !== undefined)
+                                                onClickCallback(item);
+
+                                        }}>
                                             {Object.entries(item).map(([key, val]) => {
                                                 if (key === "id") return;
-                                                return <input className="border-zinc-200" type="text" value={val as string} disabled />;
+                                                return (
+                                                    <Cell className="border-zinc-200 text-base text-center whitespace-normal">
+                                                        {val as string}
+                                                    </Cell>
+                                                );
                                             })}
                                         </Row>
                                     ))

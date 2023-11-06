@@ -6,7 +6,7 @@ export default function Main() {
     return (
         <>
             <Navbar />
-            <main>
+            <main className="relative">
                 <Outlet />
             </main>
             <Footer/>
