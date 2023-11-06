@@ -170,12 +170,12 @@ export default function SoliciationFormPage() {
                 <p className="text-left w-full top-16 text-slate-600 text-xs font-bold">(NOTE: IN CASE OF LOSS, THE PERSON RESPONSIBLE WILL PAY 200 PESOS)</p>
             </section>
             <section className="flex flex-col md:flex-row flex-wrap gap-2 mb-20">
-                <section className="flex flex-col gap-2">
-                    <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
+                <section className="flex flex-col">
+                    <label htmlFor="receiver-family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
                     <input
                         type="text"
-                        name="family-name"
-                        id="family-name"
+                        name="receiver-family-name"
+                        id="receiver-family-name"
                         className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         onChange={onChangeHandler}
                         onInput={onInputHandler}
@@ -185,12 +185,12 @@ export default function SoliciationFormPage() {
                         autoComplete="off"
                     />
                 </section>
-                <section className="flex flex-col gap-2">
-                    <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">First Name</label>
+                <section className="flex flex-col">
+                    <label htmlFor="receivor-first-name" className="block text-sm font-medium leading-6 text-gray-900">First Name</label>
                     <input
                         type="text"
-                        name="family-name"
-                        id="family-name"
+                        name="receiver-first-name"
+                        id="receiver-first-name"
                         className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         onChange={onChangeHandler}
                         onInput={onInputHandler}
@@ -200,12 +200,12 @@ export default function SoliciationFormPage() {
                         autoComplete="off"
                     />
                 </section>
-                <section className="flex flex-col gap-2">
-                    <label htmlFor="relation" className="block text-sm font-medium leading-6 text-gray-900">Middle Name</label>
+                <section className="flex flex-col">
+                    <label htmlFor="receivor-middle-name" className="block text-sm font-medium leading-6 text-gray-900">Middle Name</label>
                     <input
                         type="text"
-                        name="middle-name"
-                        id="middle-name"
+                        name="receiver-middle-name"
+                        id="receiver-middle-name"
                         className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         onChange={onChangeHandler}
                         onInput={onInputHandler}
@@ -216,11 +216,11 @@ export default function SoliciationFormPage() {
                     />
                 </section>
                 <section className="relative flex flex-col">
-                    <label htmlFor="suffix" className="block text-sm font-medium leading-6 text-gray-900">Suffix</label>
+                    <label htmlFor="receiver-suffix" className="block text-sm font-medium leading-6 text-gray-900 ">Suffix</label>
                     <input
                         type="text"
-                        name="suffix"
-                        id="suffix"
+                        name="receiver-suffix"
+                        id="receiver-suffix"
                         className="block text-center rounded-md border-0 py-1.5 md:w-14 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         maxLength={4}
                         pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
@@ -230,7 +230,7 @@ export default function SoliciationFormPage() {
                     />
                     <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(E.G. SR, JR, III, IV, V)</p>
                 </section>
-                <section className="flex flex-col gap-2">
+                <section className="flex flex-col">
                     <label htmlFor="relation" className="block text-sm font-medium leading-6 text-gray-900">Relation</label>
                     <input
                         type="text"
