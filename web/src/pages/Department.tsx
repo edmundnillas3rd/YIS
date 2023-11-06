@@ -33,14 +33,12 @@ export default function Department() {
             organization: 'Association of Student Assistants',
             position: 'President',
             yearElected: '2021',
-            nodes: [],
         },
         {
             id: '1',
             organization: 'Association of Student Assistants',
             position: 'Member',
             yearElected: '2019-2023',
-            nodes: [],
         },
     ];
 
@@ -101,7 +99,7 @@ export default function Department() {
         event.preventDefault();
         const target = event.currentTarget as HTMLInputElement;
         target.setCustomValidity("");
-    }
+    };
 
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -219,6 +217,7 @@ export default function Department() {
                             {/* Year Elected */}
                             <YearRange label="Year Elected" />
                         </Display>
+                        <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
                         <MembersTable nodes={nodes} columns={["Club & Organization", "Position", "Year Elected"]} mode={mode} />
                         <hr className="my-5" />
                         <Display>
@@ -229,6 +228,7 @@ export default function Department() {
                             {/* Year */}
                             <YearRange label="Year" />
                         </Display>
+                        <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
                         <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} mode={mode} />
                     </Container>
                     <section className="flex flex-row pt-5 gap-2 justify-end items-center">

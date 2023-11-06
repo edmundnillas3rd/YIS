@@ -1,5 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
+import { AiOutlineSearch } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import StudentTable from "../components/CustomTable";
 import Container from "../components/Container";
 import Dropdown from "../components/Dropdown";
 
@@ -74,14 +76,43 @@ export default function SoliciationFormPage() {
         }
     };
 
+    const nodes = [
+        {
+            id: '1', 
+            course: "Computer Science",
+            name: "Edmund Nillas III",
+            soliNum: "2018",
+            careOf: "",
+            returned: true,
+            dateReturn: new Date(),
+            yearbookHalfPaid: true,
+            yearbookHalfPaidOR: "",
+            fullyPaid: true,
+            fullyPaidOr: ""
+        },
+        {
+            id: '2',
+            course: "Computer Science",
+            name: "Nicki Pecision",
+            soliNum: "2018",
+            careOf: "",
+            returned: true,
+            dateReturn: new Date(),
+            yearbookHalfPaid: true,
+            yearbookHalfPaidOR: "",
+            fullyPaid: true,
+            fullyPaidOr: ""
+        }
+    ];
+
     return <article className="flex flex-col p-10 gap-0">
         <h3 className="font-bold mb-3">Solicitation Forms</h3>
         <Container>
+            {/* Student Section */}
             <h3 className="font-bold">Student:</h3>
-            <section className="w-full">
+            <section className="w-full mb-5">
                 <Dropdown label="Course" items={["BSCS", "BSBA"]} />
             </section>
-            {/* Student Section */}
             <section className="flex flex-col md:flex-row flex-wrap gap-5 md:gap-2 mb-16">
                 <section className="flex flex-col">
                     <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
@@ -246,7 +277,18 @@ export default function SoliciationFormPage() {
                     />
                 </section>
             </section>
-
+        </Container>
+        <h3 className="font-bold mt-5 mb-3">Student Recipients</h3>
+        <Container>
+            <form className="relative flex flex-row items-center" action="get">
+                <input className="block w-full rounded-md border-0 pr-10 py-1.5 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" type="text" name="student-recipient" id="student-recipient" placeholder="Search the name of the student" />
+                <i className="absolute right-40 pr-4"><AiOutlineSearch style={{ color: "black", width: `16px`, height: '16px' }} /></i>
+                <section className="flex flex-row items-center gap-5">
+                    <input className="ml-3" type="checkbox" name="toggle-students" id="toggle-students" />
+                    <label className="font-bold text-center text-xs md:text-base" htmlFor="toggle-students">Show Unreturned</label>
+                </section>
+            </form>
+            <StudentTable nodes={nodes} columns={["COURSE", "NAME", "SOLI #'s", "CARE OF", "RETURNED OR UNRETURNED", "DATE RETURNED", "YEARBOOK HALF PAYMENT", "OR #", "FULL PAYMENT", "OR #"]} mode="default" />
         </Container>
     </article>;
 }
