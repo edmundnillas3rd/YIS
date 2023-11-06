@@ -59,8 +59,7 @@ export default function CustomTable({ nodes, columns, mode }: CustomerTableProps
 
     return (
         <>
-            <section className="flex flex-row mt-7 w-full top-16 items-center place-content-between">
-                <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>
+            <section className="flex flex-row w-full top-16 items-center place-content-between">
                 {/* <button
                     className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-dashed border-zinc-600 p-1 rounded"
                     onClick={handleSubmit}
@@ -82,69 +81,21 @@ export default function CustomTable({ nodes, columns, mode }: CustomerTableProps
                             </Header>
 
                             <Body>
-                                {tableList.map((item) => (
-                                    <Row key={item.id} item={item}>
-                                        <Cell>
-                                            <input
-                                                type="text"
-                                                style={{
-                                                    width: "100%",
-                                                    border: "none",
-                                                    fontSize: "1rem",
-                                                    padding: 0,
-                                                    margin: 0,
-                                                }}
-                                                value={(item?.organization ?? item?.awardsSeminar)}
-                                                onChange={(event) =>
-                                                    handleUpdate(event.target.value, item.id, `${item?.organization !== undefined ? "organization" : "awardsSeminar"}`)
-                                                }
-                                                disabled={inputDisabled}
-                                            />
-                                        </Cell>
-                                        <Cell>
-                                            <input
-                                                type="text"
-                                                style={{
-                                                    width: "100%",
-                                                    border: "none",
-                                                    fontSize: "1rem",
-                                                    padding: 0,
-                                                    margin: 0,
-                                                }}
-                                                value={(item?.position ?? item?.awardName)}
-                                                onChange={(event) =>
-                                                    handleUpdate(
-                                                        event.target.value,
-                                                        item.id,
-                                                        `${item?.position !== undefined ? "position" : "awardName"}`
-                                                    )
-                                                }
-                                                disabled={inputDisabled}
-                                            />
-                                        </Cell>
-                                        <Cell>
-                                            <input
-                                                style={{
-                                                    width: "100%",
-                                                    border: "none",
-                                                    fontSize: "1rem",
-                                                    padding: 0,
-                                                    margin: 0,
-                                                }}
-                                                value={(item.yearElected ?? item?.year)}
-                                                onChange={(event) =>
-                                                    handleUpdate(event.target.value, item.id, `${item?.yearElected !== undefined ? "yearElected" : "year"}`)
-                                                }
-                                                disabled={inputDisabled}
-                                            />
-                                        </Cell>
-                                    </Row>
-                                ))}
+                                {
+                                    tableList.map(item => (
+                                        <Row key={item.id} item={item}>
+                                            {Object.entries(item).map(([key, val]) => {
+                                                if (key === "id") return;
+                                                return <input className="border-zinc-200" type="text" value={val as string} disabled />;
+                                            })}
+                                        </Row>
+                                    ))
+                                }
                             </Body>
                         </>
                     )}
                 </Table>
-            </section>
+            </section >
         </>
     );
 }
