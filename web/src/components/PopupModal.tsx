@@ -46,7 +46,7 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
                         id="soli-form-status"
                         className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         autoComplete="off"
-                        value={returned}
+                        value="RETURNED"
                         disabled
                     />
                 </section>
@@ -104,6 +104,18 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
                         type="text"
                         name="lost-soli-num"
                         id="lost-soli-num"
+                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        autoComplete="off"
+                        value={"####"}
+                        disabled
+                    />
+                </section>
+                <section className="flex flex-col">
+                    <label htmlFor="lost-soli-or" className="block text-sm font-medium leading-6 text-gray-900">Lost Solicitation OR #</label>
+                    <input
+                        type="text"
+                        name="lost-soli-or"
+                        id="lost-soli-or"
                         className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         autoComplete="off"
                         value={"####"}
