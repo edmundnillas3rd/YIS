@@ -85,7 +85,7 @@ export default function Main() {
                 backgroundImage: `url(${images[currentIndex]})`
             }} />}
             <section className="flex flex-auto flex-col gap-0 justify-center items-center">
-                {!disabled && (role === "admin") &&
+                {/* {!disabled && (role === "admin") &&
                     (
                         <>
                             <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
@@ -96,9 +96,16 @@ export default function Main() {
                             <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
                             <h3 className="font-bold w-3/5 text-left mb-3">Student Section</h3>
                         </>
-                    )}
-                <Selection index={2} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}><p>COLLEGES</p></Selection>
-                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}><p>YEARBOOK PHOTOS</p></Selection>
+                    )} */}
+                <Selection index={1} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                    <p>SOLICITATION</p>
+                </Selection>
+                <Selection index={2} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
+                    <p>COLLEGES</p>
+                </Selection>
+                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
+                    <p>YEARBOOK PHOTOS</p>
+                </Selection>
                 <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={claimed !== "claimed"}>
                     <p>YEARBOOK RELEASED</p>
                     <p className="font-bold text-slate-500">(Please get the claim stub)</p>
