@@ -10,9 +10,9 @@ const config = {
     database: process.env.MYSQL_DATABASE,
 };
 
-export async function query(sql: string, params: any[] = []) {
+export async function query(sql: string, values: any[] = []) {
     const promisePool = await pool?.promise();
-    const [rows, fields]: any = await promisePool?.execute(sql, params);
+    const [rows, fields]: any = await promisePool?.execute(sql, values);
 
     return {
         rows,
