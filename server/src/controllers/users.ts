@@ -12,49 +12,60 @@ export async function index(req: Request, res: Response) {
     });
 }
 
+// TODO: to receive only the id of the student instead of getting all of
+// information again
 export async function submitInfo(req: Request, res: Response) {
-    const {
-        firstName,
-        familyName,
-        middleName,
-        suffix,
-        clubs,
-        awards
-    } = req.body;
+    const { id, clubs, awards } = req.body;
 
-    const sql = `
-        INSERT INTO user (user_id, user_first_name, user_family_name, user_middle_name, user_suffix)
-        VALUES (UUID(), ?, ?, ?, ?)
-    `;
+    const { rows } = await query("SELECT * FROM user WHERE user_id = ?", [id]);
+    // const {
+    //     firstName,
+    //     familyName,
+    //     middleName,
+    //     suffix,
+    //     clubs,
+    //     awards
+    // } = req.body;
 
-    const values = [
-        firstName,
-        familyName,
-        middleName,
-        suffix,
-    ];
+    // const sql = `
+    //     INSERT INTO user (user_id, user_first_name, user_family_name, user_middle_name, user_suffix)
+    //     VALUES (UUID(), ?, ?, ?, ?)
+    // `;
 
-    await query(sql, values);
+    // const values = [
+    //     firstName,
+    //     familyName,
+    //     middleName,
+    //     suffix,
+    // ];
 
-    await Array.from(clubs).map(async (club) => {
+    // await query(sql, values);
+
+    Array.from(clubs).forEach(async (club) => {
         const c = club as Club;
+
+        const UUID = await query("SELECT UUID()");
         await query(`
-            INSERT INTO club
-            VALUES (UUID(), ?, ?, ?, ?)
+            INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)
         `, [
-            c.organizationName,
-            c.positionName,
+            UUID.rows[0]['UUID()'],
+            id,
+            c.organizationID,
+            c.positionID,
             c.clubStarted,
             c.clubEnded
         ]);
     });
 
-    await Array.from(awards).map(async (award) => {
+    Array.from(awards).forEach(async (award) => {
         const a = award as Award;
+
+        const UUID = await query("SELECT UUID()");
         await query(`
-            INSERT INTO award
-            VALUES (UUID(), ?, ?, ?)
+            INSERT INTO award VALUES (?, ?, ?, ?, ?)
         `, [
+            UUID.rows[0]['UUID()'],
+            id,
             a.awardAttendedName,
             a.awardName,
             a.awardReceived
