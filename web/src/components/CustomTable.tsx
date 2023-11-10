@@ -7,7 +7,6 @@ import {
     HeaderCell,
     Cell,
 } from "@table-library/react-table-library/table";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import { SyntheticEvent, useEffect, useState } from "react";
 
 interface CustomerTableProps {
@@ -15,9 +14,10 @@ interface CustomerTableProps {
     columns: string[];
     mode: string;
     onClickCallback?: (i: any) => void;
+    size?: number;
 }
 
-export default function CustomTable({ nodes, columns, mode, onClickCallback }: CustomerTableProps) {
+export default function CustomTable({ nodes, columns, mode, onClickCallback, size = 0 }: CustomerTableProps) {
     const [data, setData] = useState({ nodes });
     const [cellColumns, setCellCollumns] = useState<string[]>([...columns]);
     const [inputDisabled, setInputDisabled] = useState(true);
@@ -59,52 +59,39 @@ export default function CustomTable({ nodes, columns, mode, onClickCallback }: C
     }, [mode]);
 
     return (
-        <>
-            <section className="flex flex-row w-full top-16 items-center place-content-between">
-                {/* <button
-                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-dashed border-zinc-600 p-1 rounded"
-                    onClick={handleSubmit}
-                >
-                    <p>Add</p>
-                    <AiOutlinePlusCircle style={{
-                        color: "#475569"
-                    }} />
-                </button> */}
-            </section>
-            <section className="border border-1 border-zinc-300 h-full p-2 mt-2 rounded">
-                <Table data={data}>
-                    {(tableList: any[]) => (
-                        <>
-                            <Header>
-                                <HeaderRow>
-                                    {cellColumns.map((cell, i) => (<HeaderCell key={i}><p className="text-xs text-center whitespace-normal">{cell}</p></HeaderCell>))}
-                                </HeaderRow>
-                            </Header>
+        <section className="border border-1 border-zinc-300 h-full p-2 mt-2 rounded">
+            <Table data={data}>
+                {(tableList: any[]) => (
+                    <>
+                        <Header>
+                            <HeaderRow>
+                                {cellColumns.map((cell, i) => (<HeaderCell key={i}><p className="text-xs text-center whitespace-normal">{cell}</p></HeaderCell>))}
+                            </HeaderRow>
+                        </Header>
 
-                            <Body>
-                                {
-                                    tableList.map((item, i) => (
-                                        <Row key={item.id} item={item} onClick={(item, event) => {
-                                            if (onClickCallback !== undefined)
-                                                onClickCallback(item);
+                        <Body>
+                            {
+                                tableList.map((item) => (
+                                    <Row key={item.id} item={item} onClick={(item, event) => {
+                                        if (onClickCallback !== undefined)
+                                            onClickCallback(item);
 
-                                        }}>
-                                            {Object.entries(item).map(([key, val]) => {
-                                                if (key === "id") return;
-                                                return (
-                                                    <Cell className="border-zinc-200 text-base text-center whitespace-normal">
-                                                        {val as string}
-                                                    </Cell>
-                                                );
-                                            })}
-                                        </Row>
-                                    ))
-                                }
-                            </Body>
-                        </>
-                    )}
-                </Table>
-            </section >
-        </>
+                                    }}>
+                                        {Object.entries(item).map(([key, val], i) => {
+                                            if (key === "id") return;
+                                            return (
+                                                <Cell key={i} className="border-zinc-200 text-base text-center whitespace-normal">
+                                                    {val as string}
+                                                </Cell>
+                                            );
+                                        })}
+                                    </Row>
+                                ))
+                            }
+                        </Body>
+                    </>
+                )}
+            </Table>
+        </section >
     );
 }

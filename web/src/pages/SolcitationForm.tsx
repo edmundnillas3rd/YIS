@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import StudentTable from "../components/CustomTable";
 import Container from "../components/Container";
 import Dropdown from "../components/Dropdown";
-import PopupModal from "../components/PopupModal";
+import PopupModal from "../components/SolificitationForm/SolicitationPopupModal";
 
 export default function SoliciationFormPage() {
     // Student
@@ -110,7 +110,6 @@ export default function SoliciationFormPage() {
 
     const onClickCallback = (i: any) => {
         setCurrentNode(i);
-        console.log("Invoke");
     };
 
     const onClickCallbackPopup = (event: SyntheticEvent) => {
@@ -126,7 +125,8 @@ export default function SoliciationFormPage() {
                     {/* Student Section */}
                     <h3 className="font-bold">Student:</h3>
                     <section className="w-full mb-5">
-                        <Dropdown label="Course" items={["BSCS", "BSBA"]} />
+                        {/* TODO: to add a course attribute for dynamically adding courses */}
+                        <Dropdown label="Course" items={[{ id: "1", name: "BSCS"}, { id: "0", name:"BSBA"}]} />
                     </section>
                     <section className="flex flex-col md:flex-row flex-wrap gap-5 md:gap-2 mb-16">
                         <section className="flex flex-col">

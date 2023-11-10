@@ -6,7 +6,7 @@ interface SelectionProps {
     src: string;
     url: string;
     callbackFn: (num: number) => void;
-    children: JSX.Element[] | JSX.Element;
+    children?: React.ReactNode;
     disabled?: boolean;
 };
 
@@ -98,17 +98,17 @@ export default function Main() {
                         </>
                     )} */}
                 <Selection index={1} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
-                    <p>SOLICITATION</p>
+                    SOLICITATION
                 </Selection>
                 <Selection index={2} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
-                    <p>COLLEGES</p>
+                    COLLEGES
                 </Selection>
                 <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
-                    <p>YEARBOOK PHOTOS</p>
+                    YEARBOOK PHOTOS
                 </Selection>
                 <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={claimed !== "claimed"}>
-                    <p>YEARBOOK RELEASED</p>
-                    <p className="font-bold text-slate-500">(Please get the claim stub)</p>
+                    YEARBOOK RELEASED
+                    <span className="font-bold text-slate-500">(Please get the claim stub)</span>
                 </Selection>
             </section>
         </article>
