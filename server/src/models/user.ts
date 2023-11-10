@@ -1,6 +1,6 @@
 export interface Club {
-    organizationName: string;
-    positionName: string;
+    organizationID: string;
+    positionID: string;
     clubStarted: Date;
     clubEnded: Date;
 }

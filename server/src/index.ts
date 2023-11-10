@@ -9,6 +9,7 @@ const app: Express = express();
 import initializeDB from "./services/mysqldb";
 import userRoute from "./routes/userRoute";
 import solicitationRoute from "./routes/solicitationRoute";
+import clubRoute from "./routes/clubRoute";
 
 const main = async () => {
 
@@ -32,6 +33,7 @@ const main = async () => {
 
     app.use("/users", userRoute);
     app.use("/solicitation", solicitationRoute);
+    app.use("/clubs", clubRoute);
 
     app.listen(process.env.PORT || 3000, () => {
         console.info(`[server]: Listening on port ${process.env.PORT}`);
