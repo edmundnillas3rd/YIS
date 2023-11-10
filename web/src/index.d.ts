@@ -10,3 +10,8 @@ interface Student {
     fullyPaid: boolean;
     fullyPaidOr: string;
 }
+
+interface Label {
+    id: string;
+    name: string;
+}

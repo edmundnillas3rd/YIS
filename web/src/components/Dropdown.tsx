@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { FaAngleDown } from "react-icons/fa";
 
 interface DropdownProps {
     label: string;
-    items: string[];
+    items: Label[];
 }
 
 export default function Dropdown({ label, items }: DropdownProps) {
@@ -18,7 +17,7 @@ export default function Dropdown({ label, items }: DropdownProps) {
                 }} />
             </span>
             {items.length !== 0 && (
-                items.map((item, i) => <option key={i} className="z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option">{item}</option>)
+                items.map((item, i) => <option key={i} className="z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option" value={item.id}>{item.name}</option>)
             )}
         </select>
     </section>;

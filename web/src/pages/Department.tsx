@@ -7,6 +7,21 @@ import YearRange from "../components/YearRange";
 import Display from "../components/Display";
 import Container from "../components/Container";
 
+interface Position {
+    club_position_id: string;
+    club_position_name: string;
+}
+
+interface Organization {
+    club_organization_id: string;
+    club_organization_name: string;
+}
+
+interface ClubAttr {
+    positions: Label[],
+    organizations: Label[];
+}
+
 export default function Department() {
     const [highlight, setHighlight] = useState("#475569");
     const [anotherHighlight, setAnotherHightlight] = useState("#475569");
@@ -18,36 +33,58 @@ export default function Department() {
     const [middleName, setMiddleName] = useState<string | null>(null);
     const [suffix, setSuffix] = useState<string | null>(null);
 
+    const [clubAttr, setClubsAttr] = useState<ClubAttr>({ positions: [], organizations: [] });
+
+    const [id, setID] = useState<string>("");
+
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
+
+    useEffect(() => {
+        fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
+            .then(response => response.json())
+            .then(data => {
+
+                const positions = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
+                const organizations = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
+
+                setClubsAttr({
+                    positions,
+                    organizations
+                });
+
+                console.log(clubAttr);
+
+            });
+    }, []);
 
     useEffect(() => {
         setErrorMsg("");
         setMode("default");
     }, [studentID, firstName, familyName, middleName, suffix]);
 
-    const nodes = [
+    const clubs = [
         {
             id: '0',
-            organization: 'Association of Student Assistants',
-            position: 'President',
-            yearElected: '2021',
+            organizationID: '098b7103-7f15-11ee-b66b-84a93eac0a67',
+            positionID: '4947b5c4-7f13-11ee-b66b-84a93eac0a67',
+            clubStarted: '2022-08-20' + " " + '2023-06-23',
         },
         {
             id: '1',
-            organization: 'Association of Student Assistants',
-            position: 'Member',
-            yearElected: '2019-2023',
-        },
+            organization: '098b7103-7f15-11ee-b66b-84a93eac0a67',
+            position: '4947bc72-7f13-11ee-b66b-84a93eac0a67',
+            clubStarted: '2019-08-16' + " " + '2023-08-16',
+        }
     ];
 
-    const awardNodes = [
+    const awards = [
         {
             id: '0',
-            awardsSeminar: 'Sample Seminar Held @ Davao City',
+            awardAttendedName: 'Sample Seminar Held @ Davao City',
             awardName: 'Participant',
-            year: '2023'
+            awardReceived: '2023'
         }
     ];
 
@@ -63,7 +100,7 @@ export default function Department() {
         setMode("edit");
     };
 
-    const save = () => {
+    const save = async () => {
         if (mode === "save") {
             setMode("default");
             return;
@@ -105,7 +142,26 @@ export default function Department() {
         event.preventDefault();
 
         if (studentID && firstName && familyName && middleName) {
-            save();
+            await save();
+
+            const modifiedClubs = clubs.map(({ id, ...attrs }) => attrs);
+            const modifiedAwards = awards.map(({ id, ...attrs }) => attrs);
+
+            const data = {
+                id,
+                modifiedClubs,
+                modifiedAwards
+            };
+
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/return-solicitation`, {
+                body: JSON.stringify(data),
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                setMode("default");
+            }
+
         } else {
             setMode("default");
             setErrorMsg("Fill up all the required fields");
@@ -211,25 +267,25 @@ export default function Department() {
                     <Container>
                         <Display>
                             {/* Clubs & Organizations */}
-                            <Dropdown label="Clubs & Organization" items={["Association of Student Assistants"]} />
+                            <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />
                             {/* Club Positions */}
-                            <Dropdown label="Position" items={["President", "Member"]} />
+                            <Dropdown label="Position" items={clubAttr.positions} />
                             {/* Year Elected */}
                             <YearRange label="Year Elected" />
                         </Display>
                         <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
-                        <MembersTable nodes={nodes} columns={["Club & Organization", "Position", "Year Elected"]} mode={mode} />
+                        <MembersTable nodes={clubs} columns={["Clubs & Organizations", "Position", "Year Elected"]} mode={mode} />
                         <hr className="my-5" />
                         <Display>
                             {/* Awards & Seminars*/}
-                            <Dropdown label="Awards & Seminars" items={["Sample Seminar Held @ Davao City"]} />
+                            <Dropdown label="Awards & Seminars" items={[{ id: "1", name: "Sample Seminar Held @ Davao City" }]} />
                             {/* Award Name */}
-                            <Dropdown label="Award Name" items={["Participant"]} />
+                            <Dropdown label="Award Name" items={[{ id: "1", name: "Participant" }]} />
                             {/* Year */}
                             <YearRange label="Year" />
                         </Display>
                         <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
-                        <MembersTable nodes={awardNodes} columns={["Awards & Seminars", "Award Name", "Year"]} mode={mode} />
+                        <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name", "Year"]} mode={mode} />
                     </Container>
                     <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                         {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
