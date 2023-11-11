@@ -35,8 +35,11 @@ export default function Department() {
     const [suffix, setSuffix] = useState<string | null>(null);
 
     const [clubAttr, setClubsAttr] = useState<ClubAttr>({ positions: [], organizations: [] });
+    const [clubData, setClubsData] = useState<any>();
 
-    const [id, setID] = useState<string>("");
+    const [id, setID] = useState<string>(import.meta.env.VITE_USER_ID);
+
+    const [user, setUser] = useState<any>(import.meta.env.VITE_USER_ID);
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -55,23 +58,23 @@ export default function Department() {
                     organizations
                 });
             });
+
+        fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}`)
+            .then(response => response.json())
+            .then((data: any) => {
+                const clubs = data.rows.map(({ organization, ...attr }: any, idx: number) => ({ id: idx.toString(), organization }));
+                const clubData = data.rows;
+                setClubsData({
+                    clubs,
+                    clubData
+                });
+            });
     }, []);
 
     useEffect(() => {
         setErrorMsg("");
         setMode("default");
     }, [studentID, firstName, familyName, middleName, suffix]);
-
-    const clubs = [
-        {
-            id: '0',
-            organizationID: '098b7103-7f15-11ee-b66b-84a93eac0a67',
-        },
-        {
-            id: '1',
-            organization: '098b7103-7f15-11ee-b66b-84a93eac0a67',
-        }
-    ];
 
     const awards = [
         {
@@ -138,7 +141,7 @@ export default function Department() {
         if (studentID && firstName && familyName && middleName) {
             await save();
 
-            const modifiedClubs = clubs.map(({ id, ...attrs }) => attrs);
+            const modifiedClubs = clubData.map(({ id, ...attrs }: any) => attrs);
             const modifiedAwards = awards.map(({ id, ...attrs }) => attrs);
 
             const data = {
@@ -166,7 +169,7 @@ export default function Department() {
     const [currentNode, setCurrentNode] = useState<any | null>(null);
 
     const onClickCallback = (i: any) => {
-        setCurrentNode(i);
+        setCurrentNode(clubData.clubData[0]);
     };
 
     const onClickCallbackPopup = (event: SyntheticEvent) => {
@@ -280,7 +283,7 @@ export default function Department() {
                                 <YearRange label="Year Elected" />
                             </Display>
                             <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
-                            <MembersTable nodes={clubs} columns={["Clubs & Organizations"]} mode={mode} onClickCallback={onClickCallback}/>
+                            {clubData && <MembersTable nodes={clubData.clubs} columns={["Clubs & Organizations"]} mode={mode} onClickCallback={onClickCallback} />}
                             <hr className="my-5" />
                             <Display>
                                 {/* Awards & Seminars*/}

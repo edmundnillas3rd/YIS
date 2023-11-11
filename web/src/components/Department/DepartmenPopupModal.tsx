@@ -33,20 +33,6 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
     const [anotherHighlight, setAnotherHightlight] = useState("#475569");
     const [disabled, setDisabled] = useState<boolean>(true);
 
-    // const {
-    //     id,
-    //     course,
-    //     name,
-    //     soliNum,
-    //     careOf,
-    //     returned,
-    //     dateReturn,
-    //     yearbookHalfPaid,
-    //     yearbookHalfPaidOr,
-    //     fullyPaid,
-    //     fullyPaidOr
-    // } = data;
-
     useEffect(() => {
         console.log(data);
     }, [data]);
@@ -64,14 +50,17 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
     return (
         <section className="flex justify-center items-center absolute z-10 bg-black bg-opacity-70 w-full h-full top-0 right-0">
             <section className="bg-white border border-zinc-400 rounded flex flex-col w-1/2 p-10 gap-2">
-                <section className="flex flex-row justify-between">
+                <section className="flex flex-row items-center justify-between">
                     <section className="flex flex-col mb-5">
                         {/* <h3 className="font-bold">{name}</h3> */}
                         <h3 className="font-bold">Club Organization Information</h3>
                     </section>
-                    <section className="font-bold h-10 w-10 flex flex-row justify-center items-center cursor-pointer" onClick={onClickCallback}>X</section>
+                    <section className="font-bold p-2 flex flex-row cursor-pointer hover:bg-zinc-300 hover:rounded" onClick={onClickCallback}>X</section>
                 </section>
-                {Object.entries(data).map(([key, val], i) => <InfoItem key={i} field={key} value={val} label={key.toUpperCase()} disabled={disabled} />)}
+                {Object.entries(data).map(([key, val], i) => {
+                    if (key === "id") return;
+                    return <InfoItem key={i} field={key} value={val} label={key.toUpperCase()} disabled={disabled} />
+                })}
                 {/* <section className="flex flex-col">
                     <label htmlFor="soli-form-status" className="block text-sm font-medium leading-6 text-gray-900">Solicitation Form Returned</label>
                     <input
