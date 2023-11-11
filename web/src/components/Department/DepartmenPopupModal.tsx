@@ -49,10 +49,9 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
 
     return (
         <section className="flex justify-center items-center absolute z-10 bg-black bg-opacity-70 w-full h-full top-0 right-0">
-            <section className="bg-white border border-zinc-400 rounded flex flex-col w-1/2 p-10 gap-2">
-                <section className="flex flex-row items-center justify-between">
-                    <section className="flex flex-col mb-5">
-                        {/* <h3 className="font-bold">{name}</h3> */}
+            <section className="bg-white border border-zinc-400 rounded flex flex-col md:w-1/2 p-10 gap-2">
+                <section className="flex flex-row items-center justify-between gap-5">
+                    <section className="flex flex-col justify-center">
                         <h3 className="font-bold">Club Organization Information</h3>
                     </section>
                     <section className="font-bold p-2 flex flex-row cursor-pointer hover:bg-zinc-300 hover:rounded" onClick={onClickCallback}>X</section>

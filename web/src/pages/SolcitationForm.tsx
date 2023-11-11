@@ -203,11 +203,11 @@ export default function SoliciationFormPage() {
                                 onChange={onChangeHandler}
                                 onInput={onInputHandler}
                                 pattern={regexInvalidSymbols}
-                                maxLength={50}
+                                maxLength={4}
                                 required
                                 autoComplete="off"
                             />
-                            <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(EX. 2023-2010)</p>
+                            <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(EX. 2023)</p>
                         </section>
                     </section>
                     {/* Care of Section */}

@@ -39,8 +39,6 @@ export default function Department() {
 
     const [id, setID] = useState<string>(import.meta.env.VITE_USER_ID);
 
-    const [user, setUser] = useState<any>(import.meta.env.VITE_USER_ID);
-
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";

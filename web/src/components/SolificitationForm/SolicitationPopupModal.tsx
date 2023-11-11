@@ -30,9 +30,9 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
 
     return (
         <section className="flex justify-center items-center absolute z-10 bg-black bg-opacity-70 w-full h-full top-0 right-0">
-            <section className="bg-white border border-zinc-400 rounded flex flex-col w-1/2 p-10 gap-2">
+            <section className="bg-white border border-zinc-400 rounded flex flex-col md:w-1/2 p-10 gap-2">
                 <section className="flex flex-row items-center justify-between">
-                    <section className="flex flex-col mb-5">
+                    <section className="flex flex-col justify-center">
                         <h3 className="font-bold">{name}</h3>
                         <h3 className="font-bold">Solic Form # {soliNum}</h3>
                     </section>
