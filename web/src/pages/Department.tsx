@@ -1,5 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { AiFillSave, AiFillEdit } from "react-icons/ai";
+import { BiPlus } from "react-icons/bi";
 
 import MembersTable from "../components/CustomTable";
 import Dropdown from "../components/Dropdown";
@@ -7,6 +8,8 @@ import YearRange from "../components/YearRange";
 import Display from "../components/Display";
 import Container from "../components/Container";
 import PopupModal from "../components/Department/DepartmenPopupModal";
+import Spinner from "../components/Spinner";
+import FillFormPopup from "../components/Department/FillupFormPopup";
 
 interface Position {
     club_position_id: string;
@@ -27,6 +30,9 @@ export default function Department() {
     const [highlight, setHighlight] = useState("#475569");
     const [anotherHighlight, setAnotherHightlight] = useState("#475569");
     const [mode, setMode] = useState("default");
+    const [loading, setLoading] = useState(false);
+    const [addClubs, setAddClubs] = useState(false);
+    const [addAwards, setAddAwards] = useState(false);
 
     const [studentID, setStudentID] = useState<string | null>(null);
     const [firstName, setFirstName] = useState<string | null>(null);
@@ -44,6 +50,7 @@ export default function Department() {
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
 
     useEffect(() => {
+        setLoading(true);
         fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
             .then(response => response.json())
             .then(data => {
@@ -67,6 +74,7 @@ export default function Department() {
                     clubData
                 });
             });
+        setLoading(false);
     }, []);
 
     useEffect(() => {
@@ -177,6 +185,12 @@ export default function Department() {
     return (
         <>
             {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup} />}
+            {addClubs && <FillFormPopup name="Club Organization Information" data={undefined} onClickCallback={function (event: SyntheticEvent): void {
+                setAddClubs(false);
+            }} />}
+            {addAwards && <FillFormPopup name="Awards & Seminars" data={undefined} onClickCallback={function (event: SyntheticEvent): void {
+                setAddAwards(false);
+            }} />}
             <article className="flex flex-col p-10 gap-10">
                 {/* General Information Section */}
                 <section>
@@ -266,35 +280,63 @@ export default function Department() {
                             </section>
                         </section>
                     </section>
-                    {/* Clubs, Seminars, and Achievements */}
-                    <section className="md:px-10 mt-10 flex flex-col gap-2">
-                        <section>
-                            <h1 className="pt-5 font-bold">Clubs, Seminars, and Achievements</h1>
+                </form>
+
+                {/* Clubs, Seminars, and Achievements */}
+                <section className="md:px-10 mt-10 flex flex-col gap-2">
+                    <section className="flex justify-between">
+                        <h1 className="pt-5 font-bold">Clubs, Seminars, and Achievements</h1>
+                    </section>
+                    <Container>
+                        <Display>
+                            {/* Clubs & Organizations */}
+                            <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />
+                            {/* Club Positions */}
+                            <Dropdown label="Position" items={clubAttr.positions} />
+                            {/* Year Elected */}
+                            <YearRange label="Year Elected" />
+                        </Display>
+                        <section className="flex justify-between items-center mt-5">
+                            <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>
+                            <button className="flex justify-center items-center border border-gray-500 px-2 py-2 rounded gap-2" onClick={(e: SyntheticEvent) => {
+                                setAddAwards(false);
+                                setAddClubs(true);
+                            }}>
+                                <BiPlus style={{ color: "black" }} />
+                                <p>Add Clubs</p>
+                            </button>
                         </section>
-                        <Container>
-                            <Display>
-                                {/* Clubs & Organizations */}
-                                <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />
-                                {/* Club Positions */}
-                                <Dropdown label="Position" items={clubAttr.positions} />
-                                {/* Year Elected */}
-                                <YearRange label="Year Elected" />
-                            </Display>
-                            <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
-                            {clubData && <MembersTable nodes={clubData.clubs} columns={["Clubs & Organizations"]} mode={mode} onClickCallback={onClickCallback} />}
-                            <hr className="my-5" />
-                            <Display>
-                                {/* Awards & Seminars*/}
-                                <Dropdown label="Awards & Seminars" items={[{ id: "1", name: "Sample Seminar Held @ Davao City" }]} />
-                                {/* Award Name */}
-                                <Dropdown label="Award Name" items={[{ id: "1", name: "Participant" }]} />
-                                {/* Year */}
-                                <YearRange label="Year" />
-                            </Display>
-                            <p className="text-slate-600 text-xs mt-7 font-bold">NOTE: ONLY FIVE (5)</p>
-                            <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
-                        </Container>
-                        <section className="flex flex-row pt-5 gap-2 justify-end items-center">
+
+                        {clubData ?
+                            <MembersTable nodes={clubData.clubs} columns={["Clubs & Organizations"]} mode={mode} onClickCallback={onClickCallback} />
+                            :
+                            <section className="flex justify-center">
+                                <Spinner />
+                            </section>
+                        }
+                        <hr className="my-5" />
+                        <Display>
+                            {/* Awards & Seminars*/}
+                            <Dropdown label="Awards & Seminars" items={[{ id: "1", name: "Sample Seminar Held @ Davao City" }]} />
+                            {/* Award Name */}
+                            <Dropdown label="Award Name" items={[{ id: "1", name: "Participant" }]} />
+                            {/* Year */}
+                            <YearRange label="Year" />
+                        </Display>
+                        <section className="flex justify-between items-center mt-5">
+                            <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>
+                            <button className="flex justify-center items-center border border-gray-500 px-2 py-2 rounded gap-2" onClick={(e: SyntheticEvent) => {
+                                setAddClubs(false);
+                                setAddAwards(true);
+                            }}>
+                                <BiPlus style={{ color: "black" }} />
+                                <p>Add Awards</p>
+                            </button>
+                        </section>
+                        <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
+                        
+                    </Container>
+                    {/* <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                             {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
                             {(mode === "save") && <p className="text-slate-600 font-bold">(SAVED SUCCESSFULLY)</p>}
                             {errorMsg && <p className="text-red-600 font-bold">{errorMsg}</p>}
@@ -331,9 +373,8 @@ export default function Department() {
                                     color: anotherHighlight
                                 }} />
                             </button>
-                        </section>
-                    </section>
-                </form>
+                        </section> */}
+                </section>
             </article >
         </>
     );

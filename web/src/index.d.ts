@@ -15,3 +15,9 @@ interface Label {
     id: string;
     name: string;
 }
+
+interface PopupModalProps {
+    name?: string;
+    data: any;
+    onClickCallback: (event: SyntheticEvent) => void;
+}
