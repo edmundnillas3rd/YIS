@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 
-import { index, loginUserStudent, signupUserStudent, submitInfo } from "../controllers/users";
+import { index, loginUserStudent, signupUserStudent, submitInfo, logoutUser } from "../controllers/users";
 
 router.get("/", index);
 
@@ -9,5 +9,6 @@ router.get("/", index);
 router.post("/info-submit", submitInfo);
 router.post("/user-signup", signupUserStudent);
 router.post("/user-login", loginUserStudent);
+router.post("/logout", logoutUser);
 
 export default router;

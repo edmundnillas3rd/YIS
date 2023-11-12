@@ -138,3 +138,12 @@ export async function loginUserStudent(req: Request, res: Response) {
 
     res.status(200).end();
 }
+
+export async function logoutUser(req: Request, res: Response) {
+    req.session.destroy((error) => {
+        if (error) {
+            console.error(error);
+        }
+    });
+    res.status(200).json({ url: '/' });
+}

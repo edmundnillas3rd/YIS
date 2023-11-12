@@ -1,15 +1,29 @@
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 
 import cjcLogo from "/assets/cjc-logo.png";
+import Spinner from "./Spinner";
 
 export default function Navbar() {
     const [title, setTitle] = useState("");
     const [display, setDisplay] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    const onClickHandler = async (e: SyntheticEvent) => {
+        setLoading(true)
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
+            method: "POST"
+        });
+        const { url } = await response.json();
+        if (response.ok) {
+            navigate(url);
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const url = window.location.href;
@@ -62,11 +76,12 @@ export default function Navbar() {
                 )}
             </section>
 
-            <button className="ml-auto" onClick={e => {
-                e.preventDefault();
-                navigate("/");
-            }}>
-                <FiLogOut />
+            <button className="ml-auto" onClick={onClickHandler} disabled={loading} >
+                {loading ? (
+                    <Spinner />
+                ) : (
+                    <FiLogOut />
+                )}
             </button>
         </nav>
     );
