@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
@@ -6,20 +6,32 @@ export default function Auth() {
     const [password, setPassword] = useState<string | null>(null);
     const [errMessage, setErrMessage] = useState<string | null>(null);
 
-
     const navigate = useNavigate();
 
     const onSubmitHandler = (e: SyntheticEvent) => {
         e.preventDefault();
 
-        const adminEmail = import.meta.env.VITE_ADMIN_ACCOUNT;
-        const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+        const data = {
+            email,
+            password
+        };
 
-        if (email === adminEmail && password === adminPassword) {
-            navigate("/home");
-        } else {
-            setErrMessage("Invalid email and password, please try again.");
-        }
+        fetch(`${import.meta.env.VITE_BASE_URL}/users/user-login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.ok) {
+                    navigate("/home")
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                setErrMessage("Invalid email and password, please try again.");
+            });
     };
 
     return (
@@ -87,7 +99,7 @@ export default function Auth() {
                     </figure>
                 </section>
             </section>
-            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III and Nick Pecision. <br/> Supervised by Mdm Ciemavil Alcain of CCIS Faculty</p></section>
+            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III and Nick Pecision. <br /> Supervised by Mdm Ciemavil Alcain of CCIS Faculty</p></section>
         </section>
     );
 }
