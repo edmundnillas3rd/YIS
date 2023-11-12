@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import session from "express-session";
 import expressMySqlSession from "express-mysql-session";
+import { MemoryStore } from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -34,7 +35,7 @@ const main = async () => {
     app.use(
         session({
             secret: process.env.SECRET as string,
-            store: sessionStore,
+            store: (process.env.NODE_ENV === "production" ? sessionStore : new MemoryStore()),
             cookie: {
                 maxAge: 600000
             },
