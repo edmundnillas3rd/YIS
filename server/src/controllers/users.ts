@@ -92,10 +92,10 @@ export async function signupUserStudent(req: Request, res: Response) {
         await query("INSERT INTO role VALUES (?, 'USER')", [roleUUID]);
     }
 
-    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) as user_full_name, user_email FROM user")
+    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) as user_full_name, user_email FROM user");
 
     if (existingUser.rows[0]?.email !== undefined && existingUser.rows[0].email === email) {
-        return res.status(400).json({ error: "User already exist!"});
+        return res.status(400).json({ error: "User already exist!" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -104,11 +104,29 @@ export async function signupUserStudent(req: Request, res: Response) {
     roleUUID = queriedRole.rows[0].role_id;
     const userUUID = await query("SELECT UUID()");
     const userValues = Object.values(attr);
-    const { rows } = await query("INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword]);
+    const { rows } = await query("INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword, roleUUID]);
 
-    res.status(200).json({ message: "User successfully registerd!"});
+    res.status(200).json({ message: "User successfully registerd!" });
 }
 
 export async function loginUserStudent(req: Request, res: Response) {
-    res.status(200).end()
+    const { email, password } = req.body;
+
+    const user = await query(`
+        SELECT user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email as email, user.user_password as password, role.role_name as role FROM user 
+        INNER JOIN role
+        ON user.role_id = role.role_id
+        WHERE user.user_email = ? AND role.role_name = 'USER'
+    `, [email]);
+
+    if (user.rows.length === 0) {
+        return res.status(401).json({ message: "Invalid user email and password" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.rows[0].password);
+    if (!isPasswordValid) {
+        return res.status(401).json({ error: "Invalid user email and password"});
+    }
+
+    res.status(200).end();
 }
