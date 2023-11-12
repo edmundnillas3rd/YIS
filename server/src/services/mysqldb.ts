@@ -1,9 +1,11 @@
+import MySQLStore from "express-mysql-session";
 import mysql from "mysql2";
+
 import { Pool } from "mysql2/typings/mysql/lib/Pool";
 
 let pool: Pool | null = null;
 
-const config = {
+export const config = {
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,

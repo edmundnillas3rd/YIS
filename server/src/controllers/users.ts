@@ -112,8 +112,12 @@ export async function signupUserStudent(req: Request, res: Response) {
 export async function loginUserStudent(req: Request, res: Response) {
     const { email, password } = req.body;
 
+    if (req.session.authenticated) {
+        return res.status(200).end();
+    }
+
     const user = await query(`
-        SELECT user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email as email, user.user_password as password, role.role_name as role FROM user 
+        SELECT user.user_id as id, user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email as email, user.user_password as password, role.role_name as role FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
         WHERE user.user_email = ? AND role.role_name = 'USER'
@@ -125,8 +129,12 @@ export async function loginUserStudent(req: Request, res: Response) {
 
     const isPasswordValid = await bcrypt.compare(password, user.rows[0].password);
     if (!isPasswordValid) {
-        return res.status(401).json({ error: "Invalid user email and password"});
+        return res.status(401).json({ error: "Invalid user email and password" });
     }
+
+    req.session.authenticated = true;
+    req.session.userID = user.rows[0].id;
+    req.session.role = user.rows[0].role;
 
     res.status(200).end();
 }
