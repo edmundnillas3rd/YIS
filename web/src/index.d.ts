@@ -21,3 +21,26 @@ interface PopupModalProps {
     data: any;
     onClickCallback: (event: SyntheticEvent) => void;
 }
+
+interface ClubAttr {
+    positions: Label[],
+    organizations: Label[];
+}
+
+interface Position {
+    club_position_id: string;
+    club_position_name: string;
+}
+
+interface Organization {
+    club_organization_id: string;
+    club_organization_name: string;
+}
+
+interface User {
+    id: string;
+    user_first_name: string;
+    user_middle_name: string;
+    user_family_name: string;
+    user_suffix: string;
+}
