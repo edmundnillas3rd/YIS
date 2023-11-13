@@ -1,5 +1,4 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { AiFillSave, AiFillEdit } from "react-icons/ai";
 import { BiPlus } from "react-icons/bi";
 
 import MembersTable from "../components/CustomTable";
@@ -11,38 +10,13 @@ import PopupModal from "../components/Department/DepartmenPopupModal";
 import Spinner from "../components/Spinner";
 import FillFormPopup from "../components/Department/FillupFormPopup";
 
-interface Position {
-    club_position_id: string;
-    club_position_name: string;
-}
-
-interface Organization {
-    club_organization_id: string;
-    club_organization_name: string;
-}
-
-interface ClubAttr {
-    positions: Label[],
-    organizations: Label[];
-}
-
-interface User {
-    id: string;
-    user_first_name: string;
-    user_middle_name: string;
-    user_family_name: string;
-    user_suffix: string;
-}
-
 export default function Department() {
-    const [highlight, setHighlight] = useState("#475569");
-    const [anotherHighlight, setAnotherHightlight] = useState("#475569");
     const [mode, setMode] = useState("default");
     const [loading, setLoading] = useState(false);
     const [addClubs, setAddClubs] = useState(false);
     const [addAwards, setAddAwards] = useState(false);
     
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User>();
     const [studentID, setStudentID] = useState<string | null>(null);
     const [firstName, setFirstName] = useState<string | null>(null);
     const [familyName, setFamilyName] = useState<string | null>(null);
@@ -51,8 +25,6 @@ export default function Department() {
 
     const [clubAttr, setClubsAttr] = useState<ClubAttr>({ positions: [], organizations: [] });
     const [clubData, setClubsData] = useState<any>();
-
-    const [id, setID] = useState<string>(import.meta.env.VITE_USER_ID);
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -66,11 +38,12 @@ export default function Department() {
         })
             .then(response => response.json())
             .then(data => {
-                setID(data.id);
                 setUser(data.user);
             });
 
-        fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
+        fetch(`${import.meta.env.VITE_BASE_URL}/clubs`, {
+            credentials: "include"
+        })
             .then(response => response.json())
             .then(data => {
 
@@ -83,7 +56,9 @@ export default function Department() {
                 });
             });
 
-        fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}`)
+        fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-club`, {
+            credentials: "include"
+        })
             .then(response => response.json())
             .then((data: any) => {
                 const clubs = data.rows.map(({ organization, ...attr }: any, idx: number) => ({ id: idx.toString(), organization }));
@@ -100,6 +75,23 @@ export default function Department() {
         setErrorMsg("");
         setMode("default");
     }, [studentID, firstName, familyName, middleName, suffix]);
+
+    useEffect(() => {
+        if (!addClubs) {
+            fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
+            .then(response => response.json())
+            .then(data => {
+
+                const positions = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
+                const organizations = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
+
+                setClubsAttr({
+                    positions,
+                    organizations
+                });
+            });
+        }
+    }, [addClubs, addAwards]);
 
     const awards = [
         {
@@ -170,7 +162,6 @@ export default function Department() {
             const modifiedAwards = awards.map(({ id, ...attrs }) => attrs);
 
             const data = {
-                id,
                 modifiedClubs,
                 modifiedAwards
             };
@@ -201,15 +192,19 @@ export default function Department() {
         setCurrentNode(null);
     };
 
+    const onClickCallbackAddClub = async (event: SyntheticEvent) => {
+        setAddClubs(false);
+    }
+
+    const onClickCallbackAward = async (event: SyntheticEvent) => {
+        setAddAwards(false);
+    }
+
     return (
         <>
             {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup} />}
-            {addClubs && <FillFormPopup name="Club Organization Information" data={undefined} onClickCallback={function (event: SyntheticEvent): void {
-                setAddClubs(false);
-            }} />}
-            {addAwards && <FillFormPopup name="Awards & Seminars" data={undefined} onClickCallback={function (event: SyntheticEvent): void {
-                setAddAwards(false);
-            }} />}
+            {addClubs && <FillFormPopup name="Club Organization Information" data={undefined} onClickCallback={onClickCallbackAddClub} />}
+            {addAwards && <FillFormPopup name="Awards & Seminars" data={undefined} onClickCallback={onClickCallbackAward} />}
             <article className="flex flex-col p-10 gap-10">
                 {/* General Information Section */}
                 <section>
@@ -233,7 +228,6 @@ export default function Department() {
                                     // pattern="(\d{4}-\d{4}-\d)"
                                     autoComplete="off"
                                     disabled
-                                    value={id}
                                 />
                                 <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT EXAMPLE: 2018-4024-2)</p>
                             </section>
