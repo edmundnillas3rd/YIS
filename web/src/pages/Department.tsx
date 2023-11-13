@@ -356,44 +356,6 @@ export default function Department() {
                         <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
 
                     </Container>
-                    {/* <section className="flex flex-row pt-5 gap-2 justify-end items-center">
-                            {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
-                            {(mode === "save") && <p className="text-slate-600 font-bold">(SAVED SUCCESSFULLY)</p>}
-                            {errorMsg && <p className="text-red-600 font-bold">{errorMsg}</p>}
-                            <button
-                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
-                                onClick={handleEdit}
-                                onMouseEnter={e => {
-                                    e.preventDefault();
-                                    setHighlight("#f1f5f9");
-                                }}
-                                onMouseLeave={e => {
-                                    e.preventDefault();
-                                    setHighlight("#475569");
-                                }}
-                            >
-                                <p>Edit</p>
-                                <AiFillEdit style={{
-                                    color: highlight
-                                }} />
-                            </button>
-                            <button
-                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
-                                onMouseEnter={e => {
-                                    e.preventDefault();
-                                    setAnotherHightlight("#f1f5f9");
-                                }}
-                                onMouseLeave={e => {
-                                    setAnotherHightlight("#475569");
-                                }}
-                                type="submit"
-                            >
-                                <p>Save</p>
-                                <AiFillSave style={{
-                                    color: anotherHighlight
-                                }} />
-                            </button>
-                        </section> */}
                 </section>
             </article >
         </>
