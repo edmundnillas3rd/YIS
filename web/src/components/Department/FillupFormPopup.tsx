@@ -4,6 +4,7 @@ import { AiFillSave } from "react-icons/ai";
 import Dropdown from "../Dropdown";
 
 export default function FillFormPopup({ name, data, onClickCallback }: PopupModalProps) {
+    const [errMessage, setErrMessage] = useState<string>("");
     const [highlight, setHighlight] = useState("#475569");
     const [disabled, setDisabled] = useState<boolean>(true);
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
@@ -18,7 +19,6 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
         fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
             .then(response => response.json())
             .then(data => {
-
                 const positions = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
                 const organizations = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
 
@@ -79,8 +79,12 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
             body: JSON.stringify(data),
         });
 
+        const { error } = await response.json();
+
         if (response.ok) {
             onClickCallback(event);
+        } else if (error) {
+            setErrMessage(error);
         }
         
         setDisabled(false);
@@ -100,6 +104,7 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
                 <Dropdown label="Year Started" items={years(defaultYear) as []} callbackDropdownFn={onYearStartHandler}/>
                 <Dropdown label="Year Ended" items={years(defaultYear + 4) as []} callbackDropdownFn={onYearEndHandler}/>
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
+                    {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button
                         className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
                         onClick={onClickCallback}

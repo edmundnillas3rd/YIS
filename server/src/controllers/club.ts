@@ -34,6 +34,18 @@ export async function clubUserAdd(req: Request, res: Response) {
     const { userID } = req.session;
     const { club, position, yearStart, yearEnd } = req.body;
 
+    // TODO: find if user already is in a club;
+    const foundClub = await query(`
+        SELECT user.user_id FROM user
+        INNER JOIN club
+        ON user.user_id = club.user_id
+        WHERE user.user_id = ? AND club.club_organization_id = ?
+    `, [userID, club]);
+
+    if (foundClub.rows.length > 0) {
+        return res.status(400).json({ error: "Entry already exist!" });
+    }
+
     const ClubUUID = await query("SELECT UUID()");
     const { rows } = await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [
         ClubUUID.rows[0]['UUID()'],
@@ -43,6 +55,6 @@ export async function clubUserAdd(req: Request, res: Response) {
         yearStart,
         yearEnd
     ]);
-    
+
     res.status(200).end();
 }
