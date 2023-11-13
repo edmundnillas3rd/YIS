@@ -12,10 +12,10 @@ export async function index(req: Request, res: Response) {
 }
 
 export async function userClub(req: Request, res: Response) {
-    const { id } = req.params;
+    const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT club_organization.club_organization_name as organization, club_position.club_position_name as position, YEAR(club.club_started) as 'Year Started', YEAR(club.club_ended) as 'Year Ended' FROM user
+        SELECT club_organization.club_organization_name as organization, club_position.club_position_name as position, club.club_started as 'Year Started', club.club_ended as 'Year Ended' FROM user
         INNER JOIN club
         ON club.user_id = user.user_id
         INNER JOIN club_organization
@@ -23,9 +23,26 @@ export async function userClub(req: Request, res: Response) {
         INNER JOIN club_position
         ON club.club_position_id = club_position.club_position_id
         WHERE user.user_id = ?;
-    `, [id]);
+    `, [userID]);
 
     res.status(200).json({
         rows
     });
+}
+
+export async function clubUserAdd(req: Request, res: Response) {
+    const { userID } = req.session;
+    const { club, position, yearStart, yearEnd } = req.body;
+
+    const ClubUUID = await query("SELECT UUID()");
+    const { rows } = await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [
+        ClubUUID.rows[0]['UUID()'],
+        userID,
+        club,
+        position,
+        yearStart,
+        yearEnd
+    ]);
+    
+    res.status(200).end();
 }
