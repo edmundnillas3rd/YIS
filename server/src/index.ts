@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import session from "express-session";
 import expressMySqlSession from "express-mysql-session";
+import cookieParser from "cookie-parser";
 import { MemoryStore } from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -30,12 +31,15 @@ const main = async () => {
         credentials: true
     }));
 
+    await initializeDB();
     const MySQLStore = expressMySqlSession(session as any);
-    const sessionStore = new MySQLStore(config);
+    const sessionStore = (process.env.NODE_ENV === "production" ? new MySQLStore(config) : new MemoryStore());
+
+    app.use(cookieParser());
     app.use(
         session({
             secret: process.env.SECRET as string,
-            store: (process.env.NODE_ENV === "production" ? sessionStore : new MemoryStore()),
+            store: sessionStore,
             cookie: {
                 maxAge: 600000
             },
@@ -43,10 +47,6 @@ const main = async () => {
             saveUninitialized: false
         })
     );
-
-
-
-    await initializeDB();
 
     app.use("/users", userRoute);
     app.use("/solicitation", solicitationRoute);

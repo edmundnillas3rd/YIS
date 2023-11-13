@@ -13,6 +13,16 @@ export async function index(req: Request, res: Response) {
     });
 }
 
+export async function getCurrentLogUser(req: Request, res: Response) {
+    if (!req.session.authenticated) {
+        return res.status(404).end();
+    }
+
+    const { userID } = req.session;
+    const { rows } = await query("SELECT user.user_first_name, user.user_family_name, user.user_middle_name, user.user_suffix FROM user WHERE user.user_id = ?", [userID])
+    res.status(200).json({ id: userID, user: rows[0] });
+}
+
 // TODO: to receive only the id of the student instead of getting all of
 // information again
 export async function submitInfo(req: Request, res: Response) {
