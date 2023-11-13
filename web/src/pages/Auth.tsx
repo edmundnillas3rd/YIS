@@ -21,6 +21,7 @@ export default function Auth() {
 
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/user-login`, {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             },

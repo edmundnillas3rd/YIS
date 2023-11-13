@@ -26,6 +26,14 @@ interface ClubAttr {
     organizations: Label[];
 }
 
+interface User {
+    id: string;
+    user_first_name: string;
+    user_middle_name: string;
+    user_family_name: string;
+    user_suffix: string;
+}
+
 export default function Department() {
     const [highlight, setHighlight] = useState("#475569");
     const [anotherHighlight, setAnotherHightlight] = useState("#475569");
@@ -33,7 +41,8 @@ export default function Department() {
     const [loading, setLoading] = useState(false);
     const [addClubs, setAddClubs] = useState(false);
     const [addAwards, setAddAwards] = useState(false);
-
+    
+    const [user, setUser] = useState<User | null>(null);
     const [studentID, setStudentID] = useState<string | null>(null);
     const [firstName, setFirstName] = useState<string | null>(null);
     const [familyName, setFamilyName] = useState<string | null>(null);
@@ -51,6 +60,16 @@ export default function Department() {
 
     useEffect(() => {
         setLoading(true);
+
+        fetch(`${import.meta.env.VITE_BASE_URL}/users/user-current`, {
+            credentials: "include"
+        })
+            .then(response => response.json())
+            .then(data => {
+                setID(data.id);
+                setUser(data.user);
+            });
+
         fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
             .then(response => response.json())
             .then(data => {
@@ -211,9 +230,10 @@ export default function Department() {
                                     className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     onChange={onChangeHandler}
                                     onInput={onInputHandler}
-                                    pattern="(\d{4}-\d{4}-\d)"
-                                    required
+                                    // pattern="(\d{4}-\d{4}-\d)"
                                     autoComplete="off"
+                                    disabled
+                                    value={id}
                                 />
                                 <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT EXAMPLE: 2018-4024-2)</p>
                             </section>
@@ -228,8 +248,10 @@ export default function Department() {
                                     onInput={onInputHandler}
                                     pattern={regexInvalidSymbols}
                                     maxLength={50}
-                                    required
                                     autoComplete="off"
+                                    disabled
+                                    value={user?.user_family_name}
+
                                 />
                             </section>
                             <section className="flex flex-col">
@@ -243,8 +265,9 @@ export default function Department() {
                                     onInput={onInputHandler}
                                     pattern={regexInvalidSymbols}
                                     maxLength={50}
-                                    required
                                     autoComplete="off"
+                                    disabled
+                                    value={user?.user_first_name}
                                 />
                             </section>
                             <section className="relative flex flex-col">
@@ -258,8 +281,9 @@ export default function Department() {
                                     onInput={onInputHandler}
                                     pattern={`[A-Za-z]${regexInvalidSymbols}`}
                                     maxLength={50}
-                                    required
                                     autoComplete="off"
+                                    disabled
+                                    value={user?.user_middle_name}
                                 />
                                 <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(NOTE: SPELL OUT YOUR MIDDLE NAME)</p>
                             </section>
@@ -275,6 +299,8 @@ export default function Department() {
                                     onChange={onChangeHandler}
                                     onInput={onInputHandler}
                                     autoComplete="off"
+                                    disabled
+                                    value={user?.user_suffix}
                                 />
                                 <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(E.G. SR, JR, III, IV, V)</p>
                             </section>
@@ -334,7 +360,7 @@ export default function Department() {
                             </button>
                         </section>
                         <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
-                        
+
                     </Container>
                     {/* <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                             {(mode === "edit") && <p className="text-slate-600 font-bold">(EDIT MODE)</p>}
