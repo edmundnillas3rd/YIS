@@ -72,7 +72,7 @@ export default function CustomTable({ nodes, columns, mode, onClickCallback, siz
                         <Body>
                             {
                                 tableList.map((item) => (
-                                    <Row key={item.id} item={item} onClick={(item, event) => {
+                                    <Row className="!cursor-pointer" key={item.id} item={item} onClick={(item, event) => {
                                         if (onClickCallback !== undefined)
                                             onClickCallback(item);
 

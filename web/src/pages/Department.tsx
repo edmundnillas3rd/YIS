@@ -1,5 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { BiPlus } from "react-icons/bi";
+import { AiOutlinePlus } from "react-icons/ai";
 
 import MembersTable from "../components/CustomTable";
 import Dropdown from "../components/Dropdown";
@@ -10,25 +10,168 @@ import PopupModal from "../components/Department/DepartmenPopupModal";
 import Spinner from "../components/Spinner";
 import FillFormPopup from "../components/Department/FillupFormPopup";
 
-export default function Department() {
-    const [mode, setMode] = useState("default");
-    const [loading, setLoading] = useState(false);
-    const [addClubs, setAddClubs] = useState(false);
-    const [addAwards, setAddAwards] = useState(false);
-    
-    const [user, setUser] = useState<User>();
+interface StudentInfoProps {
+    student: any;
+}
+
+const StudentInformation = ({ student }: StudentInfoProps) => {
+    const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
+
     const [studentID, setStudentID] = useState<string | null>(null);
     const [firstName, setFirstName] = useState<string | null>(null);
     const [familyName, setFamilyName] = useState<string | null>(null);
     const [middleName, setMiddleName] = useState<string | null>(null);
     const [suffix, setSuffix] = useState<string | null>(null);
 
+    const onChangeHandler = (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.currentTarget as HTMLInputElement;
+
+        switch (target.name) {
+            case "student-id":
+                setStudentID(target.value as string);
+                break;
+            case "first-name":
+                setFirstName(target.value as string);
+                break;
+            case "family-name":
+                setFamilyName(target.value as string);
+                break;
+            case "middle-name":
+                setMiddleName(target.value as string);
+                break;
+            case "suffix":
+                setSuffix(target.value as string);
+                break;
+        }
+    };
+
+    useEffect(() => {
+        // setErrorMsg("");
+        // setMode("default");
+    }, [studentID, firstName, familyName, middleName, suffix]);
+
+
+    const onInputHandler = (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.currentTarget as HTMLInputElement;
+        target.setCustomValidity("");
+    };
+
+    const onSubmitHandler = (event: SyntheticEvent) => {
+
+    }
+
+
+    return (
+        <form method="post" onSubmit={onSubmitHandler}>
+            <section>
+                <section>
+                    <h1 className="md:pl-10 pt-5 font-bold">Student Name</h1>
+                </section>
+                <section className="md:px-10 flex flex-wrap flex-col md:flex-row gap-7 md:gap-10">
+                    <section className="relative flex flex-col">
+                        <label htmlFor="student-id" className="block text-sm font-medium leading-6 text-gray-900">Student ID</label>
+                        <input
+                            type="text"
+                            name="student-id"
+                            id="student-id"
+                            className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            onChange={onChangeHandler}
+                            onInput={onInputHandler}
+                            // pattern="(\d{4}-\d{4}-\d)"
+                            autoComplete="off"
+                            disabled
+                        />
+                        <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT EXAMPLE: 2018-4024-2)</p>
+                    </section>
+                    <section className="flex flex-col">
+                        <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
+                        <input
+                            type="text"
+                            name="family-name"
+                            id="family-name"
+                            className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            onChange={onChangeHandler}
+                            onInput={onInputHandler}
+                            pattern={regexInvalidSymbols}
+                            maxLength={50}
+                            autoComplete="off"
+                            disabled
+                            value={student.user_family_name}
+
+                        />
+                    </section>
+                    <section className="flex flex-col">
+                        <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">First Name</label>
+                        <input
+                            type="text"
+                            name="first-name"
+                            id="first-name"
+                            className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            onChange={onChangeHandler}
+                            onInput={onInputHandler}
+                            pattern={regexInvalidSymbols}
+                            maxLength={50}
+                            autoComplete="off"
+                            disabled
+                            value={student.user_first_name}
+                        />
+                    </section>
+                    <section className="relative flex flex-col">
+                        <label htmlFor="middle-name" className="block text-sm font-medium leading-6 text-gray-900">Middle Name</label>
+                        <input
+                            type="text"
+                            name="middle-name"
+                            id="middle-name"
+                            className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            onChange={onChangeHandler}
+                            onInput={onInputHandler}
+                            pattern={`[A-Za-z]${regexInvalidSymbols}`}
+                            maxLength={50}
+                            autoComplete="off"
+                            disabled
+                            value={student.user_middle_name}
+                        />
+                        <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(NOTE: SPELL OUT YOUR MIDDLE NAME)</p>
+                    </section>
+                    <section className="relative flex flex-col">
+                        <label htmlFor="suffix" className="block text-sm font-medium leading-6 text-gray-900">Suffix</label>
+                        <input
+                            type="text"
+                            name="suffix"
+                            id="suffix"
+                            className="block text-center rounded-md border-0 py-1.5 md:w-14 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            maxLength={4}
+                            pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
+                            onChange={onChangeHandler}
+                            onInput={onInputHandler}
+                            autoComplete="off"
+                            disabled
+                            value={student.user_suffix}
+                        />
+                        <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(E.G. SR, JR, III, IV, V)</p>
+                    </section>
+                </section>
+            </section>
+        </form>
+    );
+};
+
+export default function Department() {
+    const [mode, setMode] = useState("default");
+    const [loading, setLoading] = useState(false);
+    const [addClubs, setAddClubs] = useState(false);
+    const [addAwards, setAddAwards] = useState(false);
+
+    const [user, setUser] = useState<User>();
+
+
     const [clubAttr, setClubsAttr] = useState<ClubAttr>({ positions: [], organizations: [] });
     const [clubData, setClubsData] = useState<any>();
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
 
     useEffect(() => {
         setLoading(true);
@@ -61,8 +204,9 @@ export default function Department() {
         })
             .then(response => response.json())
             .then((data: any) => {
-                const clubs = data.rows.map(({ organization, ...attr }: any, idx: number) => ({ id: idx.toString(), organization }));
+                const clubs = data.rows.map(({ club_id, organization, ...attr }: any) => ({ id: club_id, organization }));
                 const clubData = data.rows;
+                
                 setClubsData({
                     clubs,
                     clubData
@@ -72,24 +216,19 @@ export default function Department() {
     }, []);
 
     useEffect(() => {
-        setErrorMsg("");
-        setMode("default");
-    }, [studentID, firstName, familyName, middleName, suffix]);
-
-    useEffect(() => {
         if (!addClubs) {
             fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
-            .then(response => response.json())
-            .then(data => {
+                .then(response => response.json())
+                .then(data => {
 
-                const positions = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
-                const organizations = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
+                    const positions = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
+                    const organizations = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
 
-                setClubsAttr({
-                    positions,
-                    organizations
+                    setClubsAttr({
+                        positions,
+                        organizations
+                    });
                 });
-            });
         }
     }, [addClubs, addAwards]);
 
@@ -123,69 +262,10 @@ export default function Department() {
         setMode("save");
     };
 
-    const onChangeHandler = (event: SyntheticEvent) => {
-        event.preventDefault();
-        const target = event.currentTarget as HTMLInputElement;
-
-        switch (target.name) {
-            case "student-id":
-                setStudentID(target.value as string);
-                break;
-            case "first-name":
-                setFirstName(target.value as string);
-                break;
-            case "family-name":
-                setFamilyName(target.value as string);
-                break;
-            case "middle-name":
-                setMiddleName(target.value as string);
-                break;
-            case "suffix":
-                setSuffix(target.value as string);
-                break;
-        }
-    };
-
-    const onInputHandler = (event: SyntheticEvent) => {
-        event.preventDefault();
-        const target = event.currentTarget as HTMLInputElement;
-        target.setCustomValidity("");
-    };
-
-    const onSubmitHandler = async (event: SyntheticEvent) => {
-        event.preventDefault();
-
-        if (studentID && firstName && familyName && middleName) {
-            await save();
-
-            const modifiedClubs = clubData.map(({ id, ...attrs }: any) => attrs);
-            const modifiedAwards = awards.map(({ id, ...attrs }) => attrs);
-
-            const data = {
-                modifiedClubs,
-                modifiedAwards
-            };
-
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/return-solicitation`, {
-                body: JSON.stringify(data),
-                credentials: "include"
-            });
-
-            if (response.ok) {
-                setMode("default");
-            }
-
-        } else {
-            setMode("default");
-            setErrorMsg("Fill up all the required fields");
-            return;
-        }
-    };
-
     const [currentNode, setCurrentNode] = useState<any | null>(null);
 
     const onClickCallback = (i: any) => {
-        setCurrentNode(clubData.clubData[0]);
+        setCurrentNode(clubData.clubs.filter((d: any) => d.id === i.id)[0]);
     };
 
     const onClickCallbackPopup = (event: SyntheticEvent) => {
@@ -194,11 +274,11 @@ export default function Department() {
 
     const onClickCallbackAddClub = async (event: SyntheticEvent) => {
         setAddClubs(false);
-    }
+    };
 
     const onClickCallbackAward = async (event: SyntheticEvent) => {
         setAddAwards(false);
-    }
+    };
 
     return (
         <>
@@ -210,100 +290,11 @@ export default function Department() {
                 <section>
                     <h1 className="font-bold">GENERAL INFORMATION</h1>
                 </section>
-                <form method="post" onSubmit={onSubmitHandler}>
-                    <section>
-                        <section>
-                            <h1 className="md:pl-10 pt-5 font-bold">Student Name</h1>
-                        </section>
-                        <section className="md:px-10 flex flex-wrap flex-col md:flex-row gap-7 md:gap-10">
-                            <section className="relative flex flex-col">
-                                <label htmlFor="student-id" className="block text-sm font-medium leading-6 text-gray-900">Student ID</label>
-                                <input
-                                    type="text"
-                                    name="student-id"
-                                    id="student-id"
-                                    className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    onChange={onChangeHandler}
-                                    onInput={onInputHandler}
-                                    // pattern="(\d{4}-\d{4}-\d)"
-                                    autoComplete="off"
-                                    disabled
-                                />
-                                <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT EXAMPLE: 2018-4024-2)</p>
-                            </section>
-                            <section className="flex flex-col">
-                                <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
-                                <input
-                                    type="text"
-                                    name="family-name"
-                                    id="family-name"
-                                    className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    onChange={onChangeHandler}
-                                    onInput={onInputHandler}
-                                    pattern={regexInvalidSymbols}
-                                    maxLength={50}
-                                    autoComplete="off"
-                                    disabled
-                                    value={user?.user_family_name}
-
-                                />
-                            </section>
-                            <section className="flex flex-col">
-                                <label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">First Name</label>
-                                <input
-                                    type="text"
-                                    name="first-name"
-                                    id="first-name"
-                                    className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    onChange={onChangeHandler}
-                                    onInput={onInputHandler}
-                                    pattern={regexInvalidSymbols}
-                                    maxLength={50}
-                                    autoComplete="off"
-                                    disabled
-                                    value={user?.user_first_name}
-                                />
-                            </section>
-                            <section className="relative flex flex-col">
-                                <label htmlFor="middle-name" className="block text-sm font-medium leading-6 text-gray-900">Middle Name</label>
-                                <input
-                                    type="text"
-                                    name="middle-name"
-                                    id="middle-name"
-                                    className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    onChange={onChangeHandler}
-                                    onInput={onInputHandler}
-                                    pattern={`[A-Za-z]${regexInvalidSymbols}`}
-                                    maxLength={50}
-                                    autoComplete="off"
-                                    disabled
-                                    value={user?.user_middle_name}
-                                />
-                                <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(NOTE: SPELL OUT YOUR MIDDLE NAME)</p>
-                            </section>
-                            <section className="relative flex flex-col">
-                                <label htmlFor="suffix" className="block text-sm font-medium leading-6 text-gray-900">Suffix</label>
-                                <input
-                                    type="text"
-                                    name="suffix"
-                                    id="suffix"
-                                    className="block text-center rounded-md border-0 py-1.5 md:w-14 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    maxLength={4}
-                                    pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
-                                    onChange={onChangeHandler}
-                                    onInput={onInputHandler}
-                                    autoComplete="off"
-                                    disabled
-                                    value={user?.user_suffix}
-                                />
-                                <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(E.G. SR, JR, III, IV, V)</p>
-                            </section>
-                        </section>
-                    </section>
-                </form>
-
+                {user &&
+                    <StudentInformation student={user} />
+                }
                 {/* Clubs, Seminars, and Achievements */}
-                <section className="md:px-10 mt-10 flex flex-col gap-2">
+                < section className="md:px-10 mt-10 flex flex-col gap-2">
                     <section className="flex justify-between">
                         <h1 className="pt-5 font-bold">Clubs, Seminars, and Achievements</h1>
                     </section>
@@ -322,7 +313,7 @@ export default function Department() {
                                 setAddAwards(false);
                                 setAddClubs(true);
                             }}>
-                                <BiPlus style={{ color: "black" }} />
+                                <AiOutlinePlus style={{ color: "black" }} />
                                 <p>Add Clubs</p>
                             </button>
                         </section>
@@ -349,7 +340,7 @@ export default function Department() {
                                 setAddClubs(false);
                                 setAddAwards(true);
                             }}>
-                                <BiPlus style={{ color: "black" }} />
+                                <AiOutlinePlus style={{ color: "black" }} />
                                 <p>Add Awards</p>
                             </button>
                         </section>

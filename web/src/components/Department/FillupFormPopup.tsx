@@ -9,10 +9,6 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
     const [disabled, setDisabled] = useState<boolean>(true);
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [club, setClub] = useState<string>();
-    const [position, setPosition] = useState<string>();
-    const [yearStart, setYearStart] = useState();
-    const [yearEnd, setYearEnd] = useState();
-    const defaultYear = 2001;
 
     useEffect(() => {
 
@@ -30,33 +26,9 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
     }, []);
 
 
-    const years = (startYear: number) => {
-        const currentYear = new Date().getFullYear();
-        const years = [];
-        startYear = startYear || 2000;
-        let id = 0;
-        while (startYear <= currentYear) {
-            years.push({ id: startYear++, name: `${startYear++}`});
-        }
-
-        return years;
-    }
-
     const onSelectClub= async (data: any) => {
         setClub(data);
     };
-
-    const onSelectPosition = async (data: any) => {
-        setPosition(data);
-    };
-
-    const onYearStartHandler = async (data: any) => {
-        setYearStart(data);
-    }
-
-    const onYearEndHandler = async (data: any) => {
-        setYearEnd(data);
-    }
 
     const onHandleSave = async (event: SyntheticEvent) => {
         setDisabled(true);
@@ -65,9 +37,6 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
 
         const data = {
             club,
-            position,
-            yearStart,
-            yearEnd
         }
 
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/club-add`, {
@@ -99,10 +68,10 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
             </section>
 
             <form className="flex flex-col gap-2">
-                {clubAttr && <Dropdown label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} />}
-                {clubAttr && <Dropdown label="Positions" items={clubAttr.positions} callbackDropdownFn={onSelectPosition} />}
-                <Dropdown label="Year Started" items={years(defaultYear) as []} callbackDropdownFn={onYearStartHandler}/>
-                <Dropdown label="Year Ended" items={years(defaultYear + 4) as []} callbackDropdownFn={onYearEndHandler}/>
+                {clubAttr && <Dropdown label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} disabled={disabled} />}
+                {/* {clubAttr && <Dropdown label="Positions" items={clubAttr.positions} callbackDropdownFn={onSelectPosition} />} */}
+                {/* <Dropdown label="Year Started" items={years(defaultYear) as []} callbackDropdownFn={onYearStartHandler}/> */}
+                {/* <Dropdown label="Year Ended" items={years(defaultYear + 4) as []} callbackDropdownFn={onYearEndHandler}/> */}
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button
