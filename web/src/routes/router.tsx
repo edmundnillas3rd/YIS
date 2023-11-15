@@ -7,6 +7,7 @@ import Colleges from "../pages/Colleges";
 import Department from "../pages/Department";
 import ErrorPage from "../pages/Error";
 import SoliciationFormPage from "../pages/SolcitationForm";
+import YearbookPhotos from "../pages/YearbookPhotos";
 
 const router = createBrowserRouter([
     {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             {
                 path: "solicitation",
                 element: <SoliciationFormPage />
+            },
+            {
+                path: "yearbook-photos",
+                element: <YearbookPhotos />
             }
         ]
     },
