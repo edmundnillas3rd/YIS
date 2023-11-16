@@ -2,17 +2,7 @@ import { Key, SyntheticEvent, useEffect, useState } from "react";
 import { AiFillEdit, AiFillSave, AiOutlinePlus } from "react-icons/ai";
 import Dropdown from "../Dropdown";
 
-const years = (startYear: number): Label[] => {
-    const currentYear = new Date().getFullYear();
-    const years: Label[] | any = [];
-    startYear = startYear || 2000;
-    let id = 0;
-    while (startYear <= currentYear) {
-        years.push({ id: startYear, name: `${startYear++}` });
-    }
-
-    return years;
-};
+import { generateYearRange as years } from "../../API/generateYearRange";
 
 interface PositionFormProps {
     info?: any;
@@ -34,7 +24,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
             setYearStarted(info.club_started);
             setYearEnded(info.club_ended);
         }
-    }, [])
+    }, []);
 
     const onHandleSave = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -42,7 +32,6 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
 
         if (onSubmitCallbackFn)
             onSubmitCallbackFn(event);
-
         return;
 
         // TODO: To add clubs route
@@ -83,7 +72,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                 />
                 <Dropdown
                     label="Year Started"
-                    defaultValue={`${yearStarted}`}
+                    defaultValue={yearStarted}
                     items={years(defaultYear)}
                     disabled={disabled}
                     callbackDropdownFn={data => {
@@ -92,7 +81,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                 />
                 <Dropdown
                     label="Year Ended"
-                    defaultValue={`${yearEnded}`}
+                    defaultValue={yearEnded}
                     items={years(defaultYear + 4)}
                     disabled={disabled}
                     callbackDropdownFn={data => {
@@ -100,32 +89,49 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                     }}
                 />
                 <section className="flex flex-row gap-2 mt-2 justify-end">
-                    <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
-                        onClick={onHandleEdit}
-                    >
-                        <p>Edit</p>
-                        <AiFillEdit style={{
-                            color: "#475569"
-                        }} />
-                    </button>
-                    <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
-                        onClick={onHandleSave}
-                        type="submit"
-                    >
-                        <p>Save</p>
-                        <AiFillSave style={{
-                            color: "#475569"
-                        }} />
-                    </button>
+                    {disabled ? (
+                        <button
+                            className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                            onClick={onHandleEdit}
+                        >
+                            <p>Edit</p>
+                            <AiFillEdit style={{
+                                color: "#475569"
+                            }} />
+                        </button>
+                    ) : (
+                        <>
+                            <button
+                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                onClick={(e: SyntheticEvent) => {
+                                    e.preventDefault();
+                                    setDisabled(true);
+
+                                }}
+                                type="submit"
+                            >
+                                <p>Cancel</p>
+                            </button>
+                            <button
+                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                onClick={onHandleSave}
+                                type="submit"
+                            >
+                                <p>Save</p>
+                                <AiFillSave style={{
+                                    color: "#475569"
+                                }} />
+                            </button>
+                        </>
+                    )}
+
                 </section>
             </section>
         </form>
     );
 };
 
-export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
+export default function DepartmenPopupModal({ data, onClickCallback }: PopupModalProps) {
     const [clubAttr, setClubAttr] = useState<ClubAttr>();
     const [positionForms, setPositionForms] = useState<React.ReactNode[]>([]);
     const [submitted, setSubmitted] = useState<boolean>(false);
@@ -153,16 +159,16 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
             setClubAttr({
                 organizations,
                 positions
-            })
+            });
 
             setSubmitted(true);
             setErrMessage("");
 
             setClubPositions(clubInfo.userClubPositions);
-            setPositionForms(clubInfo.userClubPositions.map((position: any, i: number) => <PositionForm key={i} info={position} club={data} positions={positions} onSubmitCallbackFn={onSubmitHandler} />))                
+            setPositionForms(clubInfo.userClubPositions.map((position: any, i: number) => <PositionForm key={i} info={position} club={data} positions={positions} onSubmitCallbackFn={onSubmitHandler} />));
 
-            
-        })()
+
+        })();
     }, []);
 
     const onSubmitHandler = async (event: SyntheticEvent) => {
@@ -225,7 +231,7 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
                     </button>
                     <button className="flex flex-row flex-shrink-0 justify-center items-center gap-3 font-bold border text-slate-600 border-zinc-600 p-1 rounded"
                         onClick={onClickAddPosition}>
-                        <p>Add Awards</p>
+                        <p>Add Positions</p>
                         <AiOutlinePlus style={{
                             color: "#475569"
                         }} />

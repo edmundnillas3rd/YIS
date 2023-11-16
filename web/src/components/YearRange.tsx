@@ -2,21 +2,11 @@ interface YearRangeProps {
     label: string;
 }
 
+import { generateYearRange as years } from "../API/generateYearRange";
+
 export default function YearRange({ label }: YearRangeProps) {
 
     const defaultStartingYear = 2016;
-    const years = (startYear: number) => {
-        const currentYear = new Date().getFullYear();
-        const years = [];
-        startYear = startYear || 2000;
-        let id = 0;
-        while (startYear <= currentYear) {
-            years.push(startYear++);
-        }
-
-        return years;
-    };
-
 
     return <section className="flex flex-col p-5 md:p-0 md:w-full">
         <label id="listbox-label" className="block text-sm font-medium leading-6 text-gray-900">{label}</label>

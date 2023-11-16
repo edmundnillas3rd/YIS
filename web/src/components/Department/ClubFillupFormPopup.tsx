@@ -5,28 +5,33 @@ import Dropdown from "../Dropdown";
 
 export default function FillFormPopup({ name, data, onClickCallback }: PopupModalProps) {
     const [errMessage, setErrMessage] = useState<string>("");
-    const [highlight, setHighlight] = useState("#475569");
-    const [disabled, setDisabled] = useState<boolean>(true);
+    const [disabled, setDisabled] = useState<boolean>(false);
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [club, setClub] = useState<string>();
 
     useEffect(() => {
 
-        fetch(`${import.meta.env.VITE_BASE_URL}/clubs`)
-            .then(response => response.json())
-            .then(data => {
-                const positions = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
-                const organizations = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
+        (async () => {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
+            const data = await response.json();
 
-                setClubsAttr({
-                    positions,
-                    organizations
-                });
+            const p = data.positions.map(({ club_position_id, club_position_name }: Position) => ({ id: club_position_id, name: club_position_name }));
+            const o = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
+
+            console.log(p);
+            
+
+            setClubsAttr({
+                positions: p,
+                organizations: o
             });
+            console.log(o);
+            
+        })();
     }, []);
 
 
-    const onSelectClub= async (data: any) => {
+    const onSelectClub = async (data: any) => {
         setClub(data);
     };
 
@@ -37,7 +42,7 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
 
         const data = {
             club,
-        }
+        };
 
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/club-add`, {
             method: "POST",
@@ -55,7 +60,7 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
         } else if (error) {
             setErrMessage(error);
         }
-        
+
         setDisabled(false);
     };
 
@@ -75,26 +80,19 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
                         onClick={onClickCallback}
                     >
                         <p>Cancel</p>
                     </button>
                     <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
                         onClick={onHandleSave}
-                        onMouseEnter={e => {
-                            e.preventDefault();
-                            setHighlight("#f1f5f9");
-                        }}
-                        onMouseLeave={e => {
-                            setHighlight("#475569");
-                        }}
                         type="submit"
                     >
                         <p>Save</p>
                         <AiFillSave style={{
-                            color: highlight
+                            color: "#475569"
                         }} />
                     </button>
                 </section>

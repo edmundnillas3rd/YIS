@@ -3,7 +3,7 @@ import { AiFillSave } from "react-icons/ai";
 
 import Dropdown from "../Dropdown";
 
-export default function FillFormPopup({ name, data, onClickCallback }: PopupModalProps) {
+export default function AwardsFillupFormPopup({ name, data, onClickCallback }: PopupModalProps) {
     const [errMessage, setErrMessage] = useState<string>("");
     const [highlight, setHighlight] = useState("#475569");
     const [disabled, setDisabled] = useState<boolean>(true);
@@ -50,26 +50,19 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
                         onClick={onClickCallback}
                     >
                         <p>Cancel</p>
                     </button>
                     <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
                         onClick={onHandleSave}
-                        onMouseEnter={e => {
-                            e.preventDefault();
-                            setHighlight("#f1f5f9");
-                        }}
-                        onMouseLeave={e => {
-                            setHighlight("#475569");
-                        }}
                         type="submit"
                     >
                         <p>Save</p>
                         <AiFillSave style={{
-                            color: highlight
+                            color: "#475569"
                         }} />
                     </button>
                 </section>

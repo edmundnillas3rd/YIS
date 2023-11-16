@@ -71,7 +71,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
                     <h1 className="md:pl-10 pt-5 font-bold">Student Name</h1>
                 </section>
                 <section className="md:px-10 flex flex-wrap flex-col md:flex-row gap-7 md:gap-10">
-                    <section className="relative flex flex-col">
+                    {/* <section className="relative flex flex-col">
                         <label htmlFor="student-id" className="block text-sm font-medium leading-6 text-gray-900">Student ID</label>
                         <input
                             type="text"
@@ -85,7 +85,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
                             disabled
                         />
                         <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(FORMAT EXAMPLE: 2018-4024-2)</p>
-                    </section>
+                    </section> */}
                     <section className="flex flex-col">
                         <label htmlFor="family-name" className="block text-sm font-medium leading-6 text-gray-900">Family Name</label>
                         <input

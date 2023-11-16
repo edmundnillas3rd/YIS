@@ -1,14 +1,16 @@
-import { SyntheticEvent, useEffect } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 
 interface DropdownProps {
     defaultValue?: string;
     label: string;
-    items: Label[];
+    items: any[];
     callbackDropdownFn?: (data: any) => void;
     disabled?: boolean;
 }
 
 export default function Dropdown({ defaultValue, label, items, callbackDropdownFn, disabled }: DropdownProps) {
+
+    const [selections, setSelections] = useState<any[]>([]);
     const onChangeHandler = (event: SyntheticEvent) => {
         const selectedItem = event.target as HTMLInputElement;
         if (callbackDropdownFn) {
@@ -17,6 +19,18 @@ export default function Dropdown({ defaultValue, label, items, callbackDropdownF
     };
 
     useEffect(() => {
+
+        if (!items[0].hasOwnProperty('id')) {
+            setSelections(items.map((item, idx) => {
+                return {
+                    id: `${idx}`,
+                    name: `${item}`
+                };
+            }));
+        } else {
+            setSelections(items)
+        }
+
         if (callbackDropdownFn) {
             callbackDropdownFn(items[0]);
         }
@@ -28,11 +42,11 @@ export default function Dropdown({ defaultValue, label, items, callbackDropdownF
             onClick={onChangeHandler}
             disabled={disabled}
         >
-            {items.length !== 0 && (
-                items.map((item, i) => {
+            {selections.length !== 0 && (
+                selections.map((item, i) => {
 
                     if (item.name === defaultValue) return (
-                        <option selected key={i} className="z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option" value={item.id}>
+                        <option defaultValue={selections[0]} key={i} className="z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm text-gray-900 relative cursor-default select-none py-2 pl-3 pr-9" id="listbox-option-0" role="option" value={item.id}>
                             {item.name}
                         </option>
 
