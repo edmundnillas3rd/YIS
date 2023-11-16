@@ -8,7 +8,8 @@ import Display from "../components/Display";
 import Container from "../components/Container";
 import PopupModal from "../components/Department/DepartmenPopupModal";
 import Spinner from "../components/Spinner";
-import FillFormPopup from "../components/Department/FillupFormPopup";
+import ClubFillupFormPopup from "../components/Department/ClubFillupFormPopup";
+import AwardsFillupFormPopup from "../components/Department/AwardsFillupFormPopup";
 
 interface StudentInfoProps {
     student: any;
@@ -283,8 +284,8 @@ export default function Department() {
     return (
         <>
             {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup} />}
-            {addClubs && <FillFormPopup name="Club Organization Information" data={undefined} onClickCallback={onClickCallbackAddClub} />}
-            {addAwards && <FillFormPopup name="Awards & Seminars" data={undefined} onClickCallback={onClickCallbackAward} />}
+            {addClubs && <ClubFillupFormPopup name="Club Organization Information" data={undefined} onClickCallback={onClickCallbackAddClub} />}
+            {addAwards && <AwardsFillupFormPopup name="Awards & Seminars" data={undefined} onClickCallback={onClickCallbackAward} />}
             <article className="flex flex-col p-10 gap-10">
                 {/* General Information Section */}
                 <section>
