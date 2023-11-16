@@ -168,7 +168,7 @@ export default function Department() {
     const [user, setUser] = useState<User>();
 
 
-    const [clubAttr, setClubsAttr] = useState<ClubAttr>({ positions: [], organizations: [] });
+    const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [clubData, setClubsData] = useState<any>();
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -294,6 +294,7 @@ export default function Department() {
                 {user &&
                     <StudentInformation student={user} />
                 }
+
                 {/* Clubs, Seminars, and Achievements */}
                 < section className="md:px-10 mt-10 flex flex-col gap-2">
                     <section className="flex justify-between">
@@ -302,9 +303,9 @@ export default function Department() {
                     <Container>
                         <Display>
                             {/* Clubs & Organizations */}
-                            <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />
+                            {clubAttr && <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />}
                             {/* Club Positions */}
-                            <Dropdown label="Position" items={clubAttr.positions} />
+                            {clubAttr && <Dropdown label="Position" items={clubAttr.positions} />}
                             {/* Year Elected */}
                             <YearRange label="Year Elected" />
                         </Display>
@@ -326,7 +327,9 @@ export default function Department() {
                                 <Spinner />
                             </section>
                         }
+
                         <hr className="my-5" />
+
                         <Display>
                             {/* Awards & Seminars*/}
                             <Dropdown label="Awards & Seminars" items={[{ id: "1", name: "Sample Seminar Held @ Davao City" }]} />
@@ -345,6 +348,7 @@ export default function Department() {
                                 <p>Add Awards</p>
                             </button>
                         </section>
+                        
                         <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
 
                     </Container>
