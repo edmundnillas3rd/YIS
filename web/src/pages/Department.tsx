@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 
 import MembersTable from "../components/CustomTable";
@@ -10,9 +10,10 @@ import PopupModal from "../components/Department/DepartmenPopupModal";
 import Spinner from "../components/Spinner";
 import ClubFillupFormPopup from "../components/Department/ClubFillupFormPopup";
 import AwardsFillupFormPopup from "../components/Department/AwardsFillupFormPopup";
+import { AuthContext } from "../context/AuthProvider";
 
 interface StudentInfoProps {
-    student: any;
+    student: User;
 }
 
 const StudentInformation = ({ student }: StudentInfoProps) => {
@@ -61,7 +62,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
 
     const onSubmitHandler = (event: SyntheticEvent) => {
 
-    }
+    };
 
 
     return (
@@ -99,7 +100,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
                             maxLength={50}
                             autoComplete="off"
                             disabled
-                            value={student.user_family_name}
+                            value={student.familyName}
 
                         />
                     </section>
@@ -116,7 +117,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
                             maxLength={50}
                             autoComplete="off"
                             disabled
-                            value={student.user_first_name}
+                            value={student.firstName}
                         />
                     </section>
                     <section className="relative flex flex-col">
@@ -132,7 +133,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
                             maxLength={50}
                             autoComplete="off"
                             disabled
-                            value={student.user_middle_name}
+                            value={student.middleName}
                         />
                         <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(NOTE: SPELL OUT YOUR MIDDLE NAME)</p>
                     </section>
@@ -149,7 +150,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
                             onInput={onInputHandler}
                             autoComplete="off"
                             disabled
-                            value={student.user_suffix}
+                            value={student.suffix}
                         />
                         <p className="absolute text-center w-full top-16 text-slate-600 text-xs font-bold">(E.G. SR, JR, III, IV, V)</p>
                     </section>
@@ -160,13 +161,11 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
 };
 
 export default function Department() {
+    const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [mode, setMode] = useState("default");
     const [loading, setLoading] = useState(false);
     const [addClubs, setAddClubs] = useState(false);
     const [addAwards, setAddAwards] = useState(false);
-
-    const [user, setUser] = useState<User>();
-
 
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [clubData, setClubsData] = useState<any>();
@@ -176,14 +175,6 @@ export default function Department() {
 
     useEffect(() => {
         setLoading(true);
-
-        fetch(`${import.meta.env.VITE_BASE_URL}/users/user-current`, {
-            credentials: "include"
-        })
-            .then(response => response.json())
-            .then(data => {
-                setUser(data.user);
-            });
 
         fetch(`${import.meta.env.VITE_BASE_URL}/clubs`, {
             credentials: "include"
@@ -207,7 +198,7 @@ export default function Department() {
             .then((data: any) => {
                 const clubs = data.rows.map(({ club_id, organization, ...attr }: any) => ({ id: club_id, organization }));
                 const clubData = data.rows;
-                
+
                 setClubsData({
                     clubs,
                     clubData
@@ -291,8 +282,8 @@ export default function Department() {
                 <section>
                     <h1 className="font-bold">GENERAL INFORMATION</h1>
                 </section>
-                {user &&
-                    <StudentInformation student={user} />
+                {currentUser &&
+                    <StudentInformation student={currentUser} />
                 }
 
                 {/* Clubs, Seminars, and Achievements */}
@@ -348,7 +339,7 @@ export default function Department() {
                                 <p>Add Awards</p>
                             </button>
                         </section>
-                        
+
                         <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
 
                     </Container>

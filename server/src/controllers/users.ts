@@ -15,12 +15,19 @@ export async function index(req: Request, res: Response) {
 
 export async function getCurrentLogUser(req: Request, res: Response) {
     if (!req.session.authenticated) {
-        return res.status(404).end();
+        return res.status(404).json({
+            error: "Not authenticated!"
+        });
     }
 
     const { userID } = req.session;
-    const { rows } = await query("SELECT user.user_first_name, user.user_family_name, user.user_middle_name, user.user_suffix FROM user WHERE user.user_id = ?", [userID]);
-    res.status(200).json({ id: userID, user: rows[0] });
+    const { rows } = await query(`
+        SELECT user.user_first_name AS firstName, user.user_family_name AS familyName, user.user_middle_name AS middleName, user.user_suffix AS suffix, role.role_name as role FROM user 
+        INNER JOIN role
+        ON user.role_id = role.role_id
+        WHERE user.user_id = ?
+    `, [userID]);
+    res.status(200).json({ id: userID, userData: rows[0] });
 }
 
 // TODO: to receive only the id of the student instead of getting all of

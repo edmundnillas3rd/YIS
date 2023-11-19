@@ -11,6 +11,14 @@ interface Student {
     fullyPaidOr: string;
 }
 
+interface User {
+    firstName: string;
+    familyName: string;
+    middleName: string;
+    suffix: string;
+    role: string;
+}
+
 interface Label {
     id: string;
     name: string;
