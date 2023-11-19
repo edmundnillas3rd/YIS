@@ -11,6 +11,55 @@ export async function index(req: Request, res: Response) {
     });
 }
 
+export async function userClubAward(req: Request, res: Response) {
+    const { userID } = req.session;
+
+    const sql = `
+        SELECT DISTINCT club_organization.club_organization_name AS organizationName, club_position.club_position_name AS clubPosition, club.club_started AS yearStarted, club.club_ended as yearEnded FROM club
+		INNER JOIN user
+		ON club.user_id = user.user_id
+		INNER JOIN club_organization
+		ON club.club_organization_id = club_organization.club_organization_id
+		INNER JOIN club_position
+		ON club.club_position_id = club_position.club_position_id
+		WHERE club.user_id = '2433cb0d-80ee-11ee-b75c-84a93eac0a67'
+    `;
+
+    const { rows } = await query(sql);
+
+    const organizations = await query("SELECT club_organization_name FROM club_organization");
+
+    let clubRecognitions = rows.reduce((accumulator: any, currentValue: any) => {
+        console.log(accumulator);
+
+        if (accumulator[currentValue.organizationName as string] !== undefined) {
+            const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1)
+            return {
+                ...accumulator,
+                [currentValue.organizationName as string]: removedComma.concat(` '${currentValue.clubPosition}', ${currentValue.yearStarted}-${currentValue.yearEnded}`),
+            };
+        }
+
+        return {
+            ...accumulator,
+            [currentValue.organizationName as string]: `'${currentValue.organizationName}', '${currentValue.clubPosition}', ${currentValue.yearStarted}-${currentValue.yearEnded},`,
+        }
+    }, {});
+
+    clubRecognitions = Object.entries(clubRecognitions).map(([key, value]) => {
+        const organization: string = clubRecognitions[key] as string;
+        if (organization.charAt(organization.length - 1) === ',') {
+            return organization.slice(0, -1);
+        }
+
+        return organization;
+    });
+
+    res.status(200).json({
+        dataPreview: clubRecognitions
+    });
+}
+
 export async function userClub(req: Request, res: Response) {
     const { userID } = req.session;
 
@@ -39,11 +88,11 @@ export async function userClubInfo(req: Request, res: Response) {
         INNER JOIN club_position
         ON club.club_position_id = club_position.club_position_id
         WHERE club.user_id = ? AND club.club_organization_id = ?
-    `, [userID, clubID])
+    `, [userID, clubID]);
 
     res.status(200).json({
         userClubPositions: rows
-    })
+    });
 }
 
 export async function clubUserAdd(req: Request, res: Response) {
@@ -90,7 +139,7 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
 
 
     if (foundClubBelongTo.rows.length > 0) {
-        return res.status(400).json({ error: "Another entry already exist "});
+        return res.status(400).json({ error: "Another entry already exist " });
     }
 
 

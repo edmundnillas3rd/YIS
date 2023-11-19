@@ -1,4 +1,4 @@
 interface QueryRow {
-    rows: any,
+    rows: any[] | any,
     fields: any
 }
