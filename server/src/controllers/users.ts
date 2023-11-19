@@ -19,7 +19,7 @@ export async function getCurrentLogUser(req: Request, res: Response) {
     }
 
     const { userID } = req.session;
-    const { rows } = await query("SELECT user.user_first_name, user.user_family_name, user.user_middle_name, user.user_suffix FROM user WHERE user.user_id = ?", [userID])
+    const { rows } = await query("SELECT user.user_first_name, user.user_family_name, user.user_middle_name, user.user_suffix FROM user WHERE user.user_id = ?", [userID]);
     res.status(200).json({ id: userID, user: rows[0] });
 }
 
@@ -156,4 +156,30 @@ export async function logoutUser(req: Request, res: Response) {
         }
     });
     res.status(200).json({ url: '/' });
+}
+
+export async function searchStudent(req: Request, res: Response) {
+    const { fullName } = req.body;
+    const { rows } = await query(`
+        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus FROM user
+        INNER JOIN college
+        ON user.user_college = college.college_id
+		INNER JOIN role
+		ON user.role_id = role.role_id 
+		LEFT JOIN solicitation_form
+		ON user.user_id = solicitation_form.user_id
+		LEFT JOIN solicitation_payment_status
+		ON solicitation_form.solicitation_payment_status_id = solicitation_payment_status.solicitation_payment_status_id 
+		LEFT JOIN solicitation_returned_status
+		ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id
+     	WHERE SOUNDEX(?) LIKE SOUNDEX(user.user_first_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_middle_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_family_name)
+    `, [fullName, fullName, fullName]);
+
+    if (rows.length === 0) {
+        return res.status(200).end();
+    }
+
+    res.status(200).json({
+        results: rows
+    })
 }
