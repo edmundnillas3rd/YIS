@@ -2,7 +2,7 @@ import { Key, SyntheticEvent, useEffect, useState } from "react";
 import { AiFillEdit, AiFillSave, AiOutlinePlus } from "react-icons/ai";
 import Dropdown from "../Dropdown";
 
-import { generateYearRange as years } from "../../API/generateYearRange";
+import { generateYearRange as years } from "../../utilities/generateYearRange";
 
 interface PositionFormProps {
     info?: any;

@@ -1,6 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import StudentTable from "../components/CustomTable";
-import { searchStudents } from "../API/students";
+import { searchStudents } from "../utilities/students";
 
 export default function YearbookPhotos() {
 

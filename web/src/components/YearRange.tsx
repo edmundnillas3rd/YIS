@@ -2,7 +2,7 @@ interface YearRangeProps {
     label: string;
 }
 
-import { generateYearRange as years } from "../API/generateYearRange";
+import { generateYearRange as years } from "../utilities/generateYearRange";
 
 export default function YearRange({ label }: YearRangeProps) {
 
