@@ -4,7 +4,7 @@ import Layout from "../layouts/Main";
 import Auth from "../pages/Auth";
 import Home from "../pages/Home";
 import Colleges from "../pages/Colleges";
-import Department from "../pages/Department";
+import StudentInformation from "../pages/StudentInformation";
 import ErrorPage from "../pages/Error";
 import SoliciationFormPage from "../pages/SolcitationForm";
 import YearbookPhotos from "../pages/YearbookPhotos";
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: ":college_division",
-                element: <Department />
+                element: <StudentInformation />
             }
         ]
     }

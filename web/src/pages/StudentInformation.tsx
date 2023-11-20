@@ -6,17 +6,17 @@ import Dropdown from "../components/Dropdown";
 import YearRange from "../components/YearRange";
 import Display from "../components/Display";
 import Container from "../components/Container";
-import PopupModal from "../components/Department/DepartmenPopupModal";
+import PopupModal from "../components/StudentInformation/StudentInformationPopupModal";
 import Spinner from "../components/Spinner";
-import ClubFillupFormPopup from "../components/Department/ClubFillupFormPopup";
-import AwardsFillupFormPopup from "../components/Department/AwardsFillupFormPopup";
+import ClubFillupFormPopup from "../components/StudentInformation/ClubFillupFormPopup";
+import AwardsFillupFormPopup from "../components/StudentInformation/AwardsFillupFormPopup";
 import { AuthContext } from "../context/AuthProvider";
 
-interface StudentInfoProps {
+interface StudentBioProps {
     student: User;
 }
 
-const StudentInformation = ({ student }: StudentInfoProps) => {
+const StudentBio = ({ student }: StudentBioProps) => {
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
 
     const [studentID, setStudentID] = useState<string | null>(null);
@@ -160,7 +160,7 @@ const StudentInformation = ({ student }: StudentInfoProps) => {
     );
 };
 
-export default function Department() {
+export default function StudentInformation() {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [mode, setMode] = useState("default");
     const [loading, setLoading] = useState(false);
@@ -169,6 +169,8 @@ export default function Department() {
 
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [clubData, setClubsData] = useState<any>();
+
+    const [awardData, setAwardData] = useState<any>();
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -204,6 +206,16 @@ export default function Department() {
                     clubData
                 });
             });
+
+        fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-award`, {
+            credentials: "include"
+        })
+            .then(response => response.json())
+            .then((data: any) => {
+                const awards = data.rows.map(({ awardID, ...attr}: any) => ({ ...attr }))
+                setAwardData(awards);
+            });
+
         setLoading(false);
     }, []);
 
@@ -223,15 +235,6 @@ export default function Department() {
                 });
         }
     }, [addClubs, addAwards]);
-
-    const awards = [
-        {
-            id: '0',
-            awardAttendedName: 'Sample Seminar Held @ Davao City',
-            awardName: 'Participant',
-            awardReceived: '2023'
-        }
-    ];
 
     const handleEdit = (event: SyntheticEvent) => {
         event.preventDefault();
@@ -256,7 +259,7 @@ export default function Department() {
 
     const [currentNode, setCurrentNode] = useState<any | null>(null);
 
-    const onClickCallback = (i: any) => {
+    const onClubsClickCallback = (i: any) => {
         setCurrentNode(clubData.clubs.filter((d: any) => d.id === i.id)[0]);
     };
 
@@ -283,7 +286,7 @@ export default function Department() {
                     <h1 className="font-bold">GENERAL INFORMATION</h1>
                 </section>
                 {currentUser &&
-                    <StudentInformation student={currentUser} />
+                    <StudentBio student={currentUser} />
                 }
 
                 {/* Clubs, Seminars, and Achievements */}
@@ -312,9 +315,9 @@ export default function Department() {
                         </section>
 
                         {clubData ?
-                            <MembersTable nodes={clubData.clubs} columns={["Clubs & Organizations"]} mode={mode} onClickCallback={onClickCallback} />
+                            <MembersTable nodes={clubData.clubs} columns={["Clubs & Organizations"]} mode={mode} onClickCallback={onClubsClickCallback} />
                             :
-                            <section className="flex justify-center">
+                            <section className="flex h-5 justify-center">
                                 <Spinner />
                             </section>
                         }
@@ -340,7 +343,7 @@ export default function Department() {
                             </button>
                         </section>
 
-                        <MembersTable nodes={awards} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />
+                        {awardData && <MembersTable nodes={awardData} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />}
 
                     </Container>
                 </section>

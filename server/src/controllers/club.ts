@@ -25,15 +25,13 @@ export async function userClubAward(req: Request, res: Response) {
 		WHERE club.user_id = '2433cb0d-80ee-11ee-b75c-84a93eac0a67'
     `;
 
-    const { rows } = await query(sql);
+    const organization = await query(sql);
 
-    const organizations = await query("SELECT club_organization_name FROM club_organization");
-
-    let clubRecognitions = rows.reduce((accumulator: any, currentValue: any) => {
+    let clubRecognitions = organization.rows.reduce((accumulator: any, currentValue: any) => {
         console.log(accumulator);
 
         if (accumulator[currentValue.organizationName as string] !== undefined) {
-            const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1)
+            const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1);
             return {
                 ...accumulator,
                 [currentValue.organizationName as string]: removedComma.concat(` '${currentValue.clubPosition}', ${currentValue.yearStarted}-${currentValue.yearEnded}`),
@@ -43,7 +41,7 @@ export async function userClubAward(req: Request, res: Response) {
         return {
             ...accumulator,
             [currentValue.organizationName as string]: `'${currentValue.organizationName}', '${currentValue.clubPosition}', ${currentValue.yearStarted}-${currentValue.yearEnded},`,
-        }
+        };
     }, {});
 
     clubRecognitions = Object.entries(clubRecognitions).map(([key, value]) => {
@@ -55,8 +53,23 @@ export async function userClubAward(req: Request, res: Response) {
         return organization;
     });
 
+    const awards = query("SELECT award.award_attended_name AS awardAttendedName, award.award_name AS awardName, award.award_received AS awardReceived FROM awards WHERE award.user_id = ?", [userID]);
+
     res.status(200).json({
         dataPreview: clubRecognitions
+    });
+}
+
+export async function userAward(req: Request, res: Response) {
+    const { userID } = req.session;
+
+    const { rows } = await query(`
+        SELECT award.award_id AS awardID, award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award
+        WHERE award.user_id = ?;
+    `, [userID]);
+
+    res.status(200).json({
+        rows
     });
 }
 
@@ -143,4 +156,16 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
     }
 
 
+}
+
+export async function awardUserAdd(req: Request, res: Response) {
+    const { awardAttendedName, awardName, awardReceived } = req.body;
+    const { userID } = req.session;
+
+    const AwardGenUUID = await query("SELECT UUID()");
+    const AwardUUID = AwardGenUUID.rows[0]['UUID()'];
+    await query(`
+        INSERT INTO award VALUES (?, ?, ?, ?, ?)
+    `, [AwardUUID, userID, awardAttendedName, awardName, awardReceived]);
+    res.status(200).end();
 }

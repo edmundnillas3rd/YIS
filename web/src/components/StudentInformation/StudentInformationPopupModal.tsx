@@ -131,7 +131,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
     );
 };
 
-export default function DepartmenPopupModal({ data, onClickCallback }: PopupModalProps) {
+export default function StudentInformationPopupModal({ data, onClickCallback }: PopupModalProps) {
     const [clubAttr, setClubAttr] = useState<ClubAttr>();
     const [positionForms, setPositionForms] = useState<React.ReactNode[]>([]);
     const [submitted, setSubmitted] = useState<boolean>(false);
