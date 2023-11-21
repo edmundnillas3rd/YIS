@@ -1,13 +1,11 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { AiFillSave } from "react-icons/ai";
 
-import Dropdown from "../Dropdown";
-
 export default function AwardsFillupFormPopup({ name, data, onClickCallback }: PopupModalProps) {
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
     let currentDate = new Date().toJSON().slice(0, 10);
     const [errMessage, setErrMessage] = useState<string>("");
-    const [disabled, setDisabled] = useState<boolean>(true);
+    const [disabled, setDisabled] = useState<boolean>(false);
     const [awardAttendedName, setAwardAttendedName] = useState<string>();
     const [awardName, setAwardName] = useState<string>();
     const [awardReceived, setAwardRecieved] = useState<string>();
