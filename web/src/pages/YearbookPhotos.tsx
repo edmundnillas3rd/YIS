@@ -1,11 +1,13 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import StudentTable from "../components/CustomTable";
+import Spinner from "../components/Spinner";
 import { searchStudents } from "../utilities/students";
 
 export default function YearbookPhotos() {
 
     const [searchedData, setSearchData] = useState<string>("");
     const [results, setResults] = useState<any>();
+    const [loading, setLoading] = useState(false);
 
     const nodes = [
         {
@@ -32,31 +34,37 @@ export default function YearbookPhotos() {
 
     const onSubmitHandler = async (e: SyntheticEvent) => {
         e.preventDefault();
+        setResults(null);
+        setLoading(true);
+
+        if (searchedData.length < 4) return;
 
         const response = await searchStudents(searchedData);
 
-        const r = response.map(({ id, fullName, collegeName,...attr}: any) => {
+        const r = response.map(({ id, fullName, collegeName, ...attr }: any) => {
             return {
                 id,
                 college: collegeName,
                 name: fullName
-            }
-        })
+            };
+        });
 
         console.log(r);
         setResults(r);
+        setLoading(false);
     };
 
     const onChangeHandler = async (e: SyntheticEvent) => {
         e.preventDefault();
 
-        setSearchData((e.target as HTMLInputElement).value)
+        setSearchData((e.target as HTMLInputElement).value);
     };
 
     return (
         <article className="flex flex-col p-10 gap-0">
             <section className="py-5 px-2 flex flex-col w-full border border-zinc-400 rounded">
                 <form
+                    className="flex justify-center gap-1"
                     onSubmit={onSubmitHandler}
                     method="post">
                     <input
@@ -65,10 +73,13 @@ export default function YearbookPhotos() {
                         placeholder="Search Student Name"
                         onChange={onChangeHandler}
                     />
-                    <button type="submit">Search</button>
+                    <button className="border p-1 rounded ring-1 ring-slate-400 ring-inset ring-gray-30 text-gray-600 flex-shrink-0" type="submit">{loading ? <Spinner /> : "Search"}</button>
                 </form>
             </section>
-        {results && <StudentTable nodes={results} columns={["COLLEGE", "FULL NAME"]} mode="default" onClickCallback={onClickCallback} />}
+            {results ? <StudentTable nodes={results} columns={["COLLEGE", "FULL NAME"]} mode="default" onClickCallback={onClickCallback} /> :
+                <section className="flex flex-col justify-center items-center w-full py-10">
+                    {loading && <Spinner />}
+                </section>}
 
         </article>
     );
