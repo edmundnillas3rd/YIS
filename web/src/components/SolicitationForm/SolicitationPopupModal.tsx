@@ -29,20 +29,19 @@ const SolicitationFillupForm = ({
     ORnumber,
 
 }: SolicitationForm) => {
-    const handleEdit = (event: SyntheticEvent) => {
+
+    const [edit, setEdit] = useState<boolean>(false);
+
+
+    const handleSave = (event: SyntheticEvent) => {
         event.preventDefault();
+        setEdit(false);
     };
 
-    // const {
-    //     id,
-    //     course,
-    //     fullName,
-    //     soliNumber,
-    //     careOfFullName,
-    //     returnedStatus,
-    //     dateReturned,
-    //     ORnumber
-    // }: SolicitationForm = solicitationForm;
+    const handleEdit = (event: SyntheticEvent) => {
+        event.preventDefault();
+        setEdit(true);
+    };
 
     return <>
         <section className="flex flex-row items-center justify-between">
@@ -98,24 +97,45 @@ const SolicitationFillupForm = ({
             />
         </section>
         <section className="flex flex-row pt-5 gap-2 justify-end items-center">
-            <button
-                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
-                onClick={handleEdit}
-            >
-                <p>Edit</p>
-                <AiFillEdit style={{
-                    color: "#475569"
-                }} />
-            </button>
-            <button
-                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
-                type="submit"
-            >
-                <p>Save</p>
-                <AiFillSave style={{
-                    color: "#475569"
-                }} />
-            </button>
+            {!edit && (
+                <button
+                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                    onClick={handleEdit}
+                >
+                    <p>Edit</p>
+                    <AiFillEdit style={{
+                        color: "#475569"
+                    }} />
+                </button>
+            )
+            }
+            {edit && (
+                <>
+                <button
+                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                    onClick={e => {
+                        setEdit(false);
+                    }}
+                    type="submit"
+                >
+                    <p>Cancel</p>
+                    <AiFillSave style={{
+                        color: "#475569"
+                    }} />
+                </button>
+                <button
+                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                    onClick={handleSave}
+                    type="submit"
+                >
+                    <p>Save</p>
+                    <AiFillSave style={{
+                        color: "#475569"
+                    }} />
+                </button>
+                </>
+            )
+            }
         </section>
     </>;
 };
