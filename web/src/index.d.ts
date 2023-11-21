@@ -17,6 +17,7 @@ interface User {
     middleName: string;
     suffix: string;
     role: string;
+    claimStatus: string;
 }
 
 interface Label {
@@ -43,12 +44,4 @@ interface Position {
 interface Organization {
     club_organization_id: string;
     club_organization_name: string;
-}
-
-interface User {
-    id: string;
-    user_first_name: string;
-    user_middle_name: string;
-    user_family_name: string;
-    user_suffix: string;
 }

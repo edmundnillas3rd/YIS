@@ -73,10 +73,7 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
             </section>
 
             <form className="flex flex-col gap-2">
-                {clubAttr && <Dropdown label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} disabled={disabled} />}
-                {/* {clubAttr && <Dropdown label="Positions" items={clubAttr.positions} callbackDropdownFn={onSelectPosition} />} */}
-                {/* <Dropdown label="Year Started" items={years(defaultYear) as []} callbackDropdownFn={onYearStartHandler}/> */}
-                {/* <Dropdown label="Year Ended" items={years(defaultYear + 4) as []} callbackDropdownFn={onYearEndHandler}/> */}
+                {clubAttr && <Dropdown defaultValue={clubAttr.organizations[0].name} label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} disabled={disabled} />}
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button

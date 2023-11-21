@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthProvider";
 
 interface SelectionProps {
     index: number;
@@ -49,6 +50,7 @@ const Selection = ({ index, src, url, callbackFn, children, disabled = false }: 
 );
 
 export default function Main() {
+    const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [currentIndex, setIndex] = useState<number>(0);
     const [disabled, setDisable] = useState<boolean>(true);
     const [previousIndex, setPreviousIndex] = useState<number>(currentIndex);
@@ -60,7 +62,15 @@ export default function Main() {
         if (role === "admin") {
             setDisable(false);
         }
+
+        console.log(currentUser);
+
     }, []);
+
+    useEffect(() => {
+        console.log(currentUser);
+
+    }, [currentUser]);
 
     const images = [
         "/assets/cjc-logo.png",
@@ -106,10 +116,10 @@ export default function Main() {
                 <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
                     YEARBOOK PHOTOS
                 </Selection>
-                <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={claimed !== "claimed"}>
+                {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
                     YEARBOOK RELEASED
-                    <span className="font-bold text-slate-500">(Please get the claim stub)</span>
-                </Selection>
+                    {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
+                </Selection>}
             </section>
         </article>
     );
