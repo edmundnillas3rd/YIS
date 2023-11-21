@@ -11,6 +11,7 @@ import Spinner from "../components/Spinner";
 import ClubFillupFormPopup from "../components/StudentInformation/ClubFillupFormPopup";
 import AwardsFillupFormPopup from "../components/StudentInformation/AwardsFillupFormPopup";
 import { AuthContext } from "../context/AuthProvider";
+import PreviewClubAwardsModal from "../components/StudentInformation/PreviewClubAwardsModal";
 
 interface StudentBioProps {
     student: User;
@@ -166,6 +167,7 @@ export default function StudentInformation() {
     const [loading, setLoading] = useState(false);
     const [addClubs, setAddClubs] = useState(false);
     const [addAwards, setAddAwards] = useState(false);
+    const [displayPreview, setDisplayPreview] = useState(false);
 
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [clubData, setClubsData] = useState<any>();
@@ -212,7 +214,7 @@ export default function StudentInformation() {
         })
             .then(response => response.json())
             .then((data: any) => {
-                const awards = data.rows.map(({ awardID, ...attr}: any) => ({ ...attr }))
+                const awards = data.rows.map(({ awardID, ...attr }: any) => ({ ...attr }));
                 setAwardData(awards);
             });
 
@@ -280,6 +282,9 @@ export default function StudentInformation() {
             {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup} />}
             {addClubs && <ClubFillupFormPopup name="Club Organization Information" data={undefined} onClickCallback={onClickCallbackAddClub} />}
             {addAwards && <AwardsFillupFormPopup name="Awards & Seminars" data={undefined} onClickCallback={onClickCallbackAward} />}
+            {displayPreview && <PreviewClubAwardsModal onClickCallback={(data) => {
+                setDisplayPreview(false);
+            }}/>}
             <article className="flex flex-col p-10 gap-10">
                 {/* General Information Section */}
                 <section>
@@ -293,6 +298,11 @@ export default function StudentInformation() {
                 < section className="md:px-10 mt-10 flex flex-col gap-2">
                     <section className="flex justify-between">
                         <h1 className="pt-5 font-bold">Clubs, Seminars, and Achievements</h1>
+                        <button onClick={(e: SyntheticEvent) => {
+                            setDisplayPreview(true);
+                        }}>
+                            Show Preview
+                        </button>
                     </section>
                     <Container>
                         <Display>

@@ -22,10 +22,10 @@ export async function userClubAward(req: Request, res: Response) {
 		ON club.club_organization_id = club_organization.club_organization_id
 		INNER JOIN club_position
 		ON club.club_position_id = club_position.club_position_id
-		WHERE club.user_id = '2433cb0d-80ee-11ee-b75c-84a93eac0a67'
+		WHERE club.user_id = ?
     `;
 
-    const organization = await query(sql);
+    const organization = await query(sql, [userID]);
 
     let clubRecognitions = organization.rows.reduce((accumulator: any, currentValue: any) => {
         console.log(accumulator);
@@ -53,10 +53,28 @@ export async function userClubAward(req: Request, res: Response) {
         return organization;
     });
 
-    const awards = query("SELECT award.award_attended_name AS awardAttendedName, award.award_name AS awardName, award.award_received AS awardReceived FROM awards WHERE award.user_id = ?", [userID]);
+    const awards = await query("SELECT award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award WHERE award.user_id = ?", [userID]);
+    let awardRecognitions = awards.rows.reduce((accumulator: string, currentValue: any) => {
+        const { awardAttendedName, awardName, awardReceived } = currentValue;
+        if (accumulator.length === 0) {
+            return `${awardAttendedName}, ${awardName}, ${awardReceived}`
+        } else {
+            return `, ${awardAttendedName}, ${awardName}, ${awardReceived}`
+        }
+    }, "")
+
+    const formatData = [...clubRecognitions, awardRecognitions];
+
+    const dataPreview = formatData.reduce((accumulator: string, currentValue: any) => {
+        if (accumulator.length === 0) {
+            return `${currentValue}`
+        } else {
+            return `${accumulator}, ${currentValue}`
+        }
+    }, "")
 
     res.status(200).json({
-        dataPreview: clubRecognitions
+        dataPreview
     });
 }
 
@@ -97,7 +115,7 @@ export async function userClubInfo(req: Request, res: Response) {
     const { clubID } = req.params;
 
     const { rows } = await query(`
-        SELECT club_position.club_position_name, club.club_started, club.club_ended FROM club
+        SELECT club_position.club_position_name AS clubPositionName, club.club_started AS clubStarted, club.club_ended AS clubEnded FROM club
         INNER JOIN club_position
         ON club.club_position_id = club_position.club_position_id
         WHERE club.user_id = ? AND club.club_organization_id = ?
