@@ -22,6 +22,8 @@ export default function SoliciationFormPage() {
 
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+    const [nodes, setNodes] = useState<any>();
+
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
 
     const navigate = useNavigate();
@@ -32,6 +34,13 @@ export default function SoliciationFormPage() {
         if (role !== "admin") {
             navigate("/home");
         }
+
+        (async () => {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation`);
+            const data = await response.json();
+
+            setNodes(data.rows);
+        })();
     }, []);
 
     const save = () => {
@@ -79,46 +88,48 @@ export default function SoliciationFormPage() {
 
     const [currentNode, setCurrentNode] = useState<any | null>(null);
 
-    const nodes = [
-        {
-            id: '1',
-            course: "Computer Science",
-            name: "Edmund Nillas III",
-            soliNum: "2018",
-            careOf: "",
-            returned: true,
-            dateReturn: "11-11-2023",
-            yearbookHalfPaid: true,
-            yearbookHalfPaidOR: "",
-            fullyPaid: true,
-            fullyPaidOr: ""
-        },
-        {
-            id: '2',
-            course: "Computer Science",
-            name: "Nicki Pecision",
-            soliNum: "2018",
-            careOf: "",
-            returned: true,
-            dateReturn: "11-11-2023",
-            yearbookHalfPaid: true,
-            yearbookHalfPaidOR: "",
-            fullyPaid: true,
-            fullyPaidOr: ""
-        }
-    ];
+    // const nodes = [
+    //     {
+    //         id: '1',
+    //         course: "Computer Science",
+    //         name: "Edmund Nillas III",
+    //         soliNum: "2018",
+    //         careOf: "",
+    //         returned: true,
+    //         dateReturn: "11-11-2023",
+    //         yearbookHalfPaid: true,
+    //         yearbookHalfPaidOR: "",
+    //         fullyPaid: true,
+    //         fullyPaidOr: ""
+    //     },
+    //     {
+    //         id: '2',
+    //         course: "Computer Science",
+    //         name: "Nicki Pecision",
+    //         soliNum: "2018",
+    //         careOf: "",
+    //         returned: true,
+    //         dateReturn: "11-11-2023",
+    //         yearbookHalfPaid: true,
+    //         yearbookHalfPaidOR: "",
+    //         fullyPaid: true,
+    //         fullyPaidOr: ""
+    //     }
+    // ];
 
     const onClickCallback = (i: any) => {
+        console.log("Node", i);
+
         setCurrentNode(i);
     };
 
     const onClickCallbackPopup = (event: SyntheticEvent) => {
         setCurrentNode(null);
-    }
+    };
 
     return (
         <>
-            {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup}/>}
+            {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup} />}
             <article className="flex flex-col p-10 gap-0">
                 <h3 className="font-bold mb-3">Solicitation Forms</h3>
                 <Container>
@@ -126,7 +137,7 @@ export default function SoliciationFormPage() {
                     <h3 className="font-bold">Student:</h3>
                     <section className="w-full mb-5">
                         {/* TODO: to add a course attribute for dynamically adding courses */}
-                        <Dropdown label="Course" items={[{ id: "1", name: "BSCS"}, { id: "0", name:"BSBA"}]} />
+                        <Dropdown label="Course" items={[{ id: "1", name: "BSCS" }, { id: "0", name: "BSBA" }]} />
                     </section>
                     <section className="flex flex-col md:flex-row flex-wrap gap-5 md:gap-2 mb-16">
                         <section className="flex flex-col">
@@ -303,7 +314,7 @@ export default function SoliciationFormPage() {
                             <label className="font-bold text-center text-xs md:text-base" htmlFor="toggle-students">Show Unreturned</label>
                         </section>
                     </form>
-                    <StudentTable nodes={nodes} columns={["COURSE", "NAME", "SOLI #'s", "CARE OF", "RETURNED", "DATE RETURNED", "YEARBOOK HALF PAYMENT", "OR #", "FULL PAYMENT", "OR #"]} mode="default" onClickCallback={onClickCallback} />
+                    {nodes && <StudentTable nodes={nodes} columns={["COURSE", "NAME", "SOLI #", "CARE OF", "SOLICITATION STATUS", "DATE RETURNED", "AMOUNT PAID", "OR #", "PAYMENT"]} mode="default" onClickCallback={onClickCallback} />}
                 </Container>
             </article>
         </>

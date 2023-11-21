@@ -8,6 +8,7 @@ import StudentInformation from "../pages/StudentInformation";
 import ErrorPage from "../pages/Error";
 import SoliciationFormPage from "../pages/SolcitationForm";
 import YearbookPhotos from "../pages/YearbookPhotos";
+import AdminDashboard from "../layouts/AdminDashboard";
 
 const router = createBrowserRouter([
     {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
         children: [
             {
                 index: true,
-                element: <Home />
+                element: <Home />,
             }
         ]
     },
@@ -50,6 +51,16 @@ const router = createBrowserRouter([
             {
                 path: ":college_division",
                 element: <StudentInformation />
+            }
+        ]
+    },
+    {
+        path: "/admin",
+        element: <AdminDashboard />,
+        children: [
+            {
+                index: true,
+                element: <></>,
             }
         ]
     }

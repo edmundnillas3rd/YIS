@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { AiFillEdit, AiFillSave } from "react-icons/ai";
 
 interface PopupModalProps {
@@ -6,23 +6,142 @@ interface PopupModalProps {
     onClickCallback: (event: SyntheticEvent) => void;
 }
 
+interface SolicitationForm {
+    id: string;
+    course: string;
+    fullName: string;
+    soliNumber: string;
+    careOfFullName: string;
+    returnedStatus: string;
+    dateReturned: string;
+    ORnumber: string;
+    onClickCallback?: (data: any) => void;
+}
+
+const SolicitationFillupForm = ({
+    id,
+    course,
+    fullName,
+    soliNumber,
+    careOfFullName,
+    returnedStatus,
+    dateReturned,
+    ORnumber,
+
+}: SolicitationForm) => {
+    const handleEdit = (event: SyntheticEvent) => {
+        event.preventDefault();
+    };
+
+    // const {
+    //     id,
+    //     course,
+    //     fullName,
+    //     soliNumber,
+    //     careOfFullName,
+    //     returnedStatus,
+    //     dateReturned,
+    //     ORnumber
+    // }: SolicitationForm = solicitationForm;
+
+    return <>
+        <section className="flex flex-row items-center justify-between">
+
+            <h3 className="font-bold">Solicitation Form #{soliNumber}</h3>
+        </section>
+        <section className="flex flex-col">
+            <label htmlFor="soli-form-status" className="block text-sm font-medium leading-6 text-gray-900">Solicitation Form Returned</label>
+            <input
+                type="text"
+                name="soli-form-status"
+                id="soli-form-status"
+                className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                autoComplete="off"
+                value={returnedStatus}
+                disabled
+            />
+        </section>
+        <section className="flex flex-col">
+            <label htmlFor="date-return" className="block text-sm font-medium leading-6 text-gray-900">Date Returned</label>
+            <input
+                type="text"
+                name="date-return"
+                id="date-return"
+                className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                autoComplete="off"
+                value={dateReturned}
+                disabled
+            />
+        </section>
+        <section className="flex flex-col">
+            <label htmlFor="careof" className="block text-sm font-medium leading-6 text-gray-900">Care Of</label>
+            <input
+                type="text"
+                name="careof"
+                id="careof"
+                className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                autoComplete="off"
+                value={careOfFullName}
+                disabled
+            />
+        </section>
+        <section className="flex flex-col">
+            <label htmlFor="yearbook-receiptor" className="block text-sm font-medium leading-6 text-gray-900">Yearbook Receiptor #</label>
+            <input
+                type="text"
+                name="yearbook-receiptor"
+                id="yearbook-receiptor"
+                className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                autoComplete="off"
+                value={ORnumber}
+                disabled
+            />
+        </section>
+        <section className="flex flex-row pt-5 gap-2 justify-end items-center">
+            <button
+                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                onClick={handleEdit}
+            >
+                <p>Edit</p>
+                <AiFillEdit style={{
+                    color: "#475569"
+                }} />
+            </button>
+            <button
+                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
+                type="submit"
+            >
+                <p>Save</p>
+                <AiFillSave style={{
+                    color: "#475569"
+                }} />
+            </button>
+        </section>
+    </>;
+};
+
 export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
-    const [highlight, setHighlight] = useState("#475569");
-    const [anotherHighlight, setAnotherHightlight] = useState("#475569");
+
+    const [solicitations, setSolicitations] = useState<SolicitationForm[]>();
 
     const {
         id,
-        course,
-        name,
-        soliNum,
-        careOf,
-        returned,
-        dateReturn,
-        yearbookHalfPaid,
-        yearbookHalfPaidOr,
-        fullyPaid,
-        fullyPaidOr
-    } = data;
+        // course,
+        fullName,
+        // soliNumber,
+        // careOfFullName,
+        // returnedStatus,
+        // dateReturned,
+        // ORnumber
+    }: SolicitationForm = data;
+
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/${id}`);
+            const data = await response.json();
+            setSolicitations(data.solicitations);
+        })();
+    }, []);
 
     const handleEdit = (event: SyntheticEvent) => {
         event.preventDefault();
@@ -31,134 +150,22 @@ export default function PopupModal({ data, onClickCallback }: PopupModalProps) {
     return (
         <section className="flex justify-center items-center absolute z-10 bg-black bg-opacity-70 w-full h-full top-0 right-0">
             <section className="bg-white border border-zinc-400 rounded flex flex-col md:w-1/2 p-10 gap-2">
-                <section className="flex flex-row items-center justify-between">
-                    <section className="flex flex-col justify-center">
-                        <h3 className="font-bold">{name}</h3>
-                        <h3 className="font-bold">Solic Form # {soliNum}</h3>
-                    </section>
+                <section className="flex flex-row justify-between items-center">
+                    <h3 className="font-bold">{fullName}</h3>
                     <section className="font-bold p-2 flex flex-row cursor-pointer hover:bg-zinc-300 hover:rounded" onClick={onClickCallback}>X</section>
                 </section>
-                <section className="flex flex-col">
-                    <label htmlFor="soli-form-status" className="block text-sm font-medium leading-6 text-gray-900">Solicitation Form Returned</label>
-                    <input
-                        type="text"
-                        name="soli-form-status"
-                        id="soli-form-status"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value="RETURNED"
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-col">
-                    <label htmlFor="date-return" className="block text-sm font-medium leading-6 text-gray-900">Date Returned</label>
-                    <input
-                        type="text"
-                        name="date-return"
-                        id="date-return"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value={dateReturn}
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-col">
-                    <label htmlFor="yearbook-receiptor" className="block text-sm font-medium leading-6 text-gray-900">Yearbook Receiptor #</label>
-                    <input
-                        type="text"
-                        name="yearbook-receiptor"
-                        id="yearbook-receiptor"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value={"####"}
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-col">
-                    <label htmlFor="halfpaid-yearbook-receiptor-num" className="block text-sm font-medium leading-6 text-gray-900">Half Paid Yearbook Receiptor #</label>
-                    <input
-                        type="text"
-                        name="halfpaid-yearbook-receiptor-num"
-                        id="halfpaid-yearbook-receiptor-num"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value={"####"}
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-col">
-                    <label htmlFor="fully-paid-receiptor-num" className="block text-sm font-medium leading-6 text-gray-900">Fully Paid Yearbook Receiptor #</label>
-                    <input
-                        type="text"
-                        name="fully-paid-receiptor-num"
-                        id="fully-paid-receiptor-num"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value={"####"}
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-col">
-                    <label htmlFor="lost-soli-num" className="block text-sm font-medium leading-6 text-gray-900">Lost Solicitation Form #</label>
-                    <input
-                        type="text"
-                        name="lost-soli-num"
-                        id="lost-soli-num"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value={"####"}
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-col">
-                    <label htmlFor="lost-soli-or" className="block text-sm font-medium leading-6 text-gray-900">Lost Solicitation OR #</label>
-                    <input
-                        type="text"
-                        name="lost-soli-or"
-                        id="lost-soli-or"
-                        className="block rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        autoComplete="off"
-                        value={"####"}
-                        disabled
-                    />
-                </section>
-                <section className="flex flex-row pt-5 gap-2 justify-end items-center">
-                    <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
-                        onClick={handleEdit}
-                        onMouseEnter={e => {
-                            e.preventDefault();
-                            setHighlight("#f1f5f9");
-                        }}
-                        onMouseLeave={e => {
-                            e.preventDefault();
-                            setHighlight("#475569");
-                        }}
-                    >
-                        <p>Edit</p>
-                        <AiFillEdit style={{
-                            color: highlight
-                        }} />
-                    </button>
-                    <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded hover:text-slate-100 hover:bg-slate-900"
-                        onMouseEnter={e => {
-                            e.preventDefault();
-                            setAnotherHightlight("#f1f5f9");
-                        }}
-                        onMouseLeave={e => {
-                            setAnotherHightlight("#475569");
-                        }}
-                        type="submit"
-                    >
-                        <p>Save</p>
-                        <AiFillSave style={{
-                            color: anotherHighlight
-                        }} />
-                    </button>
+                <section className="overflow-y-scroll h-96">
+                    {solicitations && solicitations.map((soli, i) => {
+                        return (
+                            <>
+                                <hr className="my-5" />
+                                <SolicitationFillupForm key={i} {...soli} />
+                            </>
+                        );
+                    })}
+
                 </section>
             </section>
-
         </section>
     );
 }

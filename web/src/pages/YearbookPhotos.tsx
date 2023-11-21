@@ -9,23 +9,6 @@ export default function YearbookPhotos() {
     const [results, setResults] = useState<any>();
     const [loading, setLoading] = useState(false);
 
-    const nodes = [
-        {
-            id: '1',
-            course: "Computer Science",
-            familyName: "Nillas",
-            firstName: "Edmund",
-            middleName: "Pulvera",
-        },
-        {
-            id: '2',
-            course: "Computer Science",
-            familyName: "Pecision",
-            firstName: "Nicki",
-            middleName: "Soli",
-        }
-    ];
-
     const [currentNode, setCurrentNode] = useState<any | null>(null);
 
     const onClickCallback = (i: any) => {

@@ -72,7 +72,7 @@ export default function CustomTable({ nodes, columns, mode, onClickCallback, siz
                         <Body>
                             {
                                 tableList.map((item) => (
-                                    <Row className="!cursor-pointer" key={item.id} item={item} onClick={(item, event) => {
+                                    <Row className="!cursor-pointer flex-shrink-0 w-full" key={item.id} item={item} onClick={(item, event) => {
                                         if (onClickCallback !== undefined)
                                             onClickCallback(item);
 
@@ -80,7 +80,7 @@ export default function CustomTable({ nodes, columns, mode, onClickCallback, siz
                                         {Object.entries(item).map(([key, val], i) => {
                                             if (key === "id") return;
                                             return (
-                                                <Cell key={i} className="border-zinc-200 text-base text-center whitespace-normal">
+                                                <Cell key={i} className="text-sm md:text-xs flex-shrink-0 border-zinc-200 text-center whitespace-normal">
                                                     {val as string}
                                                 </Cell>
                                             );
