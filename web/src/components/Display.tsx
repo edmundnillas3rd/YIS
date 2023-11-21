@@ -1,5 +1,5 @@
 interface DisplayProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export default function Display({ children }: DisplayProps) {

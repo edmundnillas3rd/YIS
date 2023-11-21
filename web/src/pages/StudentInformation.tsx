@@ -297,11 +297,11 @@ export default function StudentInformation() {
                     <Container>
                         <Display>
                             {/* Clubs & Organizations */}
-                            {clubAttr && <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />}
+                            {/* {clubAttr && <Dropdown label="Clubs & Organization" items={clubAttr.organizations} />} */}
                             {/* Club Positions */}
-                            {clubAttr && <Dropdown label="Position" items={clubAttr.positions} />}
+                            {/* {clubAttr && <Dropdown label="Position" items={clubAttr.positions} />} */}
                             {/* Year Elected */}
-                            <YearRange label="Year Elected" />
+                            {/* <YearRange label="Year Elected" /> */}
                         </Display>
                         <section className="flex justify-between items-center mt-5">
                             <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>
@@ -326,11 +326,11 @@ export default function StudentInformation() {
 
                         <Display>
                             {/* Awards & Seminars*/}
-                            <Dropdown label="Awards & Seminars" items={[{ id: "1", name: "Sample Seminar Held @ Davao City" }]} />
+                            {/* <Dropdown label="Awards & Seminars" items={[{ id: "1", name: "Sample Seminar Held @ Davao City" }]} /> */}
                             {/* Award Name */}
-                            <Dropdown label="Award Name" items={[{ id: "1", name: "Participant" }]} />
+                            {/* <Dropdown label="Award Name" items={[{ id: "1", name: "Participant" }]} /> */}
                             {/* Year */}
-                            <YearRange label="Year" />
+                            {/* <YearRange label="Year" /> */}
                         </Display>
                         <section className="flex justify-between items-center mt-5">
                             <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>

@@ -1,136 +1,7 @@
 import { Key, SyntheticEvent, useEffect, useState } from "react";
 import { AiFillEdit, AiFillSave, AiOutlinePlus } from "react-icons/ai";
 import Dropdown from "../Dropdown";
-
-import { generateYearRange as years } from "../../utilities/generateYearRange";
-
-interface PositionFormProps {
-    info?: any;
-    club: string;
-    positions: Label[];
-    onSubmitCallbackFn?: (e: SyntheticEvent) => void;
-}
-
-const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFormProps) => {
-
-    const [disabled, setDisabled] = useState<boolean>(true);
-    const [position, setPosition] = useState<string>();
-    const [yearStarted, setYearStarted] = useState<string>();
-    const [yearEnded, setYearEnded] = useState<string>();
-
-    useEffect(() => {
-        if (info) {
-            setPosition(info.club_position_name);
-            setYearStarted(info.club_started);
-            setYearEnded(info.club_ended);
-        }
-    }, []);
-
-    const onHandleSave = async (event: SyntheticEvent) => {
-        event.preventDefault();
-        setDisabled(true);
-
-        if (onSubmitCallbackFn)
-            onSubmitCallbackFn(event);
-        return;
-
-        // TODO: To add clubs route
-        const data = {
-            club,
-            position,
-            yearStarted,
-            yearEnded
-        };
-
-        await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/position-add`, {
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify(data)
-        });
-
-        setDisabled(false);
-    };
-
-    const onHandleEdit = (event: SyntheticEvent) => {
-        event.preventDefault();
-        setDisabled(false);
-    };
-
-    const defaultYear = 2001;
-
-    return (
-        <form >
-            <section className="flex flex-col gap-2">
-                <Dropdown
-                    label="Position"
-                    defaultValue={`${position}`}
-                    items={positions}
-                    disabled={disabled}
-                    callbackDropdownFn={data => {
-                        setPosition(data);
-                    }}
-                />
-                <Dropdown
-                    label="Year Started"
-                    defaultValue={yearStarted}
-                    items={years(defaultYear)}
-                    disabled={disabled}
-                    callbackDropdownFn={data => {
-                        setYearStarted(data.name);
-                    }}
-                />
-                <Dropdown
-                    label="Year Ended"
-                    defaultValue={yearEnded}
-                    items={years(defaultYear + 4)}
-                    disabled={disabled}
-                    callbackDropdownFn={data => {
-                        setYearEnded(data.name);
-                    }}
-                />
-                <section className="flex flex-row gap-2 mt-2 justify-end">
-                    {disabled ? (
-                        <button
-                            className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
-                            onClick={onHandleEdit}
-                        >
-                            <p>Edit</p>
-                            <AiFillEdit style={{
-                                color: "#475569"
-                            }} />
-                        </button>
-                    ) : (
-                        <>
-                            <button
-                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
-                                onClick={(e: SyntheticEvent) => {
-                                    e.preventDefault();
-                                    setDisabled(true);
-
-                                }}
-                                type="submit"
-                            >
-                                <p>Cancel</p>
-                            </button>
-                            <button
-                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
-                                onClick={onHandleSave}
-                                type="submit"
-                            >
-                                <p>Save</p>
-                                <AiFillSave style={{
-                                    color: "#475569"
-                                }} />
-                            </button>
-                        </>
-                    )}
-
-                </section>
-            </section>
-        </form>
-    );
-};
-
+import PositionForm from "./PositionForm";
 export default function StudentInformationPopupModal({ data, onClickCallback }: PopupModalProps) {
     const [clubAttr, setClubAttr] = useState<ClubAttr>();
     const [positionForms, setPositionForms] = useState<React.ReactNode[]>([]);
@@ -167,7 +38,7 @@ export default function StudentInformationPopupModal({ data, onClickCallback }: 
             setClubPositions(clubInfo.userClubPositions);
             setPositionForms(clubInfo.userClubPositions.map((position: any, i: number) => <PositionForm key={i} info={position} club={data} positions={positions} onSubmitCallbackFn={onSubmitHandler} />));
 
-
+            console.log(clubInfo.userClubPositions, data);
         })();
     }, []);
 
@@ -192,14 +63,14 @@ export default function StudentInformationPopupModal({ data, onClickCallback }: 
             return;
         }
 
-        const key = positionForms.length + 100;
-        if (clubAttr && positionForms.length !== 2) {
-            setPositionForms((state) => ([
-                ...state,
-                <PositionForm key={key} club={data} positions={clubAttr.positions} onSubmitCallbackFn={onSubmitHandler} />
-            ]));
-            setSubmitted(false);
-        }
+        // const key = positionForms.length + 100;
+        // if (clubAttr && positionForms.length !== 2) {
+        //     setPositionForms((state) => ([
+        //         ...state,
+        //         <PositionForm key={key} club={data} positions={clubAttr.positions} onSubmitCallbackFn={onSubmitHandler} />
+        //     ]));
+        //     setSubmitted(false);
+        // }
     };
 
     return (
@@ -214,11 +85,11 @@ export default function StudentInformationPopupModal({ data, onClickCallback }: 
                 </section>
                 <section className="flex flex-col h-96 overflow-y-scroll">
 
-                    {
-                        positionForms.map((pf, i) => (
+                    {clubPositions && clubAttr &&
+                        clubPositions.map((pf, i) => (
                             <>
                                 <p className="font-bold mt-5 " key={i + 500} >Position #{i + 1}</p>
-                                {pf}
+                                <PositionForm info={pf} key={i} club={data.id} positions={clubAttr.positions} onSubmitCallbackFn={onSubmitHandler} />
                             </>
                         ))
                     }
