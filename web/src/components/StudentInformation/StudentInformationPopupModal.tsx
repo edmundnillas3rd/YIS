@@ -37,8 +37,6 @@ export default function StudentInformationPopupModal({ data, onClickCallback }: 
 
             setClubPositions(clubInfo.userClubPositions);
             setPositionForms(clubInfo.userClubPositions.map((position: any, i: number) => <PositionForm key={i} info={position} club={data} positions={positions} onSubmitCallbackFn={onSubmitHandler} />));
-
-            console.log(clubInfo.userClubPositions, data);
         })();
     }, []);
 

@@ -9,7 +9,8 @@ import {
     userClubInfo, 
     userClubAward, 
     awardUserAdd, 
-    userAward
+    userAward,
+    clubUserPositionUpdate
 } from "../controllers/club";
 
 router.get("/", index);
@@ -22,5 +23,8 @@ router.get("/user-award", userAward);
 router.post("/club-add", clubUserAdd);
 router.post("/position-add", clubUserPositionAdd);
 router.post("/award-add", awardUserAdd);
+
+// PUT
+router.put("/position-update", clubUserPositionUpdate);
 
 export default router;

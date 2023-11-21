@@ -57,21 +57,21 @@ export async function userClubAward(req: Request, res: Response) {
     let awardRecognitions = awards.rows.reduce((accumulator: string, currentValue: any) => {
         const { awardAttendedName, awardName, awardReceived } = currentValue;
         if (accumulator.length === 0) {
-            return `${awardAttendedName}, ${awardName}, ${awardReceived}`
+            return `${awardAttendedName}, ${awardName}, ${awardReceived}`;
         } else {
-            return `, ${awardAttendedName}, ${awardName}, ${awardReceived}`
+            return `, ${awardAttendedName}, ${awardName}, ${awardReceived}`;
         }
-    }, "")
+    }, "");
 
     const formatData = [...clubRecognitions, awardRecognitions];
 
     const dataPreview = formatData.reduce((accumulator: string, currentValue: any) => {
         if (accumulator.length === 0) {
-            return `${currentValue}`
+            return `${currentValue}`;
         } else {
-            return `${accumulator}, ${currentValue}`
+            return `${accumulator}, ${currentValue}`;
         }
-    }, "")
+    }, "");
 
     res.status(200).json({
         dataPreview
@@ -185,5 +185,25 @@ export async function awardUserAdd(req: Request, res: Response) {
     await query(`
         INSERT INTO award VALUES (?, ?, ?, ?, ?)
     `, [AwardUUID, userID, awardAttendedName, awardName, awardReceived]);
+    res.status(200).end();
+}
+
+export async function clubUserPositionUpdate(req: Request, res: Response) {
+    const {
+        club,
+        position,
+        yearStarted,
+        yearEnded
+    } = req.body;
+    const { userID } = req.session;
+
+    const positionExist = await query("SELECT club_position.club_position_id AS position FROM club_position WHERE club_position.club_position_name = ?", [position])
+
+    if (positionExist.rows === 0) {
+        return res.status(404).end();
+    }
+
+    const clubPositionSQL = "UPDATE club SET club.club_position_id = ?, club.club_started = ?, club.club_ended = ? WHERE club.user_id = ? AND club.club_organization_id = ?"
+    const result = await query(clubPositionSQL, [positionExist.rows[0].position, yearStarted, yearEnded, userID, club])
     res.status(200).end();
 }

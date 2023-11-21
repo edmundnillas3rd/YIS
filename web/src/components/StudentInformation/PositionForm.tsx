@@ -18,19 +18,42 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
     const [yearStarted, setYearStarted] = useState<string>();
     const [yearEnded, setYearEnded] = useState<string>();
 
-    const [positionInfo, setPositionInfo] = useState<any>();
+    const [data, setData] = useState<any>();
 
     useEffect(() => {
-        setPositionInfo({
-            clubPositionName: info.clubPositionName,
-            clubStarted: info.clubStarted,
-            clubEnded: info.clubEnded
+        setData({
+            club,
+            position: info.clubPositionName,
+            yearStarted: info.clubStarted.toString(),
+            yearEnded: info.clubEnded.toString()
         });
-
-        console.log(info);
-        
-
     }, []);
+
+    useEffect(() => {
+
+        if (position) {
+            setData((state: any) => ({
+                ...state,
+                position
+            }));
+            
+        }
+
+        if (yearStarted) {
+            setData((state: any) => ({
+                ...state,
+                yearStarted
+            }));
+        }
+
+        if (yearEnded) {
+            setData((state: any) => ({
+                ...state,
+                yearEnded
+            }));
+        }
+
+    }, [position, yearStarted, yearEnded]);
 
     const onHandleSave = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -38,18 +61,19 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
 
         if (onSubmitCallbackFn)
             onSubmitCallbackFn(event);
-        return;
 
-        // TODO: To add clubs route
-        const data = {
-            club,
-            position,
-            yearStarted,
-            yearEnded
-        };
+        // const data = {
+        //     club,
+        //     position,
+        //     yearStarted: positionInfo.clubStarted,
+        //     yearEnded: positionInfo.clubEnded
+        // };
 
-        await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/position-add`, {
-            method: "POST",
+        await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/position-update`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
             credentials: "include",
             body: JSON.stringify(data)
         });
@@ -68,32 +92,32 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
         <>
             {info && <form >
                 <section className="flex flex-col gap-2">
-                    {positionInfo && <>
+                    {data && <>
                         <Dropdown
                             label="Position"
-                            defaultValue={positionInfo.clubPositionName}
+                            defaultValue={data.position}
                             items={positions}
                             disabled={disabled}
-                            callbackDropdownFn={data => {
-                                setPosition(data);
+                            callbackDropdownFn={d => {
+                                setPosition(d.id);
                             }}
                         />
                         <Dropdown
                             label="Year Started"
-                            defaultValue={positionInfo.clubStarted as string}
+                            defaultValue={data.yearStarted as string}
                             items={defaultYear}
                             disabled={disabled}
-                            callbackDropdownFn={data => {
-                                setYearStarted(data.name);
+                            callbackDropdownFn={d => {
+                                setYearStarted(d);
                             }}
                         />
                         <Dropdown
                             label="Year Ended"
-                            defaultValue={positionInfo.clubEnded as string}
+                            defaultValue={data.yearEnded as string}
                             items={defaultYear}
                             disabled={disabled}
-                            callbackDropdownFn={data => {
-                                setYearEnded(data.name);
+                            callbackDropdownFn={d => {
+                                setYearEnded(d);
                             }}
                         />
                     </>}
@@ -115,7 +139,12 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                                     onClick={(e: SyntheticEvent) => {
                                         e.preventDefault();
                                         setDisabled(true);
-
+                                        setData({
+                                            club,
+                                            position: info.clubPositionName,
+                                            yearStarted: info.clubStarted,
+                                            yearEnded: info.clubEnded
+                                        });
                                     }}
                                     type="submit"
                                 >
