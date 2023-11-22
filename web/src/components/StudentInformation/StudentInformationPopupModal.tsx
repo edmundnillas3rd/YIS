@@ -94,16 +94,14 @@ export default function StudentInformationPopupModal({ data, onClickCallback }: 
                 </section>
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="text-red-400 font-bold text-xs">{errMessage}</p>}
-                    <button className="flex flex-row justify-center items-center gap-3 font-bold border text-slate-600 border-zinc-600 p-1 rounded"
+                    <button className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                         onClick={onClickCallback}>
                         <p>Cancel</p>
                     </button>
-                    <button className="flex flex-row flex-shrink-0 justify-center items-center gap-3 font-bold border text-slate-600 border-zinc-600 p-1 rounded"
+                    <button className="flex flex-row flex-shrink-0 justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                         onClick={onClickAddPosition}>
                         <p>Add Positions</p>
-                        <AiOutlinePlus style={{
-                            color: "#475569"
-                        }} />
+                        <AiOutlinePlus />
                     </button>
                 </section>
             </section>

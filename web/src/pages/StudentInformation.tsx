@@ -330,11 +330,11 @@ export default function StudentInformation() {
                         </Display>
                         <section className="flex justify-between items-center mt-5">
                             <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>
-                            <button className="flex justify-center items-center border border-gray-500 px-2 py-2 rounded gap-2" onClick={(e: SyntheticEvent) => {
+                            <button className="flex justify-center items-center font-bold text-slate-100 bg-red-600 px-2 py-2 rounded gap-2" onClick={(e: SyntheticEvent) => {
                                 setAddAwards(false);
                                 setAddClubs(true);
                             }}>
-                                <AiOutlinePlus style={{ color: "black" }} />
+                                <AiOutlinePlus />
                                 <p>Add Clubs</p>
                             </button>
                         </section>
@@ -359,11 +359,11 @@ export default function StudentInformation() {
                         </Display>
                         <section className="flex justify-between items-center mt-5">
                             <p className="text-slate-600 text-xs font-bold">NOTE: ONLY FIVE (5)</p>
-                            <button className="flex justify-center items-center border border-gray-500 px-2 py-2 rounded gap-2" onClick={(e: SyntheticEvent) => {
+                            <button className="flex justify-center items-center font-bold text-slate-100 bg-red-600 px-2 py-2 rounded gap-2" onClick={(e: SyntheticEvent) => {
                                 setAddClubs(false);
                                 setAddAwards(true);
                             }}>
-                                <AiOutlinePlus style={{ color: "black" }} />
+                                <AiOutlinePlus />
                                 <p>Add Awards</p>
                             </button>
                         </section>

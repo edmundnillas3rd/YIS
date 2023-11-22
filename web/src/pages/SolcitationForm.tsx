@@ -344,7 +344,7 @@ export default function SoliciationFormPage() {
                     <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                         {errorMsg && <p className="text-red-600 font-bold">{errorMsg}</p>}
                         <button
-                            className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                            className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                             type="submit"
                             onClick={onSubmitHandler}
                         >
@@ -353,9 +353,7 @@ export default function SoliciationFormPage() {
                             ) : (
                                 <>
                                     <p>Submit</p>
-                                    <IoSend style={{
-                                        color: "#475569"
-                                    }} />
+                                    <IoSend/>
                                 </>
                             )
                             }

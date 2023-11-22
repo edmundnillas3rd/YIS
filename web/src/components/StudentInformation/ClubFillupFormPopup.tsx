@@ -3,6 +3,8 @@ import { AiFillSave } from "react-icons/ai";
 
 import Dropdown from "../Dropdown";
 import { generateYearRange } from "../../utilities/generateYearRange";
+import Spinner from "../Spinner";
+import { useNavigate } from "react-router-dom";
 
 export default function FillFormPopup({ name, data, onClickCallback }: PopupModalProps) {
     const [errMessage, setErrMessage] = useState<string>("");
@@ -13,6 +15,8 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
     const [yearStarted, setYearStarted] = useState<string>();
     const [yearEnded, setYearEnded] = useState<string>();
     const defaultYear = 2001;
+
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -79,12 +83,9 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
             body: JSON.stringify(data),
         });
 
-        const { error } = await response.json();
-
         if (response.ok) {
             onClickCallback(event);
-        } else if (error) {
-            setErrMessage(error);
+            navigate(0);
         }
 
         setDisabled(false);
@@ -109,20 +110,25 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                         onClick={onClickCallback}
+                        disabled={disabled}
                     >
                         <p>Cancel</p>
                     </button>
                     <button
-                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                        className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600 p-1 rounded"
                         onClick={onHandleSave}
                         type="submit"
+                        disabled={disabled}
                     >
-                        <p>Save</p>
-                        <AiFillSave style={{
-                            color: "#475569"
-                        }} />
+                        {disabled ? <Spinner /> :
+                            (
+                                <>
+                                    <p>Save</p>
+                                    <AiFillSave />
+                                </>
+                            )}
                     </button>
                 </section>
             </form>

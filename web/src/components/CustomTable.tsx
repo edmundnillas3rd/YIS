@@ -80,7 +80,7 @@ export default function CustomTable({ nodes, columns, mode, onClickCallback, siz
                                         {Object.entries(item).map(([key, val], i) => {
                                             if (key === "id") return;
                                             return (
-                                                <Cell key={i} className="text-sm md:text-xs flex-shrink-0 border-zinc-200 text-center whitespace-normal">
+                                                <Cell key={i} className="text-sm flex-shrink-0 border-zinc-200 text-center whitespace-normal">
                                                     {val as string}
                                                 </Cell>
                                             );

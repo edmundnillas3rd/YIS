@@ -99,39 +99,33 @@ const SolicitationFillupForm = ({
         <section className="flex flex-row pt-5 gap-2 justify-end items-center">
             {!edit && (
                 <button
-                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600 border-zinc-600 p-1 rounded"
                     onClick={handleEdit}
                 >
                     <p>Edit</p>
-                    <AiFillEdit style={{
-                        color: "#475569"
-                    }} />
+                    <AiFillEdit />
                 </button>
             )
             }
             {edit && (
                 <>
                 <button
-                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                     onClick={e => {
                         setEdit(false);
                     }}
                     type="submit"
                 >
                     <p>Cancel</p>
-                    <AiFillSave style={{
-                        color: "#475569"
-                    }} />
+                    <AiFillSave />
                 </button>
                 <button
-                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                     onClick={handleSave}
                     type="submit"
                 >
                     <p>Save</p>
-                    <AiFillSave style={{
-                        color: "#475569"
-                    }} />
+                    <AiFillSave />
                 </button>
                 </>
             )

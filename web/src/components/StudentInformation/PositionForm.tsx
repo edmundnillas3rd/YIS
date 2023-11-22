@@ -150,18 +150,16 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                     <section className="flex flex-row gap-2 mt-2 justify-end">
                         {disabled ? (
                             <button
-                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                                 onClick={onHandleEdit}
                             >
                                 <p>Edit</p>
-                                <AiFillEdit style={{
-                                    color: "#475569"
-                                }} />
+                                <AiFillEdit />
                             </button>
                         ) : (
                             <>
                                 <button
-                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600  p-1 rounded"
                                     onClick={(e: SyntheticEvent) => {
                                         e.preventDefault();
                                         setDisabled(true);
@@ -177,24 +175,20 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                                     <p>Cancel</p>
                                 </button>
                                 <button
-                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600 p-1 rounded"
                                     onClick={onHandleDelete}
                                     type="submit"
                                 >
                                     <p>Delete</p>
-                                    <FaTrash style={{
-                                        color: "#475569"
-                                    }} />
+                                    <FaTrash />
                                 </button>
                                 <button
-                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600 p-1 rounded"
                                     onClick={onHandleSave}
                                     type="submit"
                                 >
                                     <p>Save</p>
-                                    <AiFillSave style={{
-                                        color: "#475569"
-                                    }} />
+                                    <AiFillSave />
                                 </button>
                             </>
                         )}

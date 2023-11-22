@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Spinner from "../Spinner";
 
 interface PreviewClubAwardsModalProps {
     onClickCallback?: (data: any) => void;
@@ -20,15 +21,20 @@ export default function PreviewClubAwardsModal({ onClickCallback }: PreviewClubA
     return <section className="flex justify-center items-center absolute z-10 bg-black bg-opacity-70 w-full h-full top-0 right-0">
         <section className="bg-white border border-zinc-400 rounded flex flex-col md:w-1/2 p-10 gap-2">
             <section className="flex justify-center">
-                {preview && (
-                    <p>
-                        {preview}
-                    </p>
-                )}
-                <button 
-                    className="text-black hover:cursor-pointer font-bold"
-                    onClick={onClickCallback}
-                >X</button>
+                {preview ?
+                    (
+                        <>
+                            <p>
+                                {preview}
+                            </p>
+
+                            <button
+                                className="text-black hover:cursor-pointer font-bold"
+                                onClick={onClickCallback}
+                            >X</button>
+                        </>
+                    ) : <Spinner />
+                }
             </section>
         </section>
     </section>;
