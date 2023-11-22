@@ -10,6 +10,9 @@ import SoliciationFormPage from "../pages/SolcitationForm";
 import YearbookPhotos from "../pages/YearbookPhotos";
 import AdminDashboard from "../layouts/AdminDashboard";
 import YearbookReleased from "../pages/YearbookRelease";
+import RegisterAdmin from "../pages/Admin/RegisterAdmin";
+import ManageAdmin from "../pages/Admin/ManageAdmin";
+import SystemConfig from "../pages/Admin/SystemConfig";
 
 const router = createBrowserRouter([
     {
@@ -66,6 +69,18 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <></>,
+            },
+            {
+                path: "register",
+                element: <RegisterAdmin />
+            },
+            {
+                path: "manage",
+                element: <ManageAdmin />
+            },
+            {
+                path: "sys-config",
+                element: <SystemConfig/>
             }
         ]
     }
