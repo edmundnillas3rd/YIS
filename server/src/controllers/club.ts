@@ -128,25 +128,35 @@ export async function userClubInfo(req: Request, res: Response) {
 
 export async function clubUserAdd(req: Request, res: Response) {
     const { userID } = req.session;
-    const { club } = req.body;
+    const { club, position, yearStarted, yearEnded } = req.body;
 
     // find if user already is in a club
     const foundClub = await query(`
         SELECT user.user_id FROM user
         INNER JOIN club
         ON user.user_id = club.user_id
-        WHERE user.user_id = ? AND club.club_organization_id = ?
+        INNER JOIN club_organization
+        ON club.club_organization_id = club_organization.club_organization_id
+        WHERE user.user_id = ? AND club_organization.club_organization_name = ?
     `, [userID, club]);
 
     if (foundClub.rows.length > 0) {
         return res.status(400).json({ error: "Entry already exist!" });
     }
 
+    const clubOrganization = await query("SELECT club_organization_id AS organizationID FROM club_organization WHERE club_organization.club_organization_name = ?", [club])
+    const clubOrganizationID = clubOrganization.rows[0]['organizationID']
+    const clubPosition = await query("SELECT club_position.club_position_id AS positionID FROM club_position WHERE club_position.club_position_name = ?", [position]);
+    const clubPositionID = clubPosition.rows[0]['positionID'];
+
     const ClubUUID = await query("SELECT UUID()");
-    const { rows } = await query("INSERT INTO club VALUES (?, ?, ?)", [
+    const { rows } = await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [
         ClubUUID.rows[0]['UUID()'],
         userID,
-        club,
+        clubOrganizationID,
+        clubPositionID,
+        yearStarted,
+        yearEnded
     ]);
 
     res.status(200).end();
@@ -205,5 +215,13 @@ export async function clubUserPositionUpdate(req: Request, res: Response) {
 
     const clubPositionSQL = "UPDATE club SET club.club_position_id = ?, club.club_started = ?, club.club_ended = ? WHERE club.user_id = ? AND club.club_organization_id = ?"
     const result = await query(clubPositionSQL, [positionExist.rows[0].position, yearStarted, yearEnded, userID, club])
+    res.status(200).end();
+}
+
+// DELETE
+export async function clubUserRemove(req: Request, res: Response) {
+    const { userID } = req.session;
+    const { id } = req.params;
+    const rows = await query("DELETE FROM club WHERE club.user_id = ? AND club.club_organization_id = ?", [userID, id])
     res.status(200).end();
 }

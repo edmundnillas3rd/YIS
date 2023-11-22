@@ -10,7 +10,8 @@ import {
     userClubAward, 
     awardUserAdd, 
     userAward,
-    clubUserPositionUpdate
+    clubUserPositionUpdate,
+    clubUserRemove
 } from "../controllers/club";
 
 router.get("/", index);
@@ -26,5 +27,8 @@ router.post("/award-add", awardUserAdd);
 
 // PUT
 router.put("/position-update", clubUserPositionUpdate);
+
+// DELETE
+router.delete("/:id/user-organization-remove", clubUserRemove);
 
 export default router;
