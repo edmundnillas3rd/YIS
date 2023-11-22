@@ -1,4 +1,4 @@
-export function generateYearRange(startYear: number) {
+export function generateYearRange(startYear?: number) {
     const currentYear = new Date().getFullYear();
     const years = [];
     startYear = startYear || 2000;

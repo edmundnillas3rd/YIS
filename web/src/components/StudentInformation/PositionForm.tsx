@@ -111,7 +111,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
         setDisabled(false);
     };
 
-    const defaultYear = years(2000);
+    const defaultYear = years();
 
     return (
         <>

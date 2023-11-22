@@ -103,8 +103,8 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
                 {clubAttr && <>
                     <Dropdown defaultValue={clubAttr.organizations[0].name} label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} disabled={disabled} />
                     <Dropdown defaultValue={clubAttr.positions[0].name} label="Position" items={clubAttr.positions} callbackDropdownFn={onSelectPosition} disabled={disabled} />
-                    <Dropdown defaultValue={defaultYear.toString()} label="Year Started" items={generateYearRange(defaultYear)} callbackDropdownFn={onSelectStarted} disabled={disabled} />
-                    <Dropdown defaultValue={defaultYear.toString()} label="Year Ended" items={generateYearRange(defaultYear)} callbackDropdownFn={onSelectEnded} disabled={disabled} />
+                    <Dropdown defaultValue={defaultYear.toString()} label="Year Started" items={generateYearRange()} callbackDropdownFn={onSelectStarted} disabled={disabled} />
+                    <Dropdown defaultValue={defaultYear.toString()} label="Year Ended" items={generateYearRange()} callbackDropdownFn={onSelectEnded} disabled={disabled} />
                 </>
                 }
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
