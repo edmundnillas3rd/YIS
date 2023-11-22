@@ -2,6 +2,8 @@ import { SyntheticEvent, useState } from "react";
 import Dropdown from "../Dropdown";
 import { generateYearRange } from "../../utilities/generateYearRange";
 import { AiFillEdit, AiFillSave } from "react-icons/ai";
+import { FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface AwardPopupModalProps {
     data: any;
@@ -19,8 +21,12 @@ export default function AwardPopupModal({ data, onClickCallback }: AwardPopupMod
     const regexInvalidSymbols = "[^\"\'\.\,\$\#\@\!\~\`\^\&\%\*\(\)\-\+\=\\\|\/\:\;\>\<\?]+";
 
     const [disabled, setDisabled] = useState<boolean>(true);
+    const [award, setAward] = useState<Award>({
+        awardID: data.id,
+        ...data
+    });
 
-    const [award, setAward] = useState<Award>(data);
+    const navigate = useNavigate();
 
     const onHandleSave = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -31,6 +37,22 @@ export default function AwardPopupModal({ data, onClickCallback }: AwardPopupMod
 
     const onHandleEdit = (event: SyntheticEvent) => {
         event.preventDefault();
+        setDisabled(false);
+    };
+
+    const onHandleDelete = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        setDisabled(true);
+
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${award.awardID}/user-award-remove`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        if (response.ok) {
+            navigate(0);
+        }
+
         setDisabled(false);
     };
 
@@ -86,7 +108,7 @@ export default function AwardPopupModal({ data, onClickCallback }: AwardPopupMod
                                 onClick={onHandleEdit}
                             >
                                 <p>Edit</p>
-                                <AiFillEdit/>
+                                <AiFillEdit />
                             </button>
                         ) : (
                             <>
@@ -99,6 +121,14 @@ export default function AwardPopupModal({ data, onClickCallback }: AwardPopupMod
                                     type="submit"
                                 >
                                     <p>Cancel</p>
+                                </button>
+                                <button
+                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600 p-1 rounded"
+                                    onClick={onHandleDelete}
+                                    type="submit"
+                                >
+                                    <p>Delete</p>
+                                    <FaTrash />
                                 </button>
                                 <button
                                     className="flex flex-row justify-center items-center gap-3 font-bold text-slate-100 bg-red-600 p-1 rounded"

@@ -11,9 +11,11 @@ import {
     awardUserAdd, 
     userAward,
     clubUserPositionUpdate,
-    clubUserRemove
+    clubUserRemove,
+    awardUserRemove
 } from "../controllers/club";
 
+// GET
 router.get("/", index);
 router.get("/user-club", userClub);
 router.get("/:clubID/user-club-info", userClubInfo);
@@ -30,5 +32,6 @@ router.put("/position-update", clubUserPositionUpdate);
 
 // DELETE
 router.delete("/:id/user-organization-remove", clubUserRemove);
+router.delete("/:id/user-award-remove", awardUserRemove);
 
 export default router;
