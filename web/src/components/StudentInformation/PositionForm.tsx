@@ -23,9 +23,6 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
 
     const [data, setData] = useState<any>();
 
-    console.log(info);
-    
-
     useEffect(() => {
         setData({
             club,
@@ -34,8 +31,6 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
             yearEnded: info.clubEnded.toString()
         });
 
-        console.log(data);
-        
     }, []);
 
     useEffect(() => {
@@ -87,20 +82,33 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
         if (onSubmitCallbackFn)
             onSubmitCallbackFn(event);
 
-        // const data = {
-        //     club,
-        //     position,
-        //     yearStarted: positionInfo.clubStarted,
-        //     yearEnded: positionInfo.clubEnded
-        // };
+        console.log(position);
 
-        await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/position-update`, {
-            method: "PUT",
+
+        const user = {
+            club,
+            position,
+            yearStarted,
+            yearEnded
+        };
+
+        let method = "PUT";
+        let url = "position-update";
+
+        if (info && info.newPosition) {
+            method = "POST";
+            url = "club-add";
+        }
+
+        console.log("User", user);
+
+        await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${url}`, {
+            method: method,
             headers: {
                 "Content-Type": "application/json"
             },
             credentials: "include",
-            body: JSON.stringify(data)
+            body: JSON.stringify(user)
         });
 
         setDisabled(false);
@@ -125,7 +133,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                             items={positions}
                             disabled={disabled}
                             callbackDropdownFn={d => {
-                                setPosition(d.id);
+                                setPosition(d);
                             }}
                         />
                         <Dropdown

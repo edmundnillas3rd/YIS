@@ -43,22 +43,39 @@ export default function StudentInformationPopupModal({ data, onClickCallback }: 
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        fetch(`${import.meta.env.VITE_BASE_URL}/clubs`, {
-            credentials: "include"
-        })
-            .then(response => response.json())
-            .then(data => {
-                setErrMessage("");
-                setSubmitted(true);
-            });
+        setSubmitted(true);
     };
 
-    const onClickAddPosition = (event: SyntheticEvent) => {
+    const onClickAddPosition = async (event: SyntheticEvent) => {
         event.preventDefault();
 
         if (!submitted && positionForms.length > 0) {
             setErrMessage("Fill in the details first before adding new");
             return;
+        }
+
+        // const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/position-add`, {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     credentials: "include",
+        //     body: JSON.stringify(data)
+        // });
+
+        // const { club } = await response.json();
+
+        if (clubPositions && clubPositions.length !== 2) {
+            setClubPositions((state) => [
+                ...state as [],
+                {
+                    clubPositionName: "Member",
+                    clubStarted: 2001,
+                    clubEnded: 2002,
+                    newPosition: true
+                }
+            ]);
+            setSubmitted(false);
         }
 
         // const key = positionForms.length + 100;

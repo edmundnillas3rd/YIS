@@ -16,7 +16,7 @@ export async function userClub(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT club_organization.club_organization_id as club_id, club_organization.club_organization_name as organization, club_position.club_position_name as position, club.club_started as 'Year Started', club.club_ended as 'Year Ended' FROM user
+        SELECT DISTINCT club_organization.club_organization_id as club_id, club_organization.club_organization_name as organization FROM user
         INNER JOIN club
         ON club.user_id = user.user_id
         INNER JOIN club_organization
@@ -146,7 +146,7 @@ export async function clubUserAdd(req: Request, res: Response) {
         return res.status(400).json({ error: "Entry already exist!" });
     }
 
-    const clubOrganization = await query("SELECT club_organization_id AS organizationID FROM club_organization WHERE club_organization.club_organization_name = ?", [club]);
+    const clubOrganization = await query("SELECT club_organization_id AS organizationID FROM club_organization WHERE club_organization.club_organization_name = ? OR club_organization.club_organization_id = ?", [club, club]);
     const clubOrganizationID = clubOrganization.rows[0]['organizationID'];
     const clubPosition = await query("SELECT club_position.club_position_id AS positionID FROM club_position WHERE club_position.club_position_name = ?", [position]);
     const clubPositionID = clubPosition.rows[0]['positionID'];
@@ -171,6 +171,9 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
     const clubOrganizationRow = await query("SELECT club_organization.club_organization_id as club FROM club_organization WHERE club_organization.club_organization_name = ?", [club]);
     const clubOrganizationID = clubOrganizationRow.rows[0].club;
 
+    // const clubPosition = await query("SELECT club_position.club_position_id AS positionID FROM club_position WHERE club_position.club_position_name = ?", [position]);
+    // const clubPositionID = clubPosition.rows[0]['positionID'];
+
     const foundClubBelongTo = await query(`
         SELECT club_position.club_position_id, club_position.club_position_name, user.user_id , CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name) as full_name FROM user
         INNER JOIN club
@@ -185,6 +188,14 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
         return res.status(400).json({ error: "Another entry already exist " });
     }
 
+    const genClubUUID = await query("SELECT UUID()");
+    const ClubUUID = genClubUUID.rows[0]['UUID()'];
+    await query("INSERT INTO club (club_id) VALUES (?)", [ClubUUID])
+
+    // await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [ClubUUID, userID, clubOrganizationID, clubPositionID, yearStarted, yearEnded]);
+    res.status(200).end({
+        club: ClubUUID
+    });
 
 }
 
