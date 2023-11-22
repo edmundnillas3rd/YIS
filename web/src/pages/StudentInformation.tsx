@@ -313,7 +313,7 @@ export default function StudentInformation() {
                 < section className="md:px-10 mt-10 flex flex-col gap-2">
                     <section className="flex justify-between">
                         <h1 className="pt-5 font-bold">Clubs, Seminars, and Achievements</h1>
-                        <button onClick={(e: SyntheticEvent) => {
+                        <button className="font-bold text-slate-100 bg-red-600 rounded px-2 py-1" onClick={(e: SyntheticEvent) => {
                             setDisplayPreview(true);
                         }}>
                             Show Preview
