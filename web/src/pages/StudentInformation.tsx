@@ -2,8 +2,6 @@ import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 
 import MembersTable from "../components/CustomTable";
-import Dropdown from "../components/Dropdown";
-import YearRange from "../components/YearRange";
 import Display from "../components/Display";
 import Container from "../components/Container";
 import PopupModal from "../components/StudentInformation/StudentInformationPopupModal";

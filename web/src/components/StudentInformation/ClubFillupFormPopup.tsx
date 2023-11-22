@@ -2,12 +2,17 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import { AiFillSave } from "react-icons/ai";
 
 import Dropdown from "../Dropdown";
+import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function FillFormPopup({ name, data, onClickCallback }: PopupModalProps) {
     const [errMessage, setErrMessage] = useState<string>("");
     const [disabled, setDisabled] = useState<boolean>(false);
     const [clubAttr, setClubsAttr] = useState<ClubAttr>();
     const [club, setClub] = useState<string>();
+    const [position, setPosition] = useState<string>();
+    const [yearStarted, setYearStarted] = useState<string>();
+    const [yearEnded, setYearEnded] = useState<string>();
+    const defaultYear = 2001;
 
     useEffect(() => {
 
@@ -19,29 +24,50 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
             const o = data.organizations.map(({ club_organization_id, club_organization_name }: Organization) => ({ id: club_organization_id, name: club_organization_name }));
 
             console.log(p);
-            
+
 
             setClubsAttr({
                 positions: p,
                 organizations: o
             });
             console.log(o);
-            
+            setClub(o[0].name);
+
         })();
     }, []);
 
 
     const onSelectClub = async (data: any) => {
+        console.log(data);
+
         setClub(data);
     };
 
-    const onHandleSave = async (event: SyntheticEvent) => {
-        setDisabled(true);
+    const onSelectPosition = async (data: any) => {
+        console.log(data);
+        setPosition(data);
 
+    };
+
+    const onSelectStarted = async (data: any) => {
+        console.log(data);
+        setYearStarted(data);
+    };
+
+    const onSelectEnded = async (data: any) => {
+        console.log(data);
+        setYearEnded(data);
+    };
+
+    const onHandleSave = async (event: SyntheticEvent) => {
         event.preventDefault();
+        setDisabled(true);
 
         const data = {
             club,
+            position,
+            yearStarted,
+            yearEnded
         };
 
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/club-add`, {
@@ -73,7 +99,13 @@ export default function FillFormPopup({ name, data, onClickCallback }: PopupModa
             </section>
 
             <form className="flex flex-col gap-2">
-                {clubAttr && <Dropdown defaultValue={clubAttr.organizations[0].name} label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} disabled={disabled} />}
+                {clubAttr && <>
+                    <Dropdown defaultValue={clubAttr.organizations[0].name} label="Clubs/Organization" items={clubAttr.organizations} callbackDropdownFn={onSelectClub} disabled={disabled} />
+                    <Dropdown defaultValue={clubAttr.positions[0].name} label="Position" items={clubAttr.positions} callbackDropdownFn={onSelectPosition} disabled={disabled} />
+                    <Dropdown defaultValue={defaultYear.toString()} label="Year Started" items={generateYearRange(defaultYear)} callbackDropdownFn={onSelectStarted} disabled={disabled} />
+                    <Dropdown defaultValue={defaultYear.toString()} label="Year Ended" items={generateYearRange(defaultYear)} callbackDropdownFn={onSelectEnded} disabled={disabled} />
+                </>
+                }
                 <section className="flex flex-row pt-5 gap-2 justify-end items-center">
                     {errMessage && <p className="ml-5 text-red-400 text-sm font-bold">{errMessage}</p>}
                     <button

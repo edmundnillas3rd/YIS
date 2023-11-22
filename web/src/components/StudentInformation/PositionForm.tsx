@@ -1,8 +1,10 @@
 import { SyntheticEvent, useState, useEffect } from "react";
+import { FaTrash } from "react-icons/fa";
 import { AiFillEdit, AiFillSave } from "react-icons/ai";
 import Dropdown from "../Dropdown";
 
 import { generateYearRange as years } from "../../utilities/generateYearRange";
+import ConfirmationPopup from "../ConfirmationPopup";
 
 interface PositionFormProps {
     info: any;
@@ -14,11 +16,15 @@ interface PositionFormProps {
 const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFormProps) => {
 
     const [disabled, setDisabled] = useState<boolean>(true);
+    const [displayConfirmation, setDisplayConfirmation] = useState<boolean>(false);
     const [position, setPosition] = useState<string>();
     const [yearStarted, setYearStarted] = useState<string>();
     const [yearEnded, setYearEnded] = useState<string>();
 
     const [data, setData] = useState<any>();
+
+    console.log(info);
+    
 
     useEffect(() => {
         setData({
@@ -27,6 +33,9 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
             yearStarted: info.clubStarted.toString(),
             yearEnded: info.clubEnded.toString()
         });
+
+        console.log(data);
+        
     }, []);
 
     useEffect(() => {
@@ -36,7 +45,7 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                 ...state,
                 position
             }));
-            
+
         }
 
         if (yearStarted) {
@@ -54,6 +63,22 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
         }
 
     }, [position, yearStarted, yearEnded]);
+
+    const onHandleDelete = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        setDisplayConfirmation(true);
+
+        if (onSubmitCallbackFn)
+            onSubmitCallbackFn(event);
+    };
+
+    const onDeleteCallback = async (event: SyntheticEvent) => {
+        if (onSubmitCallbackFn)
+            onSubmitCallbackFn(event);
+
+        setDisplayConfirmation(false);
+    };
 
     const onHandleSave = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -86,10 +111,11 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
         setDisabled(false);
     };
 
-    const defaultYear = years(2001);
+    const defaultYear = years(2000);
 
     return (
         <>
+            {displayConfirmation && <ConfirmationPopup id={data.club} onClickCallback={onDeleteCallback} />}
             {info && <form >
                 <section className="flex flex-col gap-2">
                     {data && <>
@@ -149,6 +175,16 @@ const PositionForm = ({ info, club, positions, onSubmitCallbackFn }: PositionFor
                                     type="submit"
                                 >
                                     <p>Cancel</p>
+                                </button>
+                                <button
+                                    className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
+                                    onClick={onHandleDelete}
+                                    type="submit"
+                                >
+                                    <p>Delete</p>
+                                    <FaTrash style={{
+                                        color: "#475569"
+                                    }} />
                                 </button>
                                 <button
                                     className="flex flex-row justify-center items-center gap-3 font-bold text-slate-600 border border-1 border-zinc-600 p-1 rounded"
