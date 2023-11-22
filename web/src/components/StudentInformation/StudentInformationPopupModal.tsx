@@ -1,7 +1,7 @@
-import { Key, SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { AiFillEdit, AiFillSave, AiOutlinePlus } from "react-icons/ai";
-import Dropdown from "../Dropdown";
 import PositionForm from "./PositionForm";
+
 export default function StudentInformationPopupModal({ data, onClickCallback }: PopupModalProps) {
     const [clubAttr, setClubAttr] = useState<ClubAttr>();
     const [positionForms, setPositionForms] = useState<React.ReactNode[]>([]);

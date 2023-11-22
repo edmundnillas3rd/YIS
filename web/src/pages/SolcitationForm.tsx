@@ -184,6 +184,7 @@ export default function SoliciationFormPage() {
                                     pattern={regexInvalidSymbols}
                                     maxLength={50}
                                     value={currentUser['familyName']}
+                                    disabled
                                     autoComplete="off"
                                 />
                             </section>

@@ -12,6 +12,7 @@ import ClubFillupFormPopup from "../components/StudentInformation/ClubFillupForm
 import AwardsFillupFormPopup from "../components/StudentInformation/AwardsFillupFormPopup";
 import { AuthContext } from "../context/AuthProvider";
 import PreviewClubAwardsModal from "../components/StudentInformation/PreviewClubAwardsModal";
+import AwardPopupModal from "../components/StudentInformation/AwardPopupModal";
 
 interface StudentBioProps {
     student: User;
@@ -214,8 +215,7 @@ export default function StudentInformation() {
         })
             .then(response => response.json())
             .then((data: any) => {
-                const awards = data.rows.map(({ awardID, ...attr }: any) => ({ ...attr }));
-                setAwardData(awards);
+                setAwardData(data.rows);
             });
 
         setLoading(false);
@@ -260,31 +260,48 @@ export default function StudentInformation() {
     };
 
     const [currentNode, setCurrentNode] = useState<any | null>(null);
+    const [currentAwardNode, setCurrentAwardNode] = useState<any | null>(null);
 
     const onClubsClickCallback = (i: any) => {
+        console.log(i);
+        
         setCurrentNode(clubData.clubs.filter((d: any) => d.id === i.id)[0]);
     };
 
+    const onAwardsClickCallback = (i: any) => {
+        console.log(i);
+
+        setCurrentAwardNode(awardData.filter((d: any) => d.id === i.id)[0]);
+    };
+
     const onClickCallbackPopup = (event: SyntheticEvent) => {
+        event.preventDefault();
         setCurrentNode(null);
     };
 
+    const onClickCallbackAwardPopup = (i: any) => {
+        setCurrentAwardNode(null);
+    };
+
     const onClickCallbackAddClub = async (event: SyntheticEvent) => {
+        event.preventDefault();
         setAddClubs(false);
     };
 
     const onClickCallbackAward = async (event: SyntheticEvent) => {
+        event.preventDefault();
         setAddAwards(false);
     };
 
     return (
         <>
             {currentNode && <PopupModal data={currentNode} onClickCallback={onClickCallbackPopup} />}
+            {currentAwardNode && <AwardPopupModal data={currentAwardNode} onClickCallback={onClickCallbackAwardPopup} />}
             {addClubs && <ClubFillupFormPopup name="Club Organization Information" data={undefined} onClickCallback={onClickCallbackAddClub} />}
             {addAwards && <AwardsFillupFormPopup name="Awards & Seminars" data={undefined} onClickCallback={onClickCallbackAward} />}
             {displayPreview && <PreviewClubAwardsModal onClickCallback={(data) => {
                 setDisplayPreview(false);
-            }}/>}
+            }} />}
             <article className="flex flex-col p-10 gap-10">
                 {/* General Information Section */}
                 <section>
@@ -353,7 +370,12 @@ export default function StudentInformation() {
                             </button>
                         </section>
 
-                        {awardData && <MembersTable nodes={awardData} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} />}
+                        {awardData ?
+                            <MembersTable nodes={awardData} columns={["Awards & Seminars", "Award Name / ETC", "Year"]} mode={mode} onClickCallback={onAwardsClickCallback} />
+                            : <section className="flex h-5 justify-center">
+                                <Spinner />
+                            </section>
+                        }
 
                     </Container>
                 </section>

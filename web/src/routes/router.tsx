@@ -9,6 +9,7 @@ import ErrorPage from "../pages/Error";
 import SoliciationFormPage from "../pages/SolcitationForm";
 import YearbookPhotos from "../pages/YearbookPhotos";
 import AdminDashboard from "../layouts/AdminDashboard";
+import YearbookReleased from "../pages/YearbookRelease";
 
 const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
             {
                 path: "yearbook-photos",
                 element: <YearbookPhotos />
+            },
+            {
+                path: "yearbook-released",
+                element: <YearbookReleased />
             }
         ]
     },
