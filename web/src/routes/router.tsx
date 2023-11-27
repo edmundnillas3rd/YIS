@@ -13,6 +13,7 @@ import YearbookReleased from "../pages/YearbookRelease";
 import RegisterAdmin from "../pages/Admin/RegisterAdmin";
 import ManageAdmin from "../pages/Admin/ManageAdmin";
 import SystemConfig from "../pages/Admin/SystemConfig";
+import YearbookStatus from "../pages/YearbookStatus";
 
 const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
             {
                 path: "solicitation",
                 element: <SoliciationFormPage />
+            },
+            {
+                path: "yearbook-status",
+                element: <YearbookStatus />
             },
             {
                 path: "yearbook-photos",
@@ -80,7 +85,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "sys-config",
-                element: <SystemConfig/>
+                element: <SystemConfig />
             }
         ]
     }
