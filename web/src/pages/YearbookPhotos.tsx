@@ -1,7 +1,7 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import StudentTable from "../components/CustomTable";
 import Spinner from "../components/Spinner";
-import { searchStudents } from "../utilities/students";
+import { searchStudentPaid } from "../utilities/students";
 
 export default function YearbookPhotos() {
 
@@ -22,7 +22,7 @@ export default function YearbookPhotos() {
 
         if (searchedData.length < 4) return;
 
-        const response = await searchStudents(searchedData);
+        const response = await searchStudentPaid(searchedData);
 
         const r = response.map(({ id, fullName, collegeName, ...attr }: any) => {
             return {

@@ -8,6 +8,7 @@ import Dropdown from "../components/Dropdown";
 import PopupModal from "../components/SolicitationForm/SolicitationPopupModal";
 import { AuthContext } from "../context/AuthProvider";
 import Spinner from "../components/Spinner";
+import { searchStudentRecipient, searchStudents } from "../utilities/students";
 
 export default function SoliciationFormPage() {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
@@ -19,6 +20,7 @@ export default function SoliciationFormPage() {
     const [middleName, setMiddleName] = useState<string | null>(null);
     const [suffix, setSuffix] = useState<string | null>("");
     const [solicitationNumber, setSolicitationNumber] = useState<string>();
+    const [searchName, setSearch] = useState<string>();
 
     // Care of
     const [receiverFirstName, setReceiverFirstName] = useState<string | null>(null);
@@ -43,9 +45,10 @@ export default function SoliciationFormPage() {
         }
 
         (async () => {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation`);
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/student-unreturned`);
             const data = await response.json();
-
+            console.log(data);
+            
             setNodes(data.rows);
         })();
     }, []);
@@ -144,6 +147,45 @@ export default function SoliciationFormPage() {
             setErrorMsg("Fill up all the required fields");
             return;
         }
+    };
+
+    const onSubmitSearchHandler = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        setErrorMsg("");
+        setLoading(true);
+
+        if (searchName) {
+            const response = await searchStudentRecipient(searchName);
+
+            const r = response.map(({ id, fullName, collegeName, ...attr }: any) => {
+                return {
+                    id,
+                    college: collegeName,
+                    name: fullName
+                };
+            });
+
+            if (response === undefined) {
+                setErrorMsg("Student hasn't claimed a solicitation form yet");
+                setNodes([]);
+
+                console.log(r.error);
+                
+            }
+
+            console.log(r);
+            setNodes(r);
+
+
+        }
+
+        setLoading(false);
+    };
+
+    const onChangeSearch = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.target as HTMLInputElement;
+        setSearch(target.value);
     };
 
     const [currentNode, setCurrentNode] = useState<any | null>(null);
@@ -353,7 +395,7 @@ export default function SoliciationFormPage() {
                             ) : (
                                 <>
                                     <p>Submit</p>
-                                    <IoSend/>
+                                    <IoSend />
                                 </>
                             )
                             }
@@ -362,15 +404,29 @@ export default function SoliciationFormPage() {
                 </Container>
                 <h3 className="font-bold mt-5 mb-3">Student Recipients</h3>
                 <Container>
-                    <form className="relative flex flex-row items-center" action="get">
-                        <input className="block w-full rounded-md border-0 pr-10 py-1.5 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" type="text" name="student-recipient" id="student-recipient" placeholder="Search the name of the student" />
+                    <form className="relative flex flex-row items-center" action="POST" onSubmit={onSubmitSearchHandler}>;
+                        <input
+                            className="block w-full rounded-md border-0 pr-10 py-1.5 text-gray-900 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            type="text"
+                            name="student-recipient"
+                            id="student-recipient"
+                            placeholder="Search the name of the student"
+                            onChange={onChangeSearch}
+                        />
                         <i className="absolute right-40 pr-4"><AiOutlineSearch style={{ color: "black", width: `16px`, height: '16px' }} /></i>
                         <section className="flex flex-row items-center gap-5">
                             <input className="ml-3" type="checkbox" name="toggle-students" id="toggle-students" />
                             <label className="font-bold text-center text-xs md:text-base" htmlFor="toggle-students">Show Unreturned</label>
                         </section>
                     </form>
-                    {nodes && <StudentTable nodes={nodes} columns={["COURSE", "NAME", "SOLI #", "CARE OF", "CARE OF RELATION", "SOLICITATION STATUS", "DATE RETURNED", "AMOUNT PAID", "OR #", "PAYMENT STATUS"]} mode="default" onClickCallback={onClickCallback} />}
+                    {loading ?
+                        <Spinner /> :
+                        <section className="flex flex-row justify-center">
+                            {
+                                nodes && <StudentTable nodes={nodes} columns={["COURSE", "NAME", "SOLICITATION RETURNED STATUS", ]} mode="default" onClickCallback={onClickCallback} />
+                            }
+                        </section>
+                    }
                 </Container>
             </article>
         </>

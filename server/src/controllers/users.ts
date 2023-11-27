@@ -13,6 +13,21 @@ export async function index(req: Request, res: Response) {
     });
 }
 
+export async function getStudentUnreturned(req: Request, res: Response) {
+    const { rows } = await query(`
+        SELECT DISTINCT user.user_id as id, user.user_first_name, user.user_family_name, user.user_middle_name, solicitation_returned_status.status_name FROM solicitation_form
+        INNER JOIN user
+        ON solicitation_form.user_id = user.user_id
+        INNER JOIN solicitation_returned_status
+        ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id 
+        WHERE solicitation_returned_status.status_name = 'UNRETURNED'
+    `);
+
+    res.status(200).json({
+        rows
+    });
+}
+
 export async function getCurrentLogUser(req: Request, res: Response) {
     if (!req.session.authenticated) {
         return res.status(404).json({
@@ -172,7 +187,7 @@ export async function logoutUser(req: Request, res: Response) {
 export async function searchStudent(req: Request, res: Response) {
     const { fullName } = req.body;
     const { rows } = await query(`
-        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus FROM user
+        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus, solicitation_form.solicitation_number as solicNum, solicitation_form.solicitation_or_number as OrNum FROM user
         INNER JOIN college
         ON user.user_college = college.college_id
 		INNER JOIN role
@@ -187,10 +202,107 @@ export async function searchStudent(req: Request, res: Response) {
     `, [fullName, fullName, fullName]);
 
     if (rows.length === 0) {
-        return res.status(200).end();
+        return res.status(400).end();
     }
 
     res.status(200).json({
         results: rows
-    })
+    });
+}
+
+export async function searchStudentRecipient(req: Request, res: Response) {
+    const { fullName } = req.body;
+
+    const { rows } = await query(`
+        SELECT DISTINCT
+        course.course_name AS course, 
+        CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
+        solicitation_form.solicitation_number as soliNumber,
+        CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix) AS careOfFullName,
+        care_of.relation_status AS relationStatus,
+        solicitation_returned_status.status_name AS returnedStatus, 
+        DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m-%d-%Y') AS dateReturned,
+        solicitation_form.solicitation_yearbook_payment as paymentAmount,
+        solicitation_form.solicitation_or_number as ORnumber,
+        solicitation_payment_status.status_name AS paymentStatus
+        FROM user
+        INNER JOIN college
+        ON user.user_college = college.college_id
+        INNER JOIN role
+        ON user.role_id = role.role_id
+        INNER JOIN course
+        ON user.course_id = course.course_id
+        LEFT JOIN solicitation_form
+        ON user.user_id = solicitation_form.user_id
+        LEFT JOIN care_of
+        ON solicitation_form.user_id = care_of.user_id
+        LEFT JOIN solicitation_payment_status
+        ON solicitation_form.solicitation_payment_status_id = solicitation_payment_status.solicitation_payment_status_id 
+        LEFT JOIN solicitation_returned_status
+        ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id
+        WHERE (SOUNDEX(?) LIKE SOUNDEX(user.user_first_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_middle_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_family_name)) AND solicitation_payment_status.status_name = 'FULLY PAID'
+    `, [fullName, fullName, fullName]);
+
+    if (rows.length === 0) {
+        return res.status(400).json({
+            error: "Student has not claimed their solicitation form"
+        });
+    }
+
+    res.status(200).json({
+        results: rows
+    });
+}
+
+export async function searchStudentPaid(req: Request, res: Response) {
+    const { fullName } = req.body;
+
+    const { rows } = await query(`
+        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus, solicitation_form.solicitation_number as solicNum, solicitation_form.solicitation_or_number as OrNum  FROM user
+        INNER JOIN college
+        ON user.user_college = college.college_id
+        INNER JOIN role
+        ON user.role_id = role.role_id 
+        LEFT JOIN solicitation_form
+        ON user.user_id = solicitation_form.user_id
+        LEFT JOIN solicitation_payment_status
+        ON solicitation_form.solicitation_payment_status_id = solicitation_payment_status.solicitation_payment_status_id 
+        LEFT JOIN solicitation_returned_status
+        ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id
+        WHERE (SOUNDEX(?) LIKE SOUNDEX(user.user_first_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_middle_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_family_name)) AND solicitation_payment_status.status_name = 'FULLY PAID'
+    `, [fullName, fullName, fullName]);
+
+    if (rows.length === 0) {
+        return res.status(400).end();
+    }
+
+    res.status(200).json({
+        results: rows
+    });
+}
+
+export async function searchStudentUnreturned(req: Request, res: Response) {
+    const { fullName } = req.body;
+    const { rows } = await query(`
+        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus, solicitation_form.solicitation_number as solicNum, solicitation_form.solicitation_or_number as OrNum  FROM user
+        INNER JOIN college
+        ON user.user_college = college.college_id
+        INNER JOIN role
+        ON user.role_id = role.role_id 
+        LEFT JOIN solicitation_form
+        ON user.user_id = solicitation_form.user_id
+        LEFT JOIN solicitation_payment_status
+        ON solicitation_form.solicitation_payment_status_id = solicitation_payment_status.solicitation_payment_status_id 
+        LEFT JOIN solicitation_returned_status
+        ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id
+        WHERE (SOUNDEX(?) LIKE SOUNDEX(user.user_first_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_middle_name) OR SOUNDEX(?) LIKE SOUNDEX(user.user_family_name)) AND solicitation_returned_status.status_name = 'UNRETURNED'
+    `, [fullName, fullName, fullName]);
+
+    if (rows.length === 0) {
+        return res.status(400).end();
+    }
+
+    res.status(200).json({
+        results: rows
+    });
 }
