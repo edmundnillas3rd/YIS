@@ -22,11 +22,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             console.log(data);
             setCurrentUser(data as any);
 
-            if (data) {
-                navigate("/home");
-            } else {
+            if (!data)
                 navigate("/");
-            }
         })();
     }, []);
 

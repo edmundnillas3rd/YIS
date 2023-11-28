@@ -5,6 +5,7 @@ import Auth from "../pages/Auth";
 import Home from "../pages/Home";
 import Colleges from "../pages/Colleges";
 import ErrorPage from "../pages/Error";
+import StudentInformation from "../pages/StudentInformation";
 
 const router = createBrowserRouter([
     {
@@ -30,11 +31,18 @@ const router = createBrowserRouter([
                 path: "colleges",
                 element: <Colleges />,
             },
+
         ]
     },
     {
-        path: "/division",
-        element: <Layout />
+        path: "/colleges",
+        element: <Layout />,
+        children: [
+            {
+                path: ":college",
+                element: <StudentInformation />
+            }
+        ]
     }
 ]);
 
