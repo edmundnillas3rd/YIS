@@ -81,6 +81,7 @@ export default function Auth() {
                     <div className="mt-4">
                         <Button
                             type="submit"
+                            maxWidth={true}
                         >
                             {loading ? "Loading..." : "Sign in"}
                         </Button>
