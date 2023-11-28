@@ -1,5 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/globals/Button";
 
 export default function Auth() {
     const [email, setEmail] = useState<string | null>(null);
@@ -75,12 +76,16 @@ export default function Auth() {
                         }}
                     />
                     <div className="mt-4">
-                        <button
+                        <Button
                             type="submit"
+                        >
+                            {loading ? "Loading..." : "Sign in"}
+                        </Button>
+                        {/* <button
                             className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                         >
                             {loading ? "Loading..." : "Sign in"}
-                        </button>
+                        </button> */}
                     </div>
                     <div className="mt-2 text-sm">
                         <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
