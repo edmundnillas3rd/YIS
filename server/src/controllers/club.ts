@@ -118,12 +118,12 @@ export async function userAward(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT award.award_id AS awardID, award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award
+        SELECT award.award_id AS id, award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award
         WHERE award.user_id = ?;
     `, [userID]);
 
     res.status(200).json({
-        rows
+        awards: rows
     });
 }
 

@@ -6,3 +6,10 @@ interface User {
     suffix: string;
     claimStatus?: string;
 }
+
+interface ModalProps {
+    isOpen: boolean;
+    hasCloseBtn?: boolean;
+    onClose?: () => void;
+    children?: React.ReactNode;
+};

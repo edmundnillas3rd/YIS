@@ -1,8 +1,17 @@
-import { useState } from "react";
-import Button from "../globals/Button";
+import { useEffect, useState } from "react";
+import Button from "../Globals/Button";
 
 export default function ({ data, children, ...otherProps }: any) {
     const [values, setValues] = useState(Object.values(data));
+    console.log(data);
+
+
+    useEffect(() => {
+        // Should remove the 
+        setValues(({ id, ...otherAttr }: any) => ({
+            ...otherAttr
+        }));
+    }, [values]);
 
     return (
         <section className="flex flex-row flex-auto gap-1 bg-slate-50 p-2 rounded drop-shadow-md">

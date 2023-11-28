@@ -1,6 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/globals/Button";
+import Button from "../components/Globals/Button";
 
 export default function Auth() {
     const [email, setEmail] = useState<string | null>(null);

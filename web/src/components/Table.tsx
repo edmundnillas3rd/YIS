@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Row from "./Table/Row";
-import Button from "./globals/Button";
+import Button from "./Globals/Button";
 
 interface TableProps {
     columns: any[];
