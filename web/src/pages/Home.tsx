@@ -63,14 +63,10 @@ export default function Main() {
             setDisable(false);
         }
 
-        console.log(currentUser);
+        if (currentUser)
+            console.log(currentUser);
 
     }, []);
-
-    useEffect(() => {
-        console.log(currentUser);
-
-    }, [currentUser]);
 
     const images = [
         "/assets/cjc-logo.png",

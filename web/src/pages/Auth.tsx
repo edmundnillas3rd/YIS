@@ -11,8 +11,8 @@ export default function Auth() {
     const navigate = useNavigate();
 
     const onSubmitHandler = async (e: SyntheticEvent) => {
-        setLoading(true);
         e.preventDefault();
+        setLoading(true);
 
         const data = {
             email,
@@ -31,8 +31,11 @@ export default function Auth() {
         if (response.ok) {
             navigate("/home");
         } else {
-            setErrMessage("Invalid email and password, please try again.");
-            setLoading(false);
+            const { error } = await response.json();
+            if (error) {
+                setErrMessage(error);
+                setLoading(false);
+            }
         }
     };
 

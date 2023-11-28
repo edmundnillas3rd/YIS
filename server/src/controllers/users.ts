@@ -15,11 +15,13 @@ export async function index(req: Request, res: Response) {
 
 export async function getStudentUnreturned(req: Request, res: Response) {
     const { rows } = await query(`
-        SELECT DISTINCT user.user_id as id, user.user_first_name, user.user_family_name, user.user_middle_name, solicitation_returned_status.status_name FROM solicitation_form
+        SELECT DISTINCT user.user_id as id, course.course_name as courseName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, solicitation_returned_status.status_name FROM solicitation_form
         INNER JOIN user
         ON solicitation_form.user_id = user.user_id
         INNER JOIN solicitation_returned_status
         ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id 
+        INNER JOIN course
+        ON course.course_id = user.course_id
         WHERE solicitation_returned_status.status_name = 'UNRETURNED'
     `);
 
@@ -160,7 +162,7 @@ export async function loginUserStudent(req: Request, res: Response) {
     `, [email]);
 
     if (user.rows.length === 0) {
-        return res.status(401).json({ message: "Invalid user email and password" });
+        return res.status(401).json({ error: "Invalid user email and password" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.rows[0].password);

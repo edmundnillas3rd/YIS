@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { getCurrentUser } from "../utilities/user";
 
 type IAuthContext = [undefined, React.Dispatch<React.SetStateAction<undefined>>];
 export const AuthContext = createContext<IAuthContext>([[] as any, () => null]);
@@ -14,18 +14,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(`${import.meta.env.VITE_BASE_URL}/users/user-current`, {
-            credentials: "include"
-        })
-            .then(response => response.json())
-            .then(data => {
-                const { userData } = data;
-                if (userData) {
-                    setCurrentUser(userData);
-                } else {
-                    navigate("/");
-                }
-            });
+
+        (async () => {
+            const response = await getCurrentUser();
+
+            const [data] = await Promise.all([response]);
+            console.log(data);
+            setCurrentUser(data as any);
+
+            if (data) {
+                navigate("/home");
+            } else {
+                navigate("/");
+            }
+        })();
     }, []);
 
 
