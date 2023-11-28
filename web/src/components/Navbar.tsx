@@ -4,7 +4,6 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 
 import cjcLogo from "/assets/cjc-logo.png";
-import Spinner from "./Spinner";
 
 export default function Navbar() {
     const [title, setTitle] = useState("");
@@ -78,7 +77,7 @@ export default function Navbar() {
 
             <button className="ml-auto" onClick={onClickHandler} disabled={loading} >
                 {loading ? (
-                    <Spinner />
+                    "Loading..."
                 ) : (
                     <FiLogOut />
                 )}
