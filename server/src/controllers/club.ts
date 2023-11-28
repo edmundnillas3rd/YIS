@@ -16,7 +16,7 @@ export async function userClub(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT DISTINCT club_organization.club_organization_id as club_id, club_organization.club_organization_name as organization FROM user
+        SELECT DISTINCT club_organization.club_organization_id as clubID, club_organization.club_organization_name as organization FROM user
         INNER JOIN club
         ON club.user_id = user.user_id
         INNER JOIN club_organization
@@ -47,7 +47,7 @@ export async function userClubInfo(req: Request, res: Response) {
     });
 }
 
-export async function userClubAward(req: Request, res: Response) {
+export async function userPreview(req: Request, res: Response) {
     const { userID } = req.session;
 
     const sql = `
@@ -118,7 +118,7 @@ export async function userAward(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT award.award_id AS id, award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award
+        SELECT award.award_id AS awardID, award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award
         WHERE award.user_id = ?;
     `, [userID]);
 

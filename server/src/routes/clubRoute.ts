@@ -7,7 +7,7 @@ import {
     clubUserAdd, 
     clubUserPositionAdd, 
     userClubInfo, 
-    userClubAward, 
+    userPreview, 
     awardUserAdd, 
     userAward,
     clubUserPositionUpdate,
@@ -19,7 +19,7 @@ import {
 router.get("/", index);
 router.get("/user-club", userClub);
 router.get("/:clubID/user-club-info", userClubInfo);
-router.get("/user-club-award", userClubAward);
+router.get("/user-preview", userPreview);
 router.get("/user-award", userAward);
 
 // POST
