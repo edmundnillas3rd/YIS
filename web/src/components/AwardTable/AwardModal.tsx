@@ -4,6 +4,7 @@ import { Input, Button } from "../Globals/index";
 import { useNavigate } from "react-router-dom";
 import { Dropdown } from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";
+import Spinner from "../Spinner";
 
 export default function ({
     isOpen,
@@ -15,6 +16,7 @@ export default function ({
     const [awardName, setAwardName] = useState<string>();
     const [awardReceived, setAwardReceived] = useState<string>();
     const [errMessage, setErrMessage] = useState<string>();
+    const [loading, setLoading] = useState<boolean>(false);
     const [years, setYears] = useState<number[]>();
     const navigate = useNavigate();
 
@@ -51,6 +53,7 @@ export default function ({
 
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
+        setLoading(true);
         console.log(awardAttendedName, awardName, awardReceived);
 
         if (awardAttendedName && awardName && awardReceived) {
@@ -71,6 +74,7 @@ export default function ({
 
             if (response.ok) {
                 console.log("Adding new Award success!");
+                setLoading(true);
                 navigate(0);
             }
         } else {
@@ -106,7 +110,9 @@ export default function ({
                 />
                 <section className="flex flex-row justify-end items-center gap-5">
                     {errMessage && <p className="font-bold text-red-600">{errMessage}</p>}
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" disabled={loading}>
+                        {loading ? <Spinner/> : "Submit"}
+                    </Button>
                 </section>
             </form>
 

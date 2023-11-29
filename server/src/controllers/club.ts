@@ -235,6 +235,7 @@ export async function clubUserPositionUpdate(req: Request, res: Response) {
 
 export async function clubUserAwardUpdate(req: Request, res: Response) {
     const { userID } = req.session;
+    const { id } = req.params;
     const { awardAttendedName, awardName, awardReceived } = req.body;
 
     await query(`
@@ -242,8 +243,8 @@ export async function clubUserAwardUpdate(req: Request, res: Response) {
         SET award_attended_name = ?,
         award_name = ?,
         award_received = ?
-        WHERE user_id = ?
-    `, [awardAttendedName, awardName, awardReceived, userID]);
+        WHERE user_id = ? AND award_id = ?
+    `, [awardAttendedName, awardName, awardReceived, userID, id]);
     res.status(200).end();
 }
 

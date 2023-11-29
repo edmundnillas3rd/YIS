@@ -13,7 +13,7 @@ export default function Navbar() {
     const navigate = useNavigate();
 
     const onClickHandler = async (e: SyntheticEvent) => {
-        setLoading(true)
+        setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
             method: "POST"
         });
@@ -24,7 +24,7 @@ export default function Navbar() {
         }
     };
 
-    useEffect(() => {
+    const parseURL = () => {
         const url = window.location.href;
         const parseUrl = url.split("/");
 
@@ -46,14 +46,17 @@ export default function Navbar() {
 
                     setDisplay(true);
                     break;
-                case "division":
+                case "colleges":
                     const name = parseUrl[parseUrl.length - 1].toUpperCase();
                     setTitle(name);
                     setDisplay(true);
                     break;
             }
         }
-
+    };
+    
+    useEffect(() => {
+        parseURL();
     }, [window.location.href]);
 
     return (

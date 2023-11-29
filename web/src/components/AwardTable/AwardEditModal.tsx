@@ -16,7 +16,7 @@ export default function ({
     onClose,
     data
 }: ModalProps) {
-    const [award, setAward] = useState(data);
+    const [id, setID] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [disable, setDisable] = useState<boolean>(true);
     const [years, setYears] = useState<number[]>();
@@ -36,24 +36,34 @@ export default function ({
     }, []);
 
     useEffect(() => {
-        setAward(data);
+        if (data) {
+            setID(data['id']);
+            setAwardAttendedName(data['awardAttendedName']);
+            setAwardName(data['awardName']);
+            setAwardReceived(data['awardReceived']);
+            console.log(typeof awardReceived);
+
+        }
     }, [data]);
 
     const onClickSave = async (event: SyntheticEvent) => {
         event.preventDefault();
         setLoading(true);
         setDisable(true);
-        if (award && awardAttendedName && awardName && awardReceived) {
-            const data = {
+        if (awardAttendedName && awardName && awardReceived) {
+            const award = {
                 awardAttendedName,
                 awardName,
                 awardReceived
             };
 
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${award['id']}/award-update`, {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/award-update`, {
                 method: "PUT",
                 credentials: "include",
-                body: JSON.stringify(data)
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(award)
             });
 
             if (response.ok) {
@@ -87,7 +97,7 @@ export default function ({
         setDisable(true);
 
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${award['id']}/user-award-remove`, {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/user-award-remove`, {
             method: "DELETE",
             credentials: "include"
         });
@@ -111,71 +121,71 @@ export default function ({
             hasCloseBtn={hasCloseBtn}
             onClose={onClose}
         >
-            {award && (
-                <section className="flex flex-col gap-2">
-                    <Input
-                        title="Award & Seminar"
-                        id="award-attended"
-                        value={award['awardAttendedName']}
-                        onChange={onChangeHandler}
-                        disabled={disable}
-                    />
-                    <Input
-                        title="Award/ETC"
-                        id="award-name"
-                        value={award['awardName']}
-                        onChange={onChangeHandler}
-                        disabled={disable}
-                    />
-                    {/* <Input
+            <section className="flex flex-col gap-2">
+                <Input
+                    title="Award & Seminar"
+                    id="award-attended"
+                    value={awardAttendedName}
+                    onChange={onChangeHandler}
+                    disabled={disable}
+                />
+                <Input
+                    title="Award/ETC"
+                    id="award-name"
+                    value={awardName}
+                    onChange={onChangeHandler}
+                    disabled={disable}
+                />
+                {/* <Input
                         title="Award Received"
                         id="award-received"
                         value={award['awardReceived']}
                         onChange={onChangeHandler}
                         disabled={disable}
                     /> */}
-                    <Dropdown
-                        label="Award Received"
-                        name="award-received"
-                        defaultValue={award['awardReceived']}
-                        disabled={disable}
-                        datas={years}
-                        onChange={onChangeHandler}
-                    />
-                    {!loading ? (
-                        <Toggle name="Edit" icon={<MdEdit />} onChange={onEditChange}>
-                            {(!confirmSave && !confirmDelete) && (
-                                <>
-                                    <Button onClick={(e: any) => { setConfirmDelete(true); }}>
-                                        Delete
-                                        <MdDelete />
-                                    </Button>
-                                    <Button onClick={(e: any) => { setConfirmSave(true); }}>
-                                        Save
-                                        <FaSave />
-                                    </Button>
-                                </>
-                            )}
-                            {confirmSave && (
-                                <Confirm
-                                    onConfirm={onClickSave}
-                                    onCancel={(e: any) => setConfirmSave(false)}
-                                />
-                            )}
-                            {confirmDelete && (
-                                <Confirm
-                                    onConfirm={onClickDelete}
-                                    onCancel={(e: any) => setConfirmDelete(false)}
-                                />
-                            )}
-                        </Toggle>
-                    ) : (
+                <Dropdown
+                    label="Award Received"
+                    name="award-received"
+                    value={awardReceived}
+                    disabled={disable}
+                    datas={years}
+                    onChange={onChangeHandler}
+                />
+                {!loading ? (
+                    <Toggle name="Edit" icon={<MdEdit />} onChange={onEditChange}>
+                        {(!confirmSave && !confirmDelete) && (
+                            <>
+                                <Button onClick={(e: any) => { setConfirmDelete(true); }}>
+                                    Delete
+                                    <MdDelete />
+                                </Button>
+                                <Button onClick={(e: any) => { setConfirmSave(true); }}>
+                                    Save
+                                    <FaSave />
+                                </Button>
+                            </>
+                        )}
+                        {confirmSave && (
+                            <Confirm
+                                onConfirm={onClickSave}
+                                onCancel={(e: any) => setConfirmSave(false)}
+                            />
+                        )}
+                        {confirmDelete && (
+                            <Confirm
+                                onConfirm={onClickDelete}
+                                onCancel={(e: any) => setConfirmDelete(false)}
+                            />
+                        )}
+                    </Toggle>
+                ) : (
+                    <Button disabled={true}>
                         <Spinner />
-                    )
-                    }
+                    </Button>
+                )
+                }
 
-                </section>
-            )}
+            </section>
         </Modal>
     );
 }

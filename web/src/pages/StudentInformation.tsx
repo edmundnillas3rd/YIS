@@ -31,6 +31,11 @@ export default function () {
         })();
     }, []);
 
+    useEffect(() => {
+        console.log("Current Node", currentNode);
+        
+    }, [currentNode]);
+
     // For organization table
     const orgDatas = Array.from({ length: 5 }, (v, i) => ({
         id: i,
