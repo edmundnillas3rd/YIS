@@ -1,40 +1,39 @@
-import { useEffect, useState } from "react";
-import Button from "../Globals/Button";
+import { SyntheticEvent, useEffect, useState } from "react";
+import { Button } from "../Globals/index";
 
-export default function ({ data, children, ...otherProps }: any) {
+export default function ({ data, children, onClickCallback, ...otherProps }: any) {
     const [values, setValues] = useState(Object.values(data));
-    console.log(data);
-
 
     useEffect(() => {
-        // Should remove the 
-        setValues(({ id, ...otherAttr }: any) => ({
-            ...otherAttr
-        }));
-    }, [values]);
+
+        // console.log(values.slice(1));
+        // Remove the the first element which is the id
+        setValues(values.slice(1));
+    }, []);
+
+    const onClick = (event: SyntheticEvent) => {
+        event.preventDefault();
+        if (onClickCallback)
+            onClickCallback(data);
+    };
 
     return (
-        <section className="flex flex-row flex-auto gap-1 bg-slate-50 p-2 rounded drop-shadow-md">
-            <section
-                className="flex flex-row flex-auto gap-1 p-2"
+        <tbody className="bg-slate-50 p-2 rounded drop-shadow-md">
+            <tr
+                className="p-2"
                 {...otherProps}
             >
                 {
-                    values.map((value: any, index) => {
-
-                        if (typeof value === "number") return <></>;
-
-                        return (
-                            <p className="flex-auto" key={index}>
-                                {value}
-                            </p>
-                        );
-                    })
+                    values.map((value: any, index) => (
+                        <td className="text-center" key={index}>
+                            {value}
+                        </td>
+                    ))
                 }
-            </section>
-            <Button>
-                Edit
-            </Button>
-        </section>
+                <Button onClick={onClick}>
+                    Edit
+                </Button>
+            </tr>
+        </tbody>
     );
 }

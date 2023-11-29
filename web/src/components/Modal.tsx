@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Button from "./Globals/Button";
+import { Button } from "./Globals/index";
 
 export default function ({ isOpen, hasCloseBtn, onClose, children }: ModalProps) {
     const modalRef = useRef<HTMLDialogElement | null>(null);
@@ -35,11 +35,13 @@ export default function ({ isOpen, hasCloseBtn, onClose, children }: ModalProps)
     };
 
     return (
-        <dialog className="p-5 rounded" ref={modalRef} onKeyDown={handleKeyDown} >
+        <dialog className="p-5 md:w-8/12 rounded" ref={modalRef} onKeyDown={handleKeyDown} >
             {hasCloseBtn && (
-                <Button onClick={handleCloseModal}>
-                    Close
-                </Button>
+                <section className="flex flex-auto flex-row justify-end">
+                    <Button onClick={handleCloseModal}>
+                        Close
+                    </Button>
+                </section>
             )}
             {children}
         </dialog>

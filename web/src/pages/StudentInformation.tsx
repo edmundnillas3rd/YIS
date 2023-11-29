@@ -17,16 +17,17 @@ export default function () {
         (async () => {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-award`, {
                 credentials: "include"
-            })
+            });
 
             const { awards } = await response.json();
 
             if (awards) {
-                setAwardsData(awards)
+                setAwardsData(awards);
+                console.log(awards);
             }
-                
-        })()
-    }, [])
+
+        })();
+    }, []);
 
     // For organization table
     const orgDatas = Array.from({ length: 5 }, (v, i) => ({
@@ -59,13 +60,11 @@ export default function () {
 
     };
 
-    const onClickAddOrganization = async (event: SyntheticEvent) => {
-        event.preventDefault();
+    const onClickAddOrganization = async (data: any) => {
         console.log("Add new organization");
     };
 
-    const onClickAddAward = async (event: SyntheticEvent) => {
-        event.preventDefault();
+    const onClickAddAward = async (data: any) => {
         console.log("Add new award");
         setDisplayAwardForm(true);
     };
@@ -123,13 +122,13 @@ export default function () {
                 )}
                 {/* Organization */}
                 <section className="flex flex-row gap-1 justify-between items-center">
-                    <h3 className="opacity-60">NOTE: ONLY FIVE ARE ALLOWED</h3>
+                    <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
                     <Button>Add Organization</Button>
                 </section>
                 {orgDatas && <Table columns={organizationHeaders} datas={orgDatas} onClickCallback={onClickAddOrganization} />}
                 {/* Awards & Seminars */}
                 <section className="flex flex-row gap-1 justify-between items-center">
-                    <h3 className="opacity-60">NOTE: ONLY FIVE ARE ALLOWED</h3>
+                    <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
                     <Button onClick={onClickAddAward}>Add Award/Seminar</Button>
                 </section>
                 {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAddOrganization} />}

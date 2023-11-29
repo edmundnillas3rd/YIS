@@ -3,6 +3,8 @@ import Modal from "../Modal";
 import Input from "../Globals/Input";
 import Button from "../Globals/Button";
 import { useNavigate } from "react-router-dom";
+import { Dropdown } from "../Globals";
+import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function ({
     isOpen,
@@ -10,10 +12,21 @@ export default function ({
     onClose,
 }: ModalProps) {
 
-    const [awardAttended, setAwardAttended] = useState<string>();
+    const [awardAttendedName, setAwardAttended] = useState<string>();
     const [awardName, setAwardName] = useState<string>();
-    const [awardRecieved, setAwardReceived] = useState<string>();
+    const [awardReceived, setAwardReceived] = useState<string>();
+    const [errMessage, setErrMessage] = useState<string>();
+    const [years, setYears] = useState<number[]>();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        setYears(generateYearRange());
+    }, []);
+
+    useEffect(() => {
+        console.log(awardAttendedName, awardName, awardReceived);
+
+    }, [awardAttendedName, awardName, awardReceived]);
 
     const onChange = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -34,28 +47,31 @@ export default function ({
 
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
-        console.log(awardAttended, awardName, awardRecieved);
+        console.log(awardAttendedName, awardName, awardReceived);
 
-        const data = {
-            awardAttended,
-            awardName,
-            awardRecieved
-        }
-        
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/award-add`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
+        if (awardAttendedName && awardName && awardReceived) {
+            const data = {
+                awardAttendedName,
+                awardName,
+                awardReceived
+            };
 
-        if (response.ok) {
-            console.log("Adding new Award success!");
-            navigate(0);
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/award-add`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                console.log("Adding new Award success!");
+                navigate(0);
+            }
+        } else {
+            setErrMessage("Fill up all key details");
         }
-            
     };
 
     return (
@@ -78,13 +94,17 @@ export default function ({
                     id="award-name"
                     onChange={onChange}
                 />
-                <Input
-                    title="Award Attended Name"
-                    id="award-received"
+                <Dropdown
+                    label="Award Received"
+                    name="award-received"
+                    defaultValue={2001}
                     onChange={onChange}
-                    type="date"
+                    datas={years}
                 />
-                <Button type="submit">Submit</Button>
+                <section className="flex flex-row justify-end items-center gap-5">
+                    {errMessage && <p className="font-bold text-red-600">{errMessage}</p>}
+                    <Button type="submit">Submit</Button>
+                </section>
             </form>
 
         </Modal>
