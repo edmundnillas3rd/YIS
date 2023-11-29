@@ -1,7 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import Modal from "../Modal";
-import Input from "../Globals/Input";
-import Button from "../Globals/Button";
+import { Input, Button } from "../Globals/index";
 import { useNavigate } from "react-router-dom";
 import { Dropdown } from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";

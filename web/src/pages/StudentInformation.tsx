@@ -1,9 +1,8 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
-import Input from "../components/Globals/Input";
 import Container from "../components/Container";
 import Table from "../components/Table";
-import Button from "../components/Globals/Button";
+import { Input, Button } from "../components/Globals/index";
 import AwardModal from "../components/AwardTable/AwardModal";
 
 export default function () {
