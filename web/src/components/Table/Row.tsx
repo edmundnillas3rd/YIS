@@ -30,9 +30,11 @@ export default function ({ data, children, onClickCallback, ...otherProps }: any
                         </td>
                     ))
                 }
-                <Button onClick={onClick}>
-                    Edit
-                </Button>
+                <td>
+                    <Button onClick={onClick}>
+                        Edit
+                    </Button>
+                </td>
             </tr>
         </tbody>
     );

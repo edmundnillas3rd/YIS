@@ -1,15 +1,18 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
-import Container from "../components/Container";
-import Table from "../components/Table";
 import { Input, Button } from "../components/Globals/index";
+import Table from "../components/Table";
+import Container from "../components/Container";
 import AwardModal from "../components/AwardTable/AwardModal";
+import AwardEditModal from "../components/AwardTable/AwardEditModal";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
+    const [currentNode, setCurrentNode] = useState(null);
     const [disable, setDisable] = useState(true);
 
     const [displayAwardForm, setDisplayAwardForm] = useState(false);
+    const [displayAwardEdit, setDisplayAwardEdit] = useState(false);
     const [awardsData, setAwardsData] = useState(null);
 
     useEffect(() => {
@@ -59,11 +62,17 @@ export default function () {
 
     };
 
-    const onClickAddOrganization = async (data: any) => {
+    const onClickAddOrganization = async (event: SyntheticEvent) => {
         console.log("Add new organization");
     };
 
-    const onClickAddAward = async (data: any) => {
+    const onClickAward = async (data: any) => {
+        console.log("Row clicked", data);
+        setDisplayAwardEdit(true);
+        setCurrentNode(data);
+    };
+
+    const onClickAddAward = async (event: SyntheticEvent) => {
         console.log("Add new award");
         setDisplayAwardForm(true);
     };
@@ -72,12 +81,23 @@ export default function () {
         setDisplayAwardForm(false);
     };
 
+    const onCloseEditAward = async () => {
+        setDisplayAwardEdit(false);
+        setCurrentNode(null);
+    };
+
     return (
         <>
             <AwardModal
                 hasCloseBtn={true}
                 isOpen={displayAwardForm}
                 onClose={onCloseAddAward}
+            />
+            <AwardEditModal
+                hasCloseBtn={true}
+                isOpen={displayAwardEdit}
+                onClose={onCloseEditAward}
+                data={currentNode}
             />
 
             <Container>
@@ -130,7 +150,7 @@ export default function () {
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
                     <Button onClick={onClickAddAward}>Add Award/Seminar</Button>
                 </section>
-                {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAddOrganization} />}
+                {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
             </Container>
         </>
 

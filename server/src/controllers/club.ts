@@ -190,7 +190,7 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
 
     const genClubUUID = await query("SELECT UUID()");
     const ClubUUID = genClubUUID.rows[0]['UUID()'];
-    await query("INSERT INTO club (club_id) VALUES (?)", [ClubUUID])
+    await query("INSERT INTO club (club_id) VALUES (?)", [ClubUUID]);
 
     // await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [ClubUUID, userID, clubOrganizationID, clubPositionID, yearStarted, yearEnded]);
     res.status(200).end({
@@ -211,6 +211,8 @@ export async function awardUserAdd(req: Request, res: Response) {
     res.status(200).end();
 }
 
+
+// PUT
 export async function clubUserPositionUpdate(req: Request, res: Response) {
     const {
         club,
@@ -228,6 +230,20 @@ export async function clubUserPositionUpdate(req: Request, res: Response) {
 
     const clubPositionSQL = "UPDATE club SET club.club_position_id = ?, club.club_started = ?, club.club_ended = ? WHERE club.user_id = ? AND club.club_organization_id = ?";
     const result = await query(clubPositionSQL, [positionExist.rows[0].position, yearStarted, yearEnded, userID, club]);
+    res.status(200).end();
+}
+
+export async function clubUserAwardUpdate(req: Request, res: Response) {
+    const { userID } = req.session;
+    const { awardAttendedName, awardName, awardReceived } = req.body;
+
+    await query(`
+        UPDATE award
+        SET award_attended_name = ?,
+        award_name = ?,
+        award_received = ?
+        WHERE user_id = ?
+    `, [awardAttendedName, awardName, awardReceived, userID]);
     res.status(200).end();
 }
 

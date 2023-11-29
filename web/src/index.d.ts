@@ -12,4 +12,5 @@ interface ModalProps {
     hasCloseBtn?: boolean;
     onClose?: () => void;
     children?: React.ReactNode;
+    data?: any;
 };

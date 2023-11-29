@@ -9,7 +9,11 @@ export default function ({ label, name, defaultValue, datas, ...otherProps }: an
                 defaultValue={defaultValue}
                 {...otherProps}
             >
-                {datas && datas.map((data: any) => (<option value={data}>{data}</option>))}
+                {datas && datas.map((data: any) => {
+                    // if (data === defaultValue)
+                    //     return <option selected value={data}>{data}</option>;
+                    return <option value={data}>{data}</option>;
+                })}
             </select>
         </section>
     );

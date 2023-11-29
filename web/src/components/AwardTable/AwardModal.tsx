@@ -23,6 +23,11 @@ export default function ({
     }, []);
 
     useEffect(() => {
+        if (years)
+            setAwardReceived(years[0].toString());
+    }, [years]);
+
+    useEffect(() => {
         console.log(awardAttendedName, awardName, awardReceived);
 
     }, [awardAttendedName, awardName, awardReceived]);
@@ -96,7 +101,6 @@ export default function ({
                 <Dropdown
                     label="Award Received"
                     name="award-received"
-                    defaultValue={2001}
                     onChange={onChange}
                     datas={years}
                 />

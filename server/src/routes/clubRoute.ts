@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
 
-import { 
+import {
     index, 
     userClub, 
     clubUserAdd, 
@@ -11,6 +11,7 @@ import {
     awardUserAdd, 
     userAward,
     clubUserPositionUpdate,
+    clubUserAwardUpdate,
     clubUserRemove,
     awardUserRemove
 } from "../controllers/club";
@@ -18,9 +19,9 @@ import {
 // GET
 router.get("/", index);
 router.get("/user-club", userClub);
+router.get("/user-award", userAward);
 router.get("/:clubID/user-club-info", userClubInfo);
 router.get("/user-preview", userPreview);
-router.get("/user-award", userAward);
 
 // POST
 router.post("/club-add", clubUserAdd);
@@ -29,6 +30,7 @@ router.post("/award-add", awardUserAdd);
 
 // PUT
 router.put("/position-update", clubUserPositionUpdate);
+router.put("/:id/award-update", clubUserAwardUpdate);
 
 // DELETE
 router.delete("/:id/user-organization-remove", clubUserRemove);
