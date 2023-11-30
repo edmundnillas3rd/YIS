@@ -3,8 +3,8 @@ import { query } from "../services/mysqldb";
 
 // GET
 export async function index(req: Request, res: Response) {
-    const organizations = await query("SELECT club_organization_id AS id, club_organization_name AS organizationName FROM club_organization");
-    const positions = await query("SELECT club_position_id AS id, club_position_name AS positionName FROM club_position");
+    const organizations = await query("SELECT club_organization_id AS id, club_organization_name AS name FROM club_organization");
+    const positions = await query("SELECT club_position_id AS id, club_position_name AS name FROM club_position");
 
     res.status(200).json({
         positions: positions.rows,
@@ -139,24 +139,18 @@ export async function clubUserAdd(req: Request, res: Response) {
         ON user.user_id = club.user_id
         INNER JOIN club_organization
         ON club.club_organization_id = club_organization.club_organization_id
-        WHERE user.user_id = ? AND club_organization.club_organization_name = ?
+        WHERE user.user_id = ? AND club_organization.club_organization_id = ?
     `, [userID, club]);
 
     if (foundClub.rows.length > 0) {
         return res.status(400).json({ error: "Entry already exist!" });
     }
-
-    const clubOrganization = await query("SELECT club_organization_id AS organizationID FROM club_organization WHERE club_organization.club_organization_name = ? OR club_organization.club_organization_id = ?", [club, club]);
-    const clubOrganizationID = clubOrganization.rows[0]['organizationID'];
-    const clubPosition = await query("SELECT club_position.club_position_id AS positionID FROM club_position WHERE club_position.club_position_name = ?", [position]);
-    const clubPositionID = clubPosition.rows[0]['positionID'];
-
     const ClubUUID = await query("SELECT UUID()");
     const { rows } = await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [
         ClubUUID.rows[0]['UUID()'],
         userID,
-        clubOrganizationID,
-        clubPositionID,
+        club,
+        position,
         yearStarted,
         yearEnded
     ]);

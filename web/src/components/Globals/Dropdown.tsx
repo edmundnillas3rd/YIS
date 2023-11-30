@@ -11,6 +11,10 @@ export default function ({ label, name, datas, ...otherProps }: any) {
                 {datas && datas.map((data: any) => {
                     // if (data === defaultValue)
                     //     return <option selected value={data}>{data}</option>;
+                    if (data?.id && data?.name) {
+                        return <option value={data.id}>{data.name}</option>;
+                    }
+
                     return <option value={data}>{data}</option>;
                 })}
             </select>

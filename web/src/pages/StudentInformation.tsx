@@ -4,15 +4,20 @@ import { AuthContext } from "../context/AuthProvider";
 import { Input, Button } from "../components/Globals/index";
 import Table from "../components/Table";
 import Container from "../components/Container";
+import OrganizationModal from "../components/OrganizationTable/OrganizationModal";
 import AwardModal from "../components/AwardTable/AwardModal";
 import AwardEditModal from "../components/AwardTable/AwardEditModal";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [disable, setDisable] = useState(true);
-    
+
     // For clubs & organizations table
     const [currentClubNode, setCurrentClubNode] = useState(null);
+    const [displayClubForm, setDisplayClubForm] = useState(false);
+    const [displayOrgForm, setDisplayOrgForm] = useState(false);
+
+    const [clubProps, setClubProps] = useState(null);
 
     // For awards table
     const [currentAwardNode, setCurrentAwardNode] = useState(null);
@@ -23,6 +28,7 @@ export default function () {
 
     useEffect(() => {
         (async () => {
+            const clubsRouteResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
             const userClubResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-club`, {
                 credentials: "include"
             });
@@ -31,10 +37,17 @@ export default function () {
                 credentials: "include"
             });
 
+            const [indexData, clubsData, awardsData] = await Promise.all([
+                clubsRouteResponse.json(),
+                userClubResponse.json(),
+                userAwardResponse.json()
+            ]);
 
-            const [clubsData, awardsData] = await Promise.all([userClubResponse.json(), userAwardResponse.json()]);
-            
-            if (clubsData && awardsData) {
+            if (indexData && clubsData && awardsData) {
+                setClubProps(indexData);
+                console.log(indexData);
+
+
                 setClubsData(clubsData['clubs']);
                 console.log(clubsData['clubs']);
 
@@ -60,14 +73,6 @@ export default function () {
         "Organization"
     ];
 
-    // For awards table
-    // const awardDatas = Array.from({ length: 5 }, (v, i) => ({
-    //     id: i + 1,
-    //     name: "Davao Seminar",
-    //     awardName: "Participant",
-    //     dateAttended: "12/05/23"
-    // }));
-
     const awardHeaders = [
         "Award & Seminar",
         "Award/ETC",
@@ -83,6 +88,15 @@ export default function () {
 
     const onClickOrganization = async (data: any) => {
         console.log("Org row clicked", data);
+    };
+
+    const onClickAddOrg = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        setDisplayOrgForm(true);
+    };
+
+    const onCloseAddOrg = async () => {
+        setDisplayOrgForm(false);
     };
 
     const onClickAward = async (data: any) => {
@@ -107,6 +121,12 @@ export default function () {
 
     return (
         <>
+            <OrganizationModal
+                hasCloseBtn={true}
+                isOpen={displayOrgForm}
+                onClose={onCloseAddOrg}
+                data={clubProps}
+            />
             <AwardModal
                 hasCloseBtn={true}
                 isOpen={displayAwardForm}
@@ -161,7 +181,7 @@ export default function () {
                 {/* Organization */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-                    <Button>Add Organization</Button>
+                    <Button onClick={onClickAddOrg}>Add Organization</Button>
                 </section>
                 {clubsData && <Table columns={organizationHeaders} datas={clubsData} onClickCallback={onClickOrganization} />}
                 {/* Awards & Seminars */}
