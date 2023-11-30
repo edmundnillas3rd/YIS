@@ -15,7 +15,7 @@ export async function index(req: Request, res: Response) {
 
 export async function getStudentUnreturned(req: Request, res: Response) {
     const { rows } = await query(`
-        SELECT DISTINCT user.user_id as id, course.course_name as courseName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, solicitation_returned_status.status_name FROM solicitation_form
+        SELECT DISTINCT user.user_id AS id, course.course_name AS courseName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) AS fullName, solicitation_returned_status.status_name FROM solicitation_form
         INNER JOIN user
         ON solicitation_form.user_id = user.user_id
         INNER JOIN solicitation_returned_status
@@ -39,7 +39,7 @@ export async function getCurrentLogUser(req: Request, res: Response) {
 
     const { userID } = req.session;
     const { rows } = await query(`
-        SELECT user.user_first_name AS firstName, user.user_family_name AS familyName, user.user_middle_name AS middleName, user.user_suffix AS suffix, role.role_name as role, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as claimStatus FROM user 
+        SELECT user.user_first_name AS firstName, user.user_family_name AS familyName, user.user_middle_name AS middleName, user.user_suffix AS suffix, role.role_name AS role, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS claimStatus FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
         LEFT JOIN solicitation_form
@@ -130,7 +130,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         await query("INSERT INTO role VALUES (?, 'USER')", [roleUUID]);
     }
 
-    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) as user_full_name, user_email FROM user");
+    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_email FROM user");
 
     if (existingUser.rows[0]?.email !== undefined && existingUser.rows[0].email === email) {
         return res.status(400).json({ error: "User already exist!" });
@@ -155,7 +155,7 @@ export async function loginUserStudent(req: Request, res: Response) {
     }
 
     const user = await query(`
-        SELECT user.user_id as id, user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email as email, user.user_password as password, role.role_name as role FROM user 
+        SELECT user.user_id AS id, user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email AS email, user.user_password AS password, role.role_name AS role FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
         WHERE user.user_email = ? AND role.role_name = 'USER'
@@ -189,7 +189,7 @@ export async function logoutUser(req: Request, res: Response) {
 export async function searchStudent(req: Request, res: Response) {
     const { fullName } = req.body;
     const { rows } = await query(`
-        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus, solicitation_form.solicitation_number as solicNum, solicitation_form.solicitation_or_number as OrNum FROM user
+        SELECT user.user_id AS id, college.college_name AS collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) AS fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") AS paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS returnStatus, solicitation_form.solicitation_number AS solicNum, solicitation_form.solicitation_or_number AS OrNum FROM user
         INNER JOIN college
         ON user.user_college = college.college_id
 		INNER JOIN role
@@ -219,13 +219,13 @@ export async function searchStudentRecipient(req: Request, res: Response) {
         SELECT DISTINCT
         course.course_name AS course, 
         CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
-        solicitation_form.solicitation_number as soliNumber,
+        solicitation_form.solicitation_number AS soliNumber,
         CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix) AS careOfFullName,
         care_of.relation_status AS relationStatus,
         solicitation_returned_status.status_name AS returnedStatus, 
         DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m-%d-%Y') AS dateReturned,
-        solicitation_form.solicitation_yearbook_payment as paymentAmount,
-        solicitation_form.solicitation_or_number as ORnumber,
+        solicitation_form.solicitation_yearbook_payment AS paymentAmount,
+        solicitation_form.solicitation_or_number AS ORnumber,
         solicitation_payment_status.status_name AS paymentStatus
         FROM user
         INNER JOIN college
@@ -260,7 +260,7 @@ export async function searchStudentPaid(req: Request, res: Response) {
     const { fullName } = req.body;
 
     const { rows } = await query(`
-        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus, solicitation_form.solicitation_number as solicNum, solicitation_form.solicitation_or_number as OrNum  FROM user
+        SELECT user.user_id AS id, college.college_name AS collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) AS fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") AS paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS returnStatus, solicitation_form.solicitation_number AS solicNum, solicitation_form.solicitation_or_number AS OrNum  FROM user
         INNER JOIN college
         ON user.user_college = college.college_id
         INNER JOIN role
@@ -286,7 +286,7 @@ export async function searchStudentPaid(req: Request, res: Response) {
 export async function searchStudentUnreturned(req: Request, res: Response) {
     const { fullName } = req.body;
     const { rows } = await query(`
-        SELECT user.user_id as id, college.college_name as collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) as fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") as paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") as returnStatus, solicitation_form.solicitation_number as solicNum, solicitation_form.solicitation_or_number as OrNum  FROM user
+        SELECT user.user_id AS id, college.college_name AS collegeName, CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name, " ", user.user_suffix) AS fullName, COALESCE(solicitation_payment_status.status_name, "UNCLAIMED") AS paymentStatus, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS returnStatus, solicitation_form.solicitation_number AS solicNum, solicitation_form.solicitation_or_number AS OrNum  FROM user
         INNER JOIN college
         ON user.user_college = college.college_id
         INNER JOIN role

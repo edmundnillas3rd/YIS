@@ -3,8 +3,8 @@ import { query } from "../services/mysqldb";
 
 // GET
 export async function index(req: Request, res: Response) {
-    const organizations = await query("SELECT club_organization_id, club_organization_name FROM club_organization");
-    const positions = await query("SELECT club_position_id, club_position_name FROM club_position");
+    const organizations = await query("SELECT club_organization_id AS id, club_organization_name AS organizationName FROM club_organization");
+    const positions = await query("SELECT club_position_id AS id, club_position_name AS positionName FROM club_position");
 
     res.status(200).json({
         positions: positions.rows,
@@ -16,7 +16,7 @@ export async function userClub(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT DISTINCT club_organization.club_organization_id as id, club_organization.club_organization_name as organization FROM user
+        SELECT DISTINCT club_organization.club_organization_id AS id, club_organization.club_organization_name AS organization FROM user
         INNER JOIN club
         ON club.user_id = user.user_id
         INNER JOIN club_organization
@@ -51,7 +51,7 @@ export async function userPreview(req: Request, res: Response) {
     const { userID } = req.session;
 
     const sql = `
-        SELECT DISTINCT club_organization.club_organization_name AS organizationName, club_position.club_position_name AS clubPosition, club.club_started AS yearStarted, club.club_ended as yearEnded FROM club
+        SELECT DISTINCT club_organization.club_organization_name AS organizationName, club_position.club_position_name AS clubPosition, club.club_started AS yearStarted, club.club_ended AS yearEnded FROM club
 		INNER JOIN user
 		ON club.user_id = user.user_id
 		INNER JOIN club_organization
@@ -168,14 +168,14 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
     const { userID } = req.session;
     const { club, position, yearStarted, yearEnded } = req.body;
 
-    const clubOrganizationRow = await query("SELECT club_organization.club_organization_id as club FROM club_organization WHERE club_organization.club_organization_name = ?", [club]);
+    const clubOrganizationRow = await query("SELECT club_organization.club_organization_id AS club FROM club_organization WHERE club_organization.club_organization_name = ?", [club]);
     const clubOrganizationID = clubOrganizationRow.rows[0].club;
 
     // const clubPosition = await query("SELECT club_position.club_position_id AS positionID FROM club_position WHERE club_position.club_position_name = ?", [position]);
     // const clubPositionID = clubPosition.rows[0]['positionID'];
 
     const foundClubBelongTo = await query(`
-        SELECT club_position.club_position_id, club_position.club_position_name, user.user_id , CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name) as full_name FROM user
+        SELECT club_position.club_position_id, club_position.club_position_name, user.user_id , CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name) AS full_name FROM user
         INNER JOIN club
         ON user.user_id = club.user_id
         INNER JOIN club_position

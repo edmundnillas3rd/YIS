@@ -7,13 +7,13 @@ export async function index(req: Request, res: Response) {
     SELECT DISTINCT solicitation_form.user_id AS id,
         course.course_name AS course, 
         CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
-        solicitation_form.solicitation_number as soliNumber,
+        solicitation_form.solicitation_number AS soliNumber,
         CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix) AS careOfFullName,
         care_of.relation_status AS relationStatus,
         solicitation_returned_status.status_name AS returnedStatus, 
         DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m-%d-%Y') AS dateReturned,
-        solicitation_form.solicitation_yearbook_payment as paymentAmount,
-        solicitation_form.solicitation_or_number as ORnumber,
+        solicitation_form.solicitation_yearbook_payment AS paymentAmount,
+        solicitation_form.solicitation_or_number AS ORnumber,
         solicitation_payment_status.status_name AS paymentStatus
         FROM solicitation_form
         INNER JOIN user
@@ -41,12 +41,12 @@ export async function getUserSolicitation(req: Request, res: Response) {
     SELECT solicitation_form.user_id AS id,
         course.course_name AS course, 
         CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
-        solicitation_form.solicitation_number as soliNumber,
+        solicitation_form.solicitation_number AS soliNumber,
         CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix) AS careOfFullName,
         solicitation_returned_status.status_name AS returnedStatus, 
         DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m-%d-%Y') AS dateReturned,
-        solicitation_form.solicitation_yearbook_payment as paymentAmount,
-        solicitation_form.solicitation_or_number as ORnumber,
+        solicitation_form.solicitation_yearbook_payment AS paymentAmount,
+        solicitation_form.solicitation_or_number AS ORnumber,
         solicitation_payment_status.status_name AS paymentStatus
         FROM solicitation_form
         INNER JOIN user
@@ -139,7 +139,7 @@ export async function claimSolicitation(req: Request, res: Response) {
     `, [CareOfUUID, userID,  receiverFirstName, receiverFamilyName, receiverMiddleName, receiverSuffix, relation])
 
 
-    const returnStatusResponse = await query("SELECT solicitation_returned_status.solicitation_returned_status_id as returnedStatusID FROM solicitation_returned_status WHERE solicitation_returned_status.status_name = 'RETURNED' ");
+    const returnStatusResponse = await query("SELECT solicitation_returned_status.solicitation_returned_status_id AS returnedStatusID FROM solicitation_returned_status WHERE solicitation_returned_status.status_name = 'RETURNED' ");
     const returnStatusID = returnStatusResponse.rows[0]['returnedStatusID']
 
 
