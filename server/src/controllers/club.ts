@@ -16,7 +16,7 @@ export async function userClub(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT DISTINCT club_organization.club_organization_id as clubID, club_organization.club_organization_name as organization FROM user
+        SELECT DISTINCT club_organization.club_organization_id as id, club_organization.club_organization_name as organization FROM user
         INNER JOIN club
         ON club.user_id = user.user_id
         INNER JOIN club_organization
@@ -27,7 +27,7 @@ export async function userClub(req: Request, res: Response) {
     `, [userID]);
 
     res.status(200).json({
-        rows
+        clubs: rows
     });
 }
 

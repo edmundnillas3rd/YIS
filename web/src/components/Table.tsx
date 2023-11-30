@@ -30,7 +30,7 @@ export default function ({ columns, datas, onClickCallback }: TableProps) {
 
                 </tr>
             </tbody>
-            {datas.map((data, index) => (<Row key={index} data={data} onClickCallback={onRowClickHandler} />))}
+            {datas.map((data, index) => (<Row key={data['uuid']} data={data} onClickCallback={onRowClickHandler} />))}
         </table>
     );
 }

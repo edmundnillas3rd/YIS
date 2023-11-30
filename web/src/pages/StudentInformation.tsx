@@ -1,4 +1,5 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { AuthContext } from "../context/AuthProvider";
 import { Input, Button } from "../components/Globals/index";
 import Table from "../components/Table";
@@ -8,37 +9,50 @@ import AwardEditModal from "../components/AwardTable/AwardEditModal";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
-    const [currentNode, setCurrentNode] = useState(null);
     const [disable, setDisable] = useState(true);
+    
+    // For clubs & organizations table
+    const [currentClubNode, setCurrentClubNode] = useState(null);
 
+    // For awards table
+    const [currentAwardNode, setCurrentAwardNode] = useState(null);
     const [displayAwardForm, setDisplayAwardForm] = useState(false);
     const [displayAwardEdit, setDisplayAwardEdit] = useState(false);
     const [awardsData, setAwardsData] = useState(null);
+    const [clubsData, setClubsData] = useState(null);
 
     useEffect(() => {
         (async () => {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-award`, {
+            const userClubResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-club`, {
                 credentials: "include"
             });
 
-            const { awards } = await response.json();
+            const userAwardResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-award`, {
+                credentials: "include"
+            });
 
-            if (awards) {
-                setAwardsData(awards);
-                console.log(awards);
+
+            const [clubsData, awardsData] = await Promise.all([userClubResponse.json(), userAwardResponse.json()]);
+            
+            if (clubsData && awardsData) {
+                setClubsData(clubsData['clubs']);
+                console.log(clubsData['clubs']);
+
+                setAwardsData(awardsData['awards']);
+                console.log(awardsData['awards']);
             }
 
         })();
     }, []);
 
     useEffect(() => {
-        console.log("Current Node", currentNode);
-        
-    }, [currentNode]);
+        console.log("Current Award Node", currentAwardNode);
+
+    }, [currentAwardNode]);
 
     // For organization table
     const orgDatas = Array.from({ length: 5 }, (v, i) => ({
-        id: i,
+        id: uuid(),
         organization: "Association of Student Assistants"
     }));
 
@@ -67,14 +81,14 @@ export default function () {
 
     };
 
-    const onClickAddOrganization = async (event: SyntheticEvent) => {
-        console.log("Add new organization");
+    const onClickOrganization = async (data: any) => {
+        console.log("Org row clicked", data);
     };
 
     const onClickAward = async (data: any) => {
-        console.log("Row clicked", data);
+        console.log("Award row clicked", data);
         setDisplayAwardEdit(true);
-        setCurrentNode(data);
+        setCurrentAwardNode(data);
     };
 
     const onClickAddAward = async (event: SyntheticEvent) => {
@@ -88,7 +102,7 @@ export default function () {
 
     const onCloseEditAward = async () => {
         setDisplayAwardEdit(false);
-        setCurrentNode(null);
+        setCurrentAwardNode(null);
     };
 
     return (
@@ -102,7 +116,7 @@ export default function () {
                 hasCloseBtn={true}
                 isOpen={displayAwardEdit}
                 onClose={onCloseEditAward}
-                data={currentNode}
+                data={currentAwardNode}
             />
 
             <Container>
@@ -149,7 +163,7 @@ export default function () {
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
                     <Button>Add Organization</Button>
                 </section>
-                {orgDatas && <Table columns={organizationHeaders} datas={orgDatas} onClickCallback={onClickAddOrganization} />}
+                {clubsData && <Table columns={organizationHeaders} datas={clubsData} onClickCallback={onClickOrganization} />}
                 {/* Awards & Seminars */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
