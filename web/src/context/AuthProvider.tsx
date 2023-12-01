@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const response = await getCurrentUser();
 
             const [data] = await Promise.all([response]);
-            console.log(data);
+            
             setCurrentUser(data as any);
 
             if (!data)

@@ -27,10 +27,13 @@ export default function ({
 
     useEffect(() => {
         if (data) {
-            console.log(data);
-
             setPositions(data['positions']);
             setOrganizations(data['organizations']);
+
+            setPosition(data['positions'][0]['id']);
+            setClub(data['organizations'][0]['id']);
+            setYearStarted("2000");
+            setYearEnded("2000");
         }
     }, [data]);
 
@@ -54,10 +57,9 @@ export default function ({
 
     };
 
-    const onSubmitHander = async (event: SyntheticEvent) => {
+    const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
         setLoading(true);
-
 
         if (club && position && yearStarted && yearEnded) {
             const data = {
@@ -79,8 +81,13 @@ export default function ({
             if (response.ok) {
                 console.log("Successfully added a new club entry");
                 navigate(0);
+            } else {
+                const { error } = await response.json();
+                setErrMessage(error);
             }
             setLoading(false);
+        } else {
+            setErrMessage("Please fill up all required fields");
         }
 
         setLoading(false);
@@ -93,7 +100,7 @@ export default function ({
             onClose={onClose}
         >
             <form
-                onSubmit={onSubmitHander}
+                onSubmit={onSubmitHandler}
                 method="POST"
                 className="flex flex-col gap-5"
             >

@@ -63,9 +63,6 @@ export default function Main() {
             setDisable(false);
         }
 
-        if (currentUser)
-            console.log(currentUser);
-
     }, []);
 
     const images = [

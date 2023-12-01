@@ -7,17 +7,17 @@ import Container from "../components/Container";
 import OrganizationModal from "../components/OrganizationTable/OrganizationModal";
 import AwardModal from "../components/AwardTable/AwardModal";
 import AwardEditModal from "../components/AwardTable/AwardEditModal";
+import OrganizationEditModal from "../components/OrganizationTable/OrganizationEditModal";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [disable, setDisable] = useState(true);
+    const [clubProps, setClubProps] = useState(null);
 
     // For clubs & organizations table
-    const [currentClubNode, setCurrentClubNode] = useState(null);
-    const [displayClubForm, setDisplayClubForm] = useState(false);
+    const [currentOrgNode, setCurrentOrgNode] = useState(null);
     const [displayOrgForm, setDisplayOrgForm] = useState(false);
-
-    const [clubProps, setClubProps] = useState(null);
+    const [displayOrgEdit, setDisplayOrgEdit] = useState(false);
 
     // For awards table
     const [currentAwardNode, setCurrentAwardNode] = useState(null);
@@ -45,29 +45,18 @@ export default function () {
 
             if (indexData && clubsData && awardsData) {
                 setClubProps(indexData);
-                console.log(indexData);
+                
 
 
                 setClubsData(clubsData['clubs']);
-                console.log(clubsData['clubs']);
+                
 
                 setAwardsData(awardsData['awards']);
-                console.log(awardsData['awards']);
+                
             }
 
         })();
     }, []);
-
-    useEffect(() => {
-        console.log("Current Award Node", currentAwardNode);
-
-    }, [currentAwardNode]);
-
-    // For organization table
-    const orgDatas = Array.from({ length: 5 }, (v, i) => ({
-        id: uuid(),
-        organization: "Association of Student Assistants"
-    }));
 
     const organizationHeaders = [
         "Organization"
@@ -88,6 +77,8 @@ export default function () {
 
     const onClickOrganization = async (data: any) => {
         console.log("Org row clicked", data);
+        setDisplayOrgEdit(true);
+        setCurrentOrgNode(data);
     };
 
     const onClickAddOrg = async (event: SyntheticEvent) => {
@@ -97,6 +88,13 @@ export default function () {
 
     const onCloseAddOrg = async () => {
         setDisplayOrgForm(false);
+    };
+
+    const onCloseEditOrg = async () => {
+        setDisplayOrgEdit(false);
+        setCurrentOrgNode(null);
+        console.log("Current Org node", currentOrgNode);
+
     };
 
     const onClickAward = async (data: any) => {
@@ -126,6 +124,13 @@ export default function () {
                 isOpen={displayOrgForm}
                 onClose={onCloseAddOrg}
                 data={clubProps}
+            />
+            <OrganizationEditModal
+                hasCloseBtn={true}
+                isOpen={displayOrgEdit}
+                onClose={onCloseEditOrg}
+                data={clubProps}
+                data2={currentOrgNode}
             />
             <AwardModal
                 hasCloseBtn={true}

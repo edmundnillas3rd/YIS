@@ -13,4 +13,5 @@ interface ModalProps {
     onClose?: () => void;
     children?: React.ReactNode;
     data?: any;
+    data2?: any;
 };

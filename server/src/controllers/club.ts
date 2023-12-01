@@ -36,7 +36,7 @@ export async function userClubInfo(req: Request, res: Response) {
     const { clubID } = req.params;
 
     const { rows } = await query(`
-        SELECT club_position.club_position_name AS clubPositionName, club.club_started AS clubStarted, club.club_ended AS clubEnded FROM club
+        SELECT club.club_id as club, club_position.club_position_id AS position, club.club_started AS yearStarted, club.club_ended AS yearEnded FROM club
         INNER JOIN club_position
         ON club.club_position_id = club_position.club_position_id
         WHERE club.user_id = ? AND club.club_organization_id = ?
@@ -162,20 +162,14 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
     const { userID } = req.session;
     const { club, position, yearStarted, yearEnded } = req.body;
 
-    const clubOrganizationRow = await query("SELECT club_organization.club_organization_id AS club FROM club_organization WHERE club_organization.club_organization_name = ?", [club]);
-    const clubOrganizationID = clubOrganizationRow.rows[0].club;
-
-    // const clubPosition = await query("SELECT club_position.club_position_id AS positionID FROM club_position WHERE club_position.club_position_name = ?", [position]);
-    // const clubPositionID = clubPosition.rows[0]['positionID'];
-
     const foundClubBelongTo = await query(`
         SELECT club_position.club_position_id, club_position.club_position_name, user.user_id , CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name) AS full_name FROM user
         INNER JOIN club
         ON user.user_id = club.user_id
         INNER JOIN club_position
         ON club.club_position_id = club_position.club_position_id
-        WHERE user.user_id = ? AND club.club_organization_id = ?;
-    `, [userID, clubOrganizationID]);
+        WHERE user.user_id = ? AND club.club_id = ? AND club.club_position_id = ?;
+    `, [userID, club, position]);
 
 
     if (foundClubBelongTo.rows.length > 0) {
@@ -184,12 +178,9 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
 
     const genClubUUID = await query("SELECT UUID()");
     const ClubUUID = genClubUUID.rows[0]['UUID()'];
-    await query("INSERT INTO club (club_id) VALUES (?)", [ClubUUID]);
+    await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [ClubUUID, userID, club, position, yearStarted, yearEnded]);
 
-    // await query("INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)", [ClubUUID, userID, clubOrganizationID, clubPositionID, yearStarted, yearEnded]);
-    res.status(200).end({
-        club: ClubUUID
-    });
+    res.status(200).end();
 
 }
 
@@ -216,14 +207,14 @@ export async function clubUserPositionUpdate(req: Request, res: Response) {
     } = req.body;
     const { userID } = req.session;
 
-    const positionExist = await query("SELECT club_position.club_position_id AS position FROM club_position WHERE club_position.club_position_name = ?", [position]);
+    const positionExist = await query("SELECT club_position.club_position_id AS position FROM club_position WHERE club_position.club_position_id = ?", [position]);
 
     if (positionExist.rows === 0) {
         return res.status(404).end();
     }
 
-    const clubPositionSQL = "UPDATE club SET club.club_position_id = ?, club.club_started = ?, club.club_ended = ? WHERE club.user_id = ? AND club.club_organization_id = ?";
-    const result = await query(clubPositionSQL, [positionExist.rows[0].position, yearStarted, yearEnded, userID, club]);
+    const clubPositionSQL = "UPDATE club SET club.club_position_id = ?, club.club_started = ?, club.club_ended = ? WHERE club.user_id = ? AND club.club_id = ?";
+    const result = await query(clubPositionSQL, [position, yearStarted, yearEnded, userID, club]);
     res.status(200).end();
 }
 
@@ -246,7 +237,7 @@ export async function clubUserAwardUpdate(req: Request, res: Response) {
 export async function clubUserRemove(req: Request, res: Response) {
     const { userID } = req.session;
     const { id } = req.params;
-    const rows = await query("DELETE FROM club WHERE club.user_id = ? AND club.club_organization_id = ?", [userID, id]);
+    const rows = await query("DELETE FROM club WHERE club.user_id = ? AND club.club_id = ?", [userID, id]);
     res.status(200).end();
 }
 

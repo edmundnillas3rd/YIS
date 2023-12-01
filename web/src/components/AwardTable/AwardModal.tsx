@@ -30,7 +30,7 @@ export default function ({
     }, [years]);
 
     useEffect(() => {
-        console.log(awardAttendedName, awardName, awardReceived);
+        
 
     }, [awardAttendedName, awardName, awardReceived]);
 
@@ -54,7 +54,7 @@ export default function ({
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
         setLoading(true);
-        console.log(awardAttendedName, awardName, awardReceived);
+        
 
         if (awardAttendedName && awardName && awardReceived) {
             const data = {

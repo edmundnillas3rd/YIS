@@ -6,7 +6,7 @@ export default function ({ data, children, onClickCallback, ...otherProps }: any
 
     useEffect(() => {
 
-        // console.log(values.slice(1));
+        // 
         // Remove the the first element which is the id
         setValues(values.slice(1));
     }, []);

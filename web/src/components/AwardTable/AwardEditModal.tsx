@@ -41,7 +41,7 @@ export default function ({
             setAwardAttendedName(data['awardAttendedName']);
             setAwardName(data['awardName']);
             setAwardReceived(data['awardReceived']);
-            console.log(typeof awardReceived);
+            
 
         }
     }, [data]);
