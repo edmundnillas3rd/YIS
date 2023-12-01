@@ -6,6 +6,7 @@ import Home from "../pages/Home";
 import Colleges from "../pages/Colleges";
 import ErrorPage from "../pages/Error";
 import StudentInformation from "../pages/StudentInformation";
+import Solicitation from "../pages/Solicitation";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
         path: "/section",
         element: <Layout />,
         children: [
+            {
+                path: "solicitation",
+                element: <Solicitation />
+            },
             {
                 path: "colleges",
                 element: <Colleges />,
