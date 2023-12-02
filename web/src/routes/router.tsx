@@ -7,6 +7,8 @@ import Colleges from "../pages/Colleges";
 import ErrorPage from "../pages/Error";
 import StudentInformation from "../pages/StudentInformation";
 import Solicitation from "../pages/Solicitation";
+import YearbookPhotos from "../pages/YearbookPhotos";
+import YearbookReleased from "../pages/YearbookReleased";
 
 const router = createBrowserRouter([
     {
@@ -36,6 +38,14 @@ const router = createBrowserRouter([
                 path: "colleges",
                 element: <Colleges />,
             },
+            {
+                path: "yearbook-photos",
+                element: <YearbookPhotos />
+            },
+            {
+                path: "yearbook-released",
+                element: <YearbookReleased/>
+            }
 
         ]
     },

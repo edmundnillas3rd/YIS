@@ -5,7 +5,7 @@ export default function ({ children, ...otherProps }: any) {
             flex-col
             gap-1
             p-5
-            mx-5
+            m-5
             rounded-md
             border
             border-slate-400

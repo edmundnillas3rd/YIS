@@ -16,10 +16,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
 
         (async () => {
+
+            if (import.meta.env.DEV) {
+                return;
+            }
+            
             const response = await getCurrentUser();
 
             const [data] = await Promise.all([response]);
-            
+
             setCurrentUser(data as any);
 
             if (!data)
