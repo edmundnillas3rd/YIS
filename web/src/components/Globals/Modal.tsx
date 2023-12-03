@@ -35,7 +35,7 @@ export default function ({ isOpen, hasCloseBtn, onClose, children }: ModalProps)
     };
 
     return (
-        <dialog className="p-5 md:w-8/12 rounded" ref={modalRef} onKeyDown={handleKeyDown} >
+        <dialog className="p-5 w-full md:w-8/12 rounded" ref={modalRef} onKeyDown={handleKeyDown} >
             {hasCloseBtn && (
                 <section className="flex flex-auto flex-row justify-end">
                     <Button onClick={handleCloseModal}>

@@ -165,7 +165,7 @@ export default function () {
                     </section>
                     <section className="flex flex-col gap-1">
                         <h3 className="font-bold">Care Of</h3>
-                        <p className="text-gray-600">NOTE: IN CASE OF, CAREE OF MUST LOSS MUST PAY PHP 200</p>
+                        <p className="text-gray-600">NOTE: IN CASE OF LOSS, THEY MUST PAY PHP 200 FEE</p>
                     </section>
                     <section className="flex flex-row flex-wrap gap-1">
                         <Input

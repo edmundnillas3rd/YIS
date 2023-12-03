@@ -1,4 +1,5 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { FaEye } from "react-icons/fa";
 import { AuthContext } from "../context/AuthProvider";
 import {
     Input,
@@ -11,11 +12,14 @@ import OrganizationModal from "../components/OrganizationTable/OrganizationModal
 import AwardModal from "../components/AwardTable/AwardModal";
 import AwardEditModal from "../components/AwardTable/AwardEditModal";
 import OrganizationEditModal from "../components/OrganizationTable/OrganizationEditModal";
+import PreivewModal from "../components/StudentInformation/PreivewModal";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [disable, setDisable] = useState(true);
     const [clubProps, setClubProps] = useState(null);
+
+    const [displayPreview, setDisplayPreview] = useState(false);
 
     // For clubs & organizations table
     const [currentOrgNode, setCurrentOrgNode] = useState(null);
@@ -78,6 +82,11 @@ export default function () {
 
     };
 
+    const onClickPreview = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        setDisplayPreview(true);
+    };
+
     const onClickOrganization = async (data: any) => {
         console.log("Org row clicked", data);
         setDisplayOrgEdit(true);
@@ -93,11 +102,8 @@ export default function () {
         setDisplayOrgForm(false);
     };
 
-    const onCloseEditOrg = async () => {
-        setDisplayOrgEdit(false);
-        setCurrentOrgNode(null);
-        console.log("Current Org node", currentOrgNode);
-
+    const onClosePreview = async () => {
+        setDisplayPreview(false);
     };
 
     const onClickAward = async (data: any) => {
@@ -111,6 +117,13 @@ export default function () {
         setDisplayAwardForm(true);
     };
 
+    const onCloseEditOrg = async () => {
+        setDisplayOrgEdit(false);
+        setCurrentOrgNode(null);
+        console.log("Current Org node", currentOrgNode);
+
+    };
+
     const onCloseAddAward = async () => {
         setDisplayAwardForm(false);
     };
@@ -122,6 +135,11 @@ export default function () {
 
     return (
         <>
+            <PreivewModal
+                hasCloseBtn={true}
+                isOpen={displayPreview}
+                onClose={onClosePreview}
+            />
             <OrganizationModal
                 hasCloseBtn={true}
                 isOpen={displayOrgForm}
@@ -186,6 +204,14 @@ export default function () {
                         />
                     </form>
                 )}
+                <section className="flex flex-row gap-1 justify-end items-center mb-5">
+                    <Button
+                        onClick={onClickPreview}
+                    >
+                        Preview
+                        <FaEye />
+                    </Button>
+                </section>
                 {/* Organization */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>

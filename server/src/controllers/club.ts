@@ -89,13 +89,13 @@ export async function userPreview(req: Request, res: Response) {
         return organization;
     });
 
-    const awards = await query("SELECT award.award_attended_name AS awardAttendedName, award.award_name AS awardName, DATE_FORMAT(award.award_received, '%Y') AS awardReceived FROM award WHERE award.user_id = ?", [userID]);
+    const awards = await query("SELECT award.award_attended_name AS awardAttendedName, award.award_name AS awardName, award.award_received AS awardReceived FROM award WHERE award.user_id = ?", [userID]);
     let awardRecognitions = awards.rows.reduce((accumulator: string, currentValue: any) => {
         const { awardAttendedName, awardName, awardReceived } = currentValue;
         if (accumulator.length === 0) {
-            return `${awardAttendedName}, ${awardName}, ${awardReceived}`;
+            return `'${awardAttendedName}', '${awardName}', ${awardReceived}`;
         } else {
-            return `, ${awardAttendedName}, ${awardName}, ${awardReceived}`;
+            return `, '${awardAttendedName}', '${awardName}', ${awardReceived}`;
         }
     }, "");
 
