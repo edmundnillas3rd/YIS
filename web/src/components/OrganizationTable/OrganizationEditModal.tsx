@@ -1,8 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { FaCirclePlus } from "react-icons/fa6";
 
-import { Button } from "../Globals";
-import Modal from "../Modal";
+import { Button, Modal } from "../Globals";
 import OrganizationFillupForm from "./OrganizationFillupForm";
 
 interface Position {

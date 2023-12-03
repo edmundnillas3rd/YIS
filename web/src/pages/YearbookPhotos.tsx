@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import Container from "../components/Container";
-import { Input } from "../components/Globals";
-import Table from "../components/Table";
+import { Input, Table, Container } from "../components/Globals";
 
 export default function () {
 

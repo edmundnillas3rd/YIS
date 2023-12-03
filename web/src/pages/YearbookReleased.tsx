@@ -1,6 +1,5 @@
 import { SyntheticEvent, useState } from "react";
-import Container from "../components/Container";
-import { Button, Dropdown, Input } from "../components/Globals";
+import { Button, Dropdown, Input, Container } from "../components/Globals";
 import { generateYearRange } from "../utilities/generateYearRange";
 
 export default function () {

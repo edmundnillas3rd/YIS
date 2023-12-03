@@ -1,4 +1,4 @@
-import { Button } from "./Globals";
+import { Button } from ".";
 
 export default function ({ children, onConfirm, onCancel }: any) {
     return (

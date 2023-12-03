@@ -1,9 +1,12 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
-import { v4 as uuid } from "uuid";
 import { AuthContext } from "../context/AuthProvider";
-import { Input, Button } from "../components/Globals/index";
-import Table from "../components/Table";
-import Container from "../components/Container";
+import {
+    Input,
+    Button,
+    Table,
+    Container
+} from "../components/Globals/index";
+
 import OrganizationModal from "../components/OrganizationTable/OrganizationModal";
 import AwardModal from "../components/AwardTable/AwardModal";
 import AwardEditModal from "../components/AwardTable/AwardEditModal";
@@ -45,14 +48,14 @@ export default function () {
 
             if (indexData && clubsData && awardsData) {
                 setClubProps(indexData);
-                
+
 
 
                 setClubsData(clubsData['clubs']);
-                
+
 
                 setAwardsData(awardsData['awards']);
-                
+
             }
 
         })();

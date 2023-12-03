@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Button } from "./Globals/index";
+import { Button } from "./index";
 
 export default function ({ isOpen, hasCloseBtn, onClose, children }: ModalProps) {
     const modalRef = useRef<HTMLDialogElement | null>(null);

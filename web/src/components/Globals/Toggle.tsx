@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button } from "./Globals";
+import { Button } from ".";
 
 export default function ({ name, icon, onChange, children }: any) {
     const [display, setDisplay] = useState<boolean>(false);

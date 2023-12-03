@@ -1,10 +1,8 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import Modal from "../Modal";
 import { Input, Button } from "../Globals/index";
 import { useNavigate } from "react-router-dom";
-import { Dropdown } from "../Globals";
+import { Dropdown, Spinner, Modal } from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";
-import Spinner from "../Spinner";
 
 export default function ({
     isOpen,

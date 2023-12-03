@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Row from "./Table/Row";
+import Row from "../Table/Row";
 
 interface TableProps {
     columns: any[];

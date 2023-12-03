@@ -2,12 +2,17 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
-import { Button, Dropdown, Input } from "../Globals";
-import Spinner from "../Spinner";
-import Modal from "../Modal";
-import Toggle from "../Toggle";
-import Confirm from "../Confirm";
 import { useNavigate } from "react-router-dom";
+
+import {
+    Button,
+    Dropdown,
+    Input,
+    Spinner,
+    Modal,
+    Toggle,
+    Confirm
+} from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function ({
@@ -41,7 +46,7 @@ export default function ({
             setAwardAttendedName(data['awardAttendedName']);
             setAwardName(data['awardName']);
             setAwardReceived(data['awardReceived']);
-            
+
 
         }
     }, [data]);

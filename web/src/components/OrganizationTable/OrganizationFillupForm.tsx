@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { MdEdit, MdDelete } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
 
-import { Dropdown, Button } from "../Globals";
+import {
+    Dropdown,
+    Button,
+    Confirm,
+    Spinner,
+    Toggle
+} from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";
-
-import Confirm from "../Confirm";
-import Spinner from "../Spinner";
-import Toggle from "../Toggle";
 
 export default function ({ data, data2, hasSubmit }: any) {
     const [positions, setPositions] = useState();

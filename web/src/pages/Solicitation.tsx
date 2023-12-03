@@ -1,7 +1,11 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import Container from "../components/Container";
-import { Button, Dropdown, Input } from "../components/Globals";
-import Table from "../components/Table";
+import {
+    Button,
+    Dropdown,
+    Input,
+    Container,
+    Table
+} from "../components/Globals";
 
 export default function () {
 

@@ -1,3 +1,11 @@
 export { default as Input } from "./Input";
 export { default as Button } from "./Button";
 export { default as Dropdown } from "./Dropdown";
+export { default as Container } from "./Container";
+export { default as Navbar } from "./Navbar";
+export { default as Footer } from "./Footer";
+export { default as Spinner } from "./Spinner";
+export { default as Modal } from "./Modal";
+export { default as Table } from "./Table";
+export { default as Toggle } from "./Toggle";
+export { default as Confirm } from "./Confirm";

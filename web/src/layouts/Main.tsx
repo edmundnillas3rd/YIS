@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { AuthProvider } from "../context/AuthProvider";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import { Navbar, Footer } from "../components/Globals";
 
 export default function Main() {
     return (
