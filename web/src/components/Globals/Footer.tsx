@@ -3,7 +3,7 @@ export default function Footer() {
 
     return (
         <section className="text-center bg-red-600 text-slate-50 w-full p-4">
-            <p>Website built by Edmund Nillas III and Nicki Pecision. <br/> Supervised by Mdm Ciemavil Alcain of CCIS Faculty</p>
+            <p>Website built by Edmund Nillas III and Nicki Pecision.</p>
         </section>
     );
 }

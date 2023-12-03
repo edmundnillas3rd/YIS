@@ -114,7 +114,7 @@ export default function Auth() {
                     </figure>
                 </section>
             </section>
-            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III and Nick Pecision. <br /> Supervised by Mdm Ciemavil Alcain of CCIS Faculty</p></section>
+            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III and Nicki Pecision.</p></section>
         </section>
     );
 }
