@@ -4,10 +4,16 @@ import Row from "../Table/Row";
 interface TableProps {
     columns: any[];
     datas: any[];
+    buttonRowName?: string,
     onClickCallback: (data: any) => void;
 }
 
-export default function ({ columns, datas, onClickCallback }: TableProps) {
+export default function ({ 
+    columns, 
+    datas, 
+    buttonRowName = "Edit", 
+    onClickCallback 
+}: TableProps) {
 
     const onRowClickHandler = (data: any) => {
         if (onClickCallback)
@@ -34,6 +40,7 @@ export default function ({ columns, datas, onClickCallback }: TableProps) {
                 <Row
                     key={data['uuid']}
                     data={data}
+                    buttonRowName={buttonRowName}
                     onClickCallback={onRowClickHandler}
                 />
             ))}

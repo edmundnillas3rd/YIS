@@ -1,7 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { Button } from "../Globals/index";
 
-export default function ({ data, children, onClickCallback, ...otherProps }: any) {
+export default function ({ data, children, buttonRowName, onClickCallback, ...otherProps }: any) {
     const [values, setValues] = useState(Object.values(data));
 
     useEffect(() => {
@@ -37,7 +37,7 @@ export default function ({ data, children, onClickCallback, ...otherProps }: any
                 }
                 <td>
                     <Button onClick={onClick}>
-                        Edit
+                        {buttonRowName}
                     </Button>
                 </td>
             </tr>

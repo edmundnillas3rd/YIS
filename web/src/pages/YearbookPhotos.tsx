@@ -44,6 +44,7 @@ export default function () {
             <Table
                 columns={attr}
                 datas={students}
+                buttonRowName="View"
                 onClickCallback={onClick}
             />
         </Container>
