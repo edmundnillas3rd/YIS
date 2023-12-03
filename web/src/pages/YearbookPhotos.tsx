@@ -1,15 +1,36 @@
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
 import { Input } from "../components/Globals";
 import Table from "../components/Table";
 
 export default function () {
 
+    const [students, setStudents] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users`);
+            const data = await response.json();
+
+            if (data?.studentUsers) {
+                setStudents(data.studentUsers);
+            }
+        })();
+    }, []);
+
     const attr = [
-        0
+        "Year",
+        "Course",
+        "Full Name"
     ];
 
     const datas = [
-        0
+        {
+            id: "1",
+            year: "3RD",
+            course: "COMPUTER SCIENCE",
+            fullname: "EDMUND NILLAS III"
+        }
     ];
 
     const onClick = async (data: any) => {
@@ -23,7 +44,7 @@ export default function () {
             />
             <Table
                 columns={attr}
-                datas={datas}
+                datas={students}
                 onClickCallback={onClick}
             />
         </Container>

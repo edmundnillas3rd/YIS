@@ -5,11 +5,19 @@ import { Award, type Club } from "../models/user";
 import { query } from "../services/mysqldb";
 
 export async function index(req: Request, res: Response) {
-    const sql = "SELECT * FROM user";
+    const sql = `
+        SELECT user.user_id AS id, user.user_year as year, course.course_name AS course, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName FROM user 
+        INNER JOIN role
+        ON user.role_id = role.role_id
+        INNER JOIN course
+        ON user.course_id = course.course_id
+        WHERE role.role_name = 'STUDENT'
+        LIMIT 10
+    `;
     const { rows } = await query(sql);
 
     res.status(200).json({
-        rows
+        studentUsers: rows
     });
 }
 
@@ -158,7 +166,7 @@ export async function loginUserStudent(req: Request, res: Response) {
         SELECT user.user_id AS id, user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email AS email, user.user_password AS password, role.role_name AS role FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
-        WHERE user.user_email = ? AND role.role_name = 'USER'
+        WHERE user.user_email = ? AND role.role_name = 'STUDENT'
     `, [email]);
 
     if (user.rows.length === 0) {

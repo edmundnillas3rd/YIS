@@ -51,10 +51,16 @@ export default function Navbar() {
                     setTitle(name);
                     setDisplay(true);
                     break;
+                case "yearbook-photos":
+                    setTitle("Yearbook Photos");
+                    break;
+                case "yearbook-released":
+                    setTitle("Yearbook Released");
+                    break;
             }
         }
     };
-    
+
     useEffect(() => {
         parseURL();
     }, [window.location.href]);

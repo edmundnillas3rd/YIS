@@ -69,27 +69,29 @@ export default function () {
                 name="course"
                 datas={courses}
             />
-            <Input
-                title="First Name"
-                id="firstName"
-                onChange={onChange}
-            />
-            <Input
-                title="Last Name"
-                id="lastName"
-                onChange={onChange}
-            />
-            <Input
-                title="Middle Name"
-                id="middleName"
-                onChange={onChange}
-            />
-            <Input
-                title="Suffix"
-                id="suffix"
-                onChange={onChange}
-            />
-            <section className="flex flex-col gap-1">
+            <section className="flex flex-row flex-wrap gap-1">
+                <Input
+                    title="First Name"
+                    id="firstName"
+                    onChange={onChange}
+                />
+                <Input
+                    title="Last Name"
+                    id="lastName"
+                    onChange={onChange}
+                />
+                <Input
+                    title="Middle Name"
+                    id="middleName"
+                    onChange={onChange}
+                />
+                <Input
+                    title="Suffix"
+                    id="suffix"
+                    onChange={onChange}
+                />
+            </section>
+            <section className="flex flex-col gap-1 mt-5">
                 <h3 className="font-bold">Care Of (Relation)</h3>
             </section>
             <section className="flex flex-row flex-wrap gap-1">

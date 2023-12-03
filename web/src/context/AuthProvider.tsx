@@ -17,9 +17,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         (async () => {
 
-            if (import.meta.env.DEV) {
-                return;
-            }
+            // if (import.meta.env.DEV) {
+            //     return;
+            // }
             
             const response = await getCurrentUser();
 
