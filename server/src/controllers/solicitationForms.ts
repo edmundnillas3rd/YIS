@@ -77,21 +77,81 @@ export async function returnSolicitation(req: Request, res: Response) {
 }
 
 export async function submitSolicitation(req: Request, res: Response) {
-    const { id } = req.params;
     const {
         careOf,
-        ...attr
+        firstName,
+        lastName,
+        middleName,
+        suffix,
+        course,
+        soliNum
     } = req.body;
 
-    const genCareOfUUID = await query("SELECT UUID()");
-    const CareOfUUID = genCareOfUUID.rows[0]['UUID()'];
-    const CareOfValues = Object.values(careOf);
-    await query("INSERT INTO care_of VALUES (?, ?, ?, ?, ?, ?, ?)", [
-        CareOfUUID,
-        id,
-        ...CareOfValues
-    ]);
+    if (!req.session.authenticated) {
+        return res.status(401).json({
+            error: "Permission Not Granted"
+        });
+    }
 
+    const userResults = await query(`
+        SELECT solicitation_form.user_id AS id FROM solicitation_form
+        WHERE solicitation_form.solicitation_number = ?
+    `, [soliNum]);
+
+
+    let userID = null;
+    if (userResults.rows.length > 0) {
+        userID = userResults.rows[0]['id'];
+    } else {
+        return res.status(404).json({
+            error: "No student found"
+        });
+    }
+
+    let CareOfUUID = "";
+
+    if (careOf) {
+        const genCareOfUUID = await query("SELECT UUID()");
+        CareOfUUID = genCareOfUUID.rows[0]['UUID()'];
+        const CareOfValues = Object.values(careOf);
+        await query("INSERT INTO care_of VALUES (?, ?, ?, ?, ?, ?, ?)", [
+            CareOfUUID,
+            userID,
+            ...CareOfValues
+        ]);
+    }
+
+    let result = null;
+
+    const statusResult = await query(`
+        SELECT solicitation_returned_status_id AS id FROM solicitation_returned_status
+        WHERE solicitation_returned_status.status_name = 'RETURNED'
+    `);
+
+    if (CareOfUUID) {
+        result = await query(`
+            UPDATE solicitation_form
+            INNER JOIN user
+            ON solicitation_form.user_id = user.user_id
+            SET solicitation_form.solicitation_care_of = ?,
+            solicitation_form.solicitation_returned_status_id = ?
+            WHERE user.user_first_name = ? AND user.user_family_name = ? AND user.user_middle_name = ? AND user.user_suffix = ? AND user.course_id = ? AND user.solicitation_form.solicitation_number = ?
+    `, [CareOfUUID, statusResult.rows[0]['id'], firstName, lastName, middleName, suffix, course, soliNum]);
+    } else {
+        result = await query(`
+            UPDATE solicitation_form
+            INNER JOIN user
+            ON solicitation_form.user_id = user.user_id
+            SET solicitation_form.solicitation_returned_status_id = ?
+            WHERE user.user_first_name = ? AND user.user_family_name = ? AND user.user_middle_name = ? AND user.user_suffix = ? AND user.course_id = ? AND solicitation_form.solicitation_number = ?
+        `, [statusResult.rows[0]['id'], firstName, lastName, middleName, suffix, course, soliNum]);
+    }
+
+    if (result) {
+        res.status(200).end();
+    } else {
+        res.status(400).end();
+    }
     // const genSolicitationUUID = await query("SELECT UUID()");
     // const SolicitationUUID = genSolicitationUUID.rows[0]['UUID()'];
     // const SolicitationValues = Object.values(attr);

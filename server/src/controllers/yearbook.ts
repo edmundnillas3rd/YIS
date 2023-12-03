@@ -7,11 +7,11 @@ export async function index(req: Request, res: Response) {
     `);
 
     const yearbooks = await query(`
-        SELECT yearbook.yearbook_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(yearbook.yearbook_date_released, 'N/A') AS dateReleased FROM yearbook
+        SELECT yearbook_photos.yearbook_photos_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(yearbook_photos.yearbook_photos_date_released, 'N/A') AS dateReleased FROM yearbook_photos
         INNER JOIN user
-        ON yearbook.user_id = user.user_id
+        ON yearbook_photos.user_id = user.user_id
         INNER JOIN yearbook_status
-        ON yearbook.yearbook_status_id = yearbook_status.yearbook_status_id
+        ON yearbook_photos.yearbook_status_id = yearbook_status.yearbook_status_id
     `);
 
     res.status(200).json({
@@ -25,9 +25,9 @@ export async function statusUpdate(req: Request, res: Response) {
     const { status, user_id } = req.params;
 
     const results = await query(`
-        UPDATE yearbook
-        SET yearbook.yearbook_status_id = ?
-        WHERE yearbook.yearbook_id = ?
+        UPDATE yearbook_photos
+        SET yearbook_photos.yearbook_status_id = ?
+        WHERE yearbook_photos.yearbook_photos_id = ?
     `, [status, user_id]);
 
     res.status(200).end();

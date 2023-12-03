@@ -8,9 +8,11 @@ import {
     Table,
     Spinner
 } from "../components/Globals";
+import { useNavigate } from "react-router-dom";
 
 export default function () {
 
+    const [loading, setLoading] = useState<boolean>(false);
     const [courses, setCourses] = useState();
     const [solis, setSolis] = useState([]);
     const [datas, setDatas] = useState({
@@ -18,18 +20,21 @@ export default function () {
     });
 
     // Student
-    const [firstName, setFirstName] = useState<string>();
-    const [lastName, setLastName] = useState<string>();
-    const [middleName, setMiddleName] = useState<string>();
-    const [suffix, setSuffix] = useState<string>();
-    const [soliNum, setSoliNum] = useState<string>();
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [middleName, setMiddleName] = useState<string>("");
+    const [suffix, setSuffix] = useState<string>("");
+    const [course, setCourse] = useState<string>("");
+    const [soliNum, setSoliNum] = useState<string>("");
 
     // Care Of
-    const [cfFirstName, setCfFirstName] = useState<string>();
-    const [cfLastName, setCfLastName] = useState<string>();
-    const [cfMiddleName, setCfMiddleName] = useState<string>();
-    const [cfSuffix, setCfSuffix] = useState<string>();
-    const [cfRelation, setCfRelation] = useState<string>();
+    const [cfFirstName, setCfFirstName] = useState<string>("");
+    const [cfLastName, setCfLastName] = useState<string>("");
+    const [cfMiddleName, setCfMiddleName] = useState<string>("");
+    const [cfSuffix, setCfSuffix] = useState<string>("");
+    const [cfRelation, setCfRelation] = useState<string>("");
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -42,6 +47,7 @@ export default function () {
 
             if (course && soli) {
                 setCourses(course.courses);
+                setCourse(course.courses[0]['id']);
                 const formattedData = soli.solis.map((soli: any) => ({
                     uuid: uuid(),
                     ...soli
@@ -72,6 +78,9 @@ export default function () {
             case "suffix":
                 setSuffix(target.value);
                 break;
+            case "course":
+                setCourse(target.value);
+                break;
             case "solicitationFormNum":
                 setSoliNum(target.value);
                 break;
@@ -95,13 +104,30 @@ export default function () {
 
     const onSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
-        const careOf = {
-            cfFirstName,
-            cfLastName,
-            cfMiddleName,
-            cfSuffix,
-            cfRelation
-        };
+        setLoading(true);
+
+        let careOf = null;
+
+        if (cfFirstName &&
+            cfLastName &&
+            cfRelation) {
+            careOf = {
+                cfFirstName,
+                cfLastName,
+                cfMiddleName,
+                cfSuffix,
+                cfRelation
+            };
+        }
+
+        if (firstName &&
+            lastName &&
+            middleName &&
+            suffix &&
+            course &&
+            soliNum) {
+
+        }
 
         const data = {
             careOf,
@@ -109,8 +135,23 @@ export default function () {
             lastName,
             middleName,
             suffix,
-
+            course,
+            soliNum
         };
+
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/submit-solicitation`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            navigate(0);
+            setLoading(false);
+        }
     };
 
     const onClick = async (data: any) => {
@@ -145,19 +186,6 @@ export default function () {
                 filteredData: solis
             }));
         }
-
-
-        // switch (target.value) {
-        //     case "ALL":
-        //         setDatas(solis);
-        //         break;
-        //     case "RETURNED":
-        //         setDatas(solis.filter(soli => soli['returnedStatus'] === "RETURNED"));
-        //         break;
-        //     case "UNRETURNED":
-        //         setDatas(solis.filter(soli => soli['returnedStatus'] === "UNRETURNED"));
-        //         break;
-        // }
     };
 
     const attr = [
@@ -180,38 +208,49 @@ export default function () {
                 <form
                     className="flex flex-col gap-2"
                     method="POST"
+                    onSubmit={onSubmit}
                 >
                     <h3 className="font-bold">Student Information</h3>
                     <section className="flex flex-row flex-wrap gap-1">
                         {courses && <Dropdown
-                            label="Course"
+                            label="COURSE"
                             name="course"
                             datas={courses}
+                            defaultValue={courses[0]['id']}
+                            onChange={onChange}
                         />}
                         <Input
-                            title="First Name"
+                            title="FIRST NAME"
                             id="firstName"
                             onChange={onChange}
+                            pattern="[A-Z]+"
+                            required
                         />
                         <Input
-                            title="Last Name"
+                            title="LAST NAME"
                             id="lastName"
                             onChange={onChange}
+                            pattern="[A-Z]+"
+                            required
                         />
                         <Input
-                            title="Middle Name"
+                            title="MIDDLE NAME"
                             id="middleName"
                             onChange={onChange}
+                            pattern="[A-Z]+"
                         />
                         <Input
-                            title="Suffix"
+                            title="SUFFIX"
                             id="suffix"
                             onChange={onChange}
+                            pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
                         />
                         <Input
-                            title="Solicitation Form # (EX. 2023-2010)"
+                            title="SOLICITATION FORM # (EX. 2023-2010)"
                             id="solicitationFormNum"
                             onChange={onChange}
+                            pattern={"\\d{4}"}
+                            required
                         />
                     </section>
                     <section className="flex flex-col gap-1">
@@ -238,6 +277,7 @@ export default function () {
                             title="SUFFIX"
                             id="cfSuffix"
                             onChange={onChange}
+                            pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
                         />
                         <Input
                             title="RELATION"
@@ -245,7 +285,13 @@ export default function () {
                             onChange={onChange}
                         />
                     </section>
-                    <Button>Submit</Button>
+                    <Button>
+                        {loading ? (
+                            <Spinner />
+                        ) : (
+                            "Submit"
+                        )}
+                    </Button>
                 </form>
             </Container>
             <Container>
@@ -266,6 +312,7 @@ export default function () {
                         columns={attr}
                         datas={datas.filteredData}
                         onClickCallback={onClick}
+                        buttonRowName="View"
                     />
                 ) : (
 
