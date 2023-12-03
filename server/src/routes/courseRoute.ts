@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { index } from "../controllers/users";
+import { index } from "../controllers/course";
 const router = Router();
 
 router.get("/", index);

@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Dropdown, Input, Container } from "../components/Globals";
 import { generateYearRange } from "../utilities/generateYearRange";
 
@@ -17,6 +17,16 @@ export default function () {
     const [cfRelation, setCfRelation] = useState<string>();
 
     const years = generateYearRange();
+
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`);
+            const data = await response.json();
+            if (data?.courses) {
+                setCourses(data.courses);
+            }
+        })();
+    }, []);
 
     const onChange = (event: SyntheticEvent) => {
         event.preventDefault();
@@ -53,39 +63,39 @@ export default function () {
         }
     };
 
-    return (
+    return courses && (
         <Container>
             <section className="flex flex-col gap-1">
                 <h3 className="font-bold">Student Information</h3>
             </section>
             <Dropdown
-                label="Year Graduated"
+                label="YEAR GRADUATED"
                 name="course"
                 datas={years}
             />
             <Dropdown
-                label="Course"
+                label="COURSE"
                 name="course"
                 datas={courses}
             />
             <section className="flex flex-row flex-wrap gap-1">
                 <Input
-                    title="First Name"
+                    title="FIRST NAME"
                     id="firstName"
                     onChange={onChange}
                 />
                 <Input
-                    title="Last Name"
+                    title="LAST NAME"
                     id="lastName"
                     onChange={onChange}
                 />
                 <Input
-                    title="Middle Name"
+                    title="MIDDLE NAME"
                     id="middleName"
                     onChange={onChange}
                 />
                 <Input
-                    title="Suffix"
+                    title="SUFFIX"
                     id="suffix"
                     onChange={onChange}
                 />
@@ -95,27 +105,27 @@ export default function () {
             </section>
             <section className="flex flex-row flex-wrap gap-1">
                 <Input
-                    title="First Name"
+                    title="FIRST NAME"
                     id="cfFirstName"
                     onChange={onChange}
                 />
                 <Input
-                    title="Last Name"
+                    title="LAST NAME"
                     id="cfLastName"
                     onChange={onChange}
                 />
                 <Input
-                    title="Middle Name"
+                    title="MIDDLE NAME"
                     id="cfmiddleName"
                     onChange={onChange}
                 />
                 <Input
-                    title="Suffix"
+                    title="SUFFIX"
                     id="cfSuffix"
                     onChange={onChange}
                 />
                 <Input
-                    title="Relation"
+                    title="RELATION TO STUDENT"
                     id="cfRelation"
                     onChange={onChange}
                 />

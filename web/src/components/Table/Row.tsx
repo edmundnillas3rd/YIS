@@ -8,7 +8,12 @@ export default function ({ data, children, onClickCallback, ...otherProps }: any
 
         // 
         // Remove the the first element which is the id
-        setValues(values.slice(1));
+
+        if (data?.id)
+            setValues(values.slice(1));
+
+        if (data?.uuid && data?.id)
+            setValues(values.slice(2));
     }, []);
 
     const onClick = (event: SyntheticEvent) => {

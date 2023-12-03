@@ -1,15 +1,21 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { v4 as uuid } from "uuid";
 import {
     Button,
     Dropdown,
     Input,
     Container,
-    Table
+    Table,
+    Spinner
 } from "../components/Globals";
 
 export default function () {
 
     const [courses, setCourses] = useState();
+    const [solis, setSolis] = useState([]);
+    const [datas, setDatas] = useState({
+        filteredData: []
+    });
 
     // Student
     const [firstName, setFirstName] = useState<string>();
@@ -27,13 +33,26 @@ export default function () {
 
     useEffect(() => {
         (async () => {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`);
-            const data = await response.json();
-            if (data?.courses) {
-                console.log(data.courses);
-                setCourses(courses);
+            const courseResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`);
+
+            const solisResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation`);
+
+            const [course, soli] = await Promise.all([courseResponse.json(), solisResponse.json()]);
+
+
+            if (course && soli) {
+                setCourses(course.courses);
+                const formattedData = soli.solis.map((soli: any) => ({
+                    uuid: uuid(),
+                    ...soli
+                }));
+                setSolis(formattedData);
+                setDatas({
+                    filteredData: formattedData
+                });
             }
         })();
+
     }, []);
 
     const onChange = (event: SyntheticEvent) => {
@@ -99,27 +118,59 @@ export default function () {
 
     };
 
+    const soliFilters = [
+        "--FILTER USERS--",
+        "ALL",
+        "RETURNED",
+        "UNRETURNED",
+    ];
+
+    const onChangeFilter = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.target as HTMLInputElement;
+
+        if (target.value === "RETURNED" || target.value === "UNRETURNED") {
+            console.log(target.value);
+
+            let filterData = solis.filter(soli => (soli['returnedStatus'] === `${target.value}`));
+
+            console.log(filterData);
+
+
+            setDatas(soli => ({
+                filteredData: filterData
+            }));
+        } else {
+            setDatas(soli => ({
+                filteredData: solis
+            }));
+        }
+
+
+        // switch (target.value) {
+        //     case "ALL":
+        //         setDatas(solis);
+        //         break;
+        //     case "RETURNED":
+        //         setDatas(solis.filter(soli => soli['returnedStatus'] === "RETURNED"));
+        //         break;
+        //     case "UNRETURNED":
+        //         setDatas(solis.filter(soli => soli['returnedStatus'] === "UNRETURNED"));
+        //         break;
+        // }
+    };
+
     const attr = [
         "COURSE",
         "NAME",
         "SOLI #",
         "CARE OF",
+        "CARE OF RELATION",
         "SOLI STATUS",
         "DATE RETURNED",
-        "PAYMENT STATUS"
-    ];
-
-    const datas = [
-        {
-            id: "0",
-            couse: "COMPUTER SCIENCE",
-            name: "EDMUND NILLAS III",
-            solicNum: "7001",
-            careOf: "N/A",
-            soliStatus: "UNRETURNED",
-            dateReturned: "N/A",
-            paymentStatus: "HALF-PAID"
-        }
+        "PAYMENT STATUS",
+        "PAYMENT",
+        "OR #"
     ];
 
     return (
@@ -132,11 +183,11 @@ export default function () {
                 >
                     <h3 className="font-bold">Student Information</h3>
                     <section className="flex flex-row flex-wrap gap-1">
-                        <Dropdown
+                        {courses && <Dropdown
                             label="Course"
                             name="course"
                             datas={courses}
-                        />
+                        />}
                         <Input
                             title="First Name"
                             id="firstName"
@@ -169,27 +220,27 @@ export default function () {
                     </section>
                     <section className="flex flex-row flex-wrap gap-1">
                         <Input
-                            title="First Name"
+                            title="FIRST NAME"
                             id="cfFirstName"
                             onChange={onChange}
                         />
                         <Input
-                            title="Last Name"
+                            title="LAST NAME"
                             id="cfLastName"
                             onChange={onChange}
                         />
                         <Input
-                            title="Middle Name"
+                            title="MIDDLE NAME"
                             id="cfmiddleName"
                             onChange={onChange}
                         />
                         <Input
-                            title="Suffix"
+                            title="SUFFIX"
                             id="cfSuffix"
                             onChange={onChange}
                         />
                         <Input
-                            title="Relation"
+                            title="RELATION"
                             id="cfRelation"
                             onChange={onChange}
                         />
@@ -198,14 +249,31 @@ export default function () {
                 </form>
             </Container>
             <Container>
-                <Input
-                    placeholder="Search the name of student"
-                />
-                <Table
-                    columns={attr}
-                    datas={datas}
-                    onClickCallback={onClick}
-                />
+                <section className="flex flex-row gap-5">
+                    <Input
+                        placeholder="Search the name of student"
+                    />
+                    <Dropdown
+                        label=""
+                        name="filterSoli"
+                        datas={soliFilters}
+                        onChange={onChangeFilter}
+                    />
+                </section>
+
+                {datas?.filteredData ? (
+                    <Table
+                        columns={attr}
+                        datas={datas.filteredData}
+                        onClickCallback={onClick}
+                    />
+                ) : (
+
+                    <section className="flex flex-row justify-center">
+                        <Spinner />
+                    </section>
+                )
+                }
             </Container>
         </>
     );

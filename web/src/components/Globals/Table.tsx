@@ -16,7 +16,7 @@ export default function ({ columns, datas, onClickCallback }: TableProps) {
 
     const [attributes, setAttributes] = useState(columns);
     return (
-        <table className="p-2 rounded mb-5">
+        <table className="table-auto p-2 rounded mb-5">
             <tbody>
                 <tr className="p-2 border-b border-slate-400 mb-5">
                     {/* Should display the column name */}
@@ -30,7 +30,13 @@ export default function ({ columns, datas, onClickCallback }: TableProps) {
 
                 </tr>
             </tbody>
-            {datas.map((data, index) => (<Row key={data['uuid']} data={data} onClickCallback={onRowClickHandler} />))}
+            {datas.map((data, index) => (
+                <Row
+                    key={data['uuid']}
+                    data={data}
+                    onClickCallback={onRowClickHandler}
+                />
+            ))}
         </table>
     );
 }

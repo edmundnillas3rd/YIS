@@ -17,7 +17,6 @@ export default function () {
     }, []);
 
     const attr = [
-        "Year",
         "Course",
         "Full Name"
     ];
@@ -37,9 +36,11 @@ export default function () {
 
     return (
         <Container>
-            <Input
-                placeholder="Search the name of student"
-            />
+            <section className="flex flex-row">
+                <Input
+                    placeholder="Search the name of student"
+                />
+            </section>
             <Table
                 columns={attr}
                 datas={students}

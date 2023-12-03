@@ -6,7 +6,7 @@ import { query } from "../services/mysqldb";
 
 export async function index(req: Request, res: Response) {
     const sql = `
-        SELECT user.user_id AS id, user.user_year as year, course.course_name AS course, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName FROM user 
+        SELECT user.user_id AS id, course.course_name AS course, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
         INNER JOIN course

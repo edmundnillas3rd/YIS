@@ -4,10 +4,10 @@ export default function ({
     onChange,
     ...otherProps }: any) {
     return (
-        <section className="flex flex-col">
+        <section className="flex flex-auto flex-col">
             <label
                 htmlFor={id}
-                className="block text-sm font-medium leading-6 text-gray-900"
+                className="block text-sm font-bold leading-6 text-gray-900"
             >
                 {title}
             </label>
