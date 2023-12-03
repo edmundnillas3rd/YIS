@@ -1,8 +1,6 @@
 import { Outlet } from "react-router-dom";
-import HeaderDashboard from "../components/Admin/HeaderDashboard";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import { AuthProvider } from "../context/AuthProvider";
+import { Navbar, Footer } from "../components/Globals";
 
 export default function AdminDashboard() {
     return (
@@ -10,7 +8,6 @@ export default function AdminDashboard() {
         <>
             <Navbar />
             <main className="flex flex-auto flex-row gap-5 pt-2 justify-start items-center">
-                <HeaderDashboard />
                 <Outlet />
             </main>
             <Footer />

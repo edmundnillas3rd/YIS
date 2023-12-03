@@ -12,6 +12,7 @@ const app: Express = express();
 import initializeDB from "./services/mysqldb";
 import userRoute from "./routes/userRoute";
 import solicitationRoute from "./routes/solicitationRoute";
+import courseRoute from "./routes/courseRoute";
 import clubRoute from "./routes/clubRoute";
 import { config } from "./services/mysqldb";
 
@@ -50,6 +51,7 @@ const main = async () => {
 
     app.use("/users", userRoute);
     app.use("/solicitation", solicitationRoute);
+    app.use("/courses", courseRoute);
     app.use("/clubs", clubRoute);
 
     app.listen(process.env.PORT || 3000, () => {

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 
 interface SelectionProps {
@@ -59,18 +59,11 @@ export default function Main() {
     const claimed = import.meta.env.VITE_STUB_CLAIM;
 
     useEffect(() => {
-        if (role === "admin") {
+        if (import.meta.env.DEV) {
             setDisable(false);
         }
 
-        console.log(currentUser);
-
     }, []);
-
-    useEffect(() => {
-        console.log(currentUser);
-
-    }, [currentUser]);
 
     const images = [
         "/assets/cjc-logo.png",
@@ -116,7 +109,11 @@ export default function Main() {
                 <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
                     YEARBOOK PHOTOS
                 </Selection>
-                {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
+                {/* {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
+                    YEARBOOK RELEASED
+                    {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
+                </Selection>} */}
+                {<Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
                     YEARBOOK RELEASED
                     {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
                 </Selection>}

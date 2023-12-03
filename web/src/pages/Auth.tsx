@@ -1,6 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Spinner from "../components/Spinner";
+import { Button } from "../components/Globals/index";
 
 export default function Auth() {
     const [email, setEmail] = useState<string | null>(null);
@@ -11,8 +11,8 @@ export default function Auth() {
     const navigate = useNavigate();
 
     const onSubmitHandler = async (e: SyntheticEvent) => {
-        setLoading(true);
         e.preventDefault();
+        setLoading(true);
 
         const data = {
             email,
@@ -31,8 +31,11 @@ export default function Auth() {
         if (response.ok) {
             navigate("/home");
         } else {
-            setErrMessage("Invalid email and password, please try again.");
-            setLoading(false);
+            const { error } = await response.json();
+            if (error) {
+                setErrMessage(error);
+                setLoading(false);
+            }
         }
     };
 
@@ -54,7 +57,7 @@ export default function Auth() {
                         autoComplete="email"
                         required
                         className="block w-full rounded-t-md border-1 border-gray-300  border-b-gray-50 py-1.5 text-gray-700 shadow-sm ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="Email or Solicitation Number"
+                        placeholder="Email"
                         onChange={e => {
                             e.preventDefault();
                             setErrMessage(null);
@@ -76,7 +79,17 @@ export default function Auth() {
                         }}
                     />
                     <div className="mt-4">
-                        <button type="submit" className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">{loading ? <Spinner /> : "Sign in"}</button>
+                        <Button
+                            type="submit"
+                            maxWidth={true}
+                        >
+                            {loading ? "Loading..." : "Sign in"}
+                        </Button>
+                        {/* <button
+                            className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                        >
+                            {loading ? "Loading..." : "Sign in"}
+                        </button> */}
                     </div>
                     <div className="mt-2 text-sm">
                         <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>

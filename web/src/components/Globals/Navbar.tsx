@@ -4,7 +4,6 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FiLogOut } from "react-icons/fi";
 
 import cjcLogo from "/assets/cjc-logo.png";
-import Spinner from "./Spinner";
 
 export default function Navbar() {
     const [title, setTitle] = useState("");
@@ -14,7 +13,7 @@ export default function Navbar() {
     const navigate = useNavigate();
 
     const onClickHandler = async (e: SyntheticEvent) => {
-        setLoading(true)
+        setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
             method: "POST"
         });
@@ -25,7 +24,7 @@ export default function Navbar() {
         }
     };
 
-    useEffect(() => {
+    const parseURL = () => {
         const url = window.location.href;
         const parseUrl = url.split("/");
 
@@ -47,14 +46,23 @@ export default function Navbar() {
 
                     setDisplay(true);
                     break;
-                case "division":
+                case "colleges":
                     const name = parseUrl[parseUrl.length - 1].toUpperCase();
                     setTitle(name);
                     setDisplay(true);
                     break;
+                case "yearbook-photos":
+                    setTitle("Yearbook Photos");
+                    break;
+                case "yearbook-released":
+                    setTitle("Yearbook Released");
+                    break;
             }
         }
+    };
 
+    useEffect(() => {
+        parseURL();
     }, [window.location.href]);
 
     return (
@@ -78,7 +86,7 @@ export default function Navbar() {
 
             <button className="ml-auto" onClick={onClickHandler} disabled={loading} >
                 {loading ? (
-                    <Spinner />
+                    "Loading..."
                 ) : (
                     <FiLogOut />
                 )}
