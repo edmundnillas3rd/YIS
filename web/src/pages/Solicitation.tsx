@@ -9,6 +9,7 @@ import {
     Spinner
 } from "../components/Globals";
 import { useNavigate } from "react-router-dom";
+import SoliciitationModal from "../components/Solicitation/SoliciitationModal";
 
 export default function () {
 
@@ -18,6 +19,8 @@ export default function () {
     const [datas, setDatas] = useState({
         filteredData: []
     });
+    const [statuses, setStatuses] = useState([]);
+    const [currentNode, setCurrentNode] = useState(null);
 
     // Student
     const [firstName, setFirstName] = useState<string>("");
@@ -53,6 +56,7 @@ export default function () {
                     ...soli
                 }));
                 setSolis(formattedData);
+                setStatuses(soli.statuses);
                 setDatas({
                     filteredData: formattedData
                 });
@@ -155,8 +159,13 @@ export default function () {
     };
 
     const onClick = async (data: any) => {
+        setCurrentNode(data);
         console.log(data);
+        
+    };
 
+    const onCloseModal = async () => {
+        setCurrentNode(null);
     };
 
     const soliFilters = [
@@ -203,7 +212,13 @@ export default function () {
 
     return (
         <>
-
+            <SoliciitationModal
+                hasCloseBtn={true}
+                isOpen={!!currentNode}
+                onClose={onCloseModal}
+                data={currentNode}
+                data2={statuses}
+            />
             <Container>
                 <form
                     className="flex flex-col gap-2"

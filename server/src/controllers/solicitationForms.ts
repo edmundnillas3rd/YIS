@@ -29,8 +29,13 @@ export async function index(req: Request, res: Response) {
     `;
     const { rows } = await query(sql);
 
+    const statusResults = await query(`
+        SELECT solicitation_returned_status_id AS id, status_name AS name FROM solicitation_returned_status
+    `);
+
     res.status(200).json({
-        solis: rows
+        solis: rows,
+        statuses: statusResults.rows
     });
 }
 
