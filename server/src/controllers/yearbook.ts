@@ -14,9 +14,14 @@ export async function index(req: Request, res: Response) {
         ON yearbook_photos.yearbook_status_id = yearbook_status.yearbook_status_id
     `);
 
+    const yearbookPaymentStatuses = await query(`
+        SELECT solicitation_payment_status_id AS id, solicitation_payment_status.status_name AS name FROM solicitation_payment_status
+    `);
+
     res.status(200).json({
         yearbookStatuses: yearbookStatus.rows,
-        yearbooks: yearbooks.rows
+        yearbooks: yearbooks.rows,
+        yearbookPaymentStatuses: yearbookPaymentStatuses.rows
     });
 }
 

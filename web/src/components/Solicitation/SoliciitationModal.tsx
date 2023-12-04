@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
-import { Dropdown, Input, Modal } from "../Globals";
+import { SyntheticEvent, useEffect, useState } from "react";
+import {
+    Button,
+    Confirm,
+    Dropdown,
+    Input,
+    Modal,
+    Toggle
+} from "../Globals";
+import { FaSave } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function ({
     isOpen,
@@ -11,27 +20,90 @@ export default function ({
 
     const [soli, setSoli] = useState();
     const [statuses, setStatuses] = useState();
+    const [paymentStatuses, setPaymentStatuses] = useState();
 
-    const [status, setStatus] = useState();
+    const [id, setID] = useState<string>();
+    const [status, setStatus] = useState<string>();
+    const [dateReturned, setDateReturned] = useState<string>();
+    const [ornumber, setORNumber] = useState<string>();
+    const [paymentStatus, setPaymentStatus] = useState<string>();
+
+    const [disable, setDisable] = useState<boolean>(false);
+    const [confirmSave, setConfirmSave] = useState<boolean>(false);
+
+    const [loading, setLoading] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (data && data2) {
             setSoli(data);
-            setStatuses(data2);
+            setStatuses(data2.statuses);
+            setPaymentStatuses(data2.yearbookPaymentStatuses);
 
+            const filteredStatus = data2.statuses.filter((s: any) =>
+                (data['returnedStatus'] === s['name'])
+            );
+            setStatus(filteredStatus[0]['id']);
 
-            const filteredStatus = data2.filter((s: any) => {
-                console.log(data['returnedStatus'] === s['name']);
+            const filteredPaymentStatus = data2.yearbookPaymentStatuses.filter((p: any) => (data['paymentStatus'] === p['name']));
 
-                return data['returnedStatus'] === s['name'];
-            });
-            console.log(filteredStatus);
+            setPaymentStatus(filteredPaymentStatus[0]['id']);
 
-            setStatus(filteredStatus);
-            // console.log(data2, data['returnedStatus']);
-
+            setID(data['id']);
+            setORNumber(data['ORnumber']);
+            setDateReturned(data['dateReturned']);
         }
     }, [data, data2]);
+
+    const onChange = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const target = event.target as HTMLInputElement;
+
+        switch (target.name) {
+            case "status":
+                setStatus(target.value);
+                break;
+            case "dateReturned":
+                setDateReturned(target.value);
+                break;
+            case "ornumber":
+                setORNumber(target.value);
+                break;
+            case "paymentStatus":
+                setPaymentStatus(target.value);
+                break;
+        }
+    };
+
+    const onClickSave = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const data = {
+            id,
+            status,
+            dateReturned,
+            ornumber,
+            paymentStatus
+        };
+
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/solicitation-update`, {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            navigate(0);
+        }
+    };
+
+    const onToggleChange = async (data: any) => {
+        setDisable(!data);
+    };
 
     return (
         <Modal
@@ -40,34 +112,60 @@ export default function ({
             onClose={onClose}
             data={data}
         >
-            {soli && status && (
-                <section className="flex flex-col gap-2">
-                    <h3 className="font-bold">{soli['fullName']}<br/>SOLI FORM # {soli['soliNumber']}</h3>
+            {soli && status && paymentStatus && (
+                <section
+                    className="flex flex-col gap-2"
+                >
+                    <h3 className="font-bold">{soli['fullName']}<br />SOLI FORM # {soli['soliNumber']}</h3>
                     <Dropdown
                         label="STATUS"
                         name="status"
-                        defaultValue={status[0]['id']}
+                        value={status}
                         datas={statuses}
-                        disabled={true}
+                        disabled={disable}
+                        onChange={onChange}
                     />
                     <Input
                         title="DATE RETURNED"
                         id="dateReturned"
-                        defaultValue={soli['dateReturned']}
-                        disabled={true}
+                        defaultValue={dateReturned}
+                        disabled={disable}
+                        onChange={onChange}
                     />
-                     <Input
+                    <Input
                         title="OR NUMBER"
                         id="ornumber"
-                        defaultValue={soli['ORnumber']}
-                        disabled={true}
+                        defaultValue={ornumber}
+                        disabled={disable}
+                        onChange={onChange}
                     />
-                     <Input
-                        title="PAYMENT STATUS"
-                        id="paymentStatus"
-                        defaultValue={soli['paymentStatus']}
-                        disabled={true}
+                    <Dropdown
+                        label="PAYMENT STATUS"
+                        name="paymentStatus"
+                        value={paymentStatus}
+                        disabled={disable}
+                        datas={paymentStatuses}
+                        onChange={onChange}
                     />
+                    <Toggle
+                        name="Edit"
+                        onChange={onToggleChange}
+                    >
+                        {!confirmSave && (
+                            <Button
+                                onClick={(e: any) => { setConfirmSave(true); }}
+                            >
+                                Save
+                                <FaSave />
+                            </Button>
+                        )}
+                        {confirmSave && (
+                            <Confirm
+                                onConfirm={onClickSave}
+                                onCancel={(e: any) => setConfirmSave(false)}
+                            />
+                        )}
+                    </Toggle>
                 </section>
             )}
         </Modal>

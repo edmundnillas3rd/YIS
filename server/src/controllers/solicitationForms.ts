@@ -219,3 +219,26 @@ export async function claimSolicitation(req: Request, res: Response) {
         success: "Successfully Claimed by Student"
     });
 }
+
+// PATCH
+
+export async function solicitationUpdate(req: Request, res: Response) {
+    const {
+        id,
+        status,
+        dateReturned,
+        ornumber,
+        paymentStatus
+    } = req.body;
+
+    const results = await query(`
+        UPDATE solicitation_form
+        SET solicitation_returned_status_id = ?,
+        solicitation_date_returned = STR_TO_DATE(?, '%m/%d/%Y'),
+        solicitation_or_number = ?,
+        solicitation_payment_status_id = ?
+        WHERE solicitation_form.user_id = ?
+    `, [status, dateReturned, ornumber, paymentStatus, id])
+
+    res.status(200).end();
+}

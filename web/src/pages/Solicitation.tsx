@@ -19,7 +19,7 @@ export default function () {
     const [datas, setDatas] = useState({
         filteredData: []
     });
-    const [statuses, setStatuses] = useState([]);
+    const [statuses, setStatuses] = useState({});
     const [currentNode, setCurrentNode] = useState(null);
 
     // Student
@@ -45,21 +45,33 @@ export default function () {
 
             const solisResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation`);
 
-            const [course, soli] = await Promise.all([courseResponse.json(), solisResponse.json()]);
+            const yearbookResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks`);
+
+            const [course, soli, yearbook] = await Promise.all([courseResponse.json(), solisResponse.json(), yearbookResponse.json()]);
 
 
-            if (course && soli) {
+            if (course && soli && yearbook) {
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
+
                 const formattedData = soli.solis.map((soli: any) => ({
                     uuid: uuid(),
                     ...soli
                 }));
+
                 setSolis(formattedData);
-                setStatuses(soli.statuses);
                 setDatas({
                     filteredData: formattedData
                 });
+
+                const { statuses } = soli;
+                const { yearbookPaymentStatuses } = yearbook;
+
+                setStatuses({
+                    statuses,
+                    yearbookPaymentStatuses: yearbookPaymentStatuses
+                });
+
             }
         })();
 
@@ -161,7 +173,7 @@ export default function () {
     const onClick = async (data: any) => {
         setCurrentNode(data);
         console.log(data);
-        
+
     };
 
     const onCloseModal = async () => {
