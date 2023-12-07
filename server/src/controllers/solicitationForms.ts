@@ -11,7 +11,7 @@ export async function index(req: Request, res: Response) {
         COALESCE(CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix), 'N/A') AS careOfFullName,
         COALESCE(care_of.relation_status, 'N/A') AS relationStatus,
         solicitation_returned_status.status_name AS returnedStatus, 
-        DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m/%d/%Y') AS dateReturned,
+        COALESCE(DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m/%d/%Y'), 'N/A') AS dateReturned,
         solicitation_payment_status.status_name AS paymentStatus,
         solicitation_form.solicitation_yearbook_payment AS paymentAmount,
         solicitation_form.solicitation_or_number AS ORnumber

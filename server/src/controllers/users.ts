@@ -150,7 +150,7 @@ export async function signupUserStudent(req: Request, res: Response) {
     roleUUID = queriedRole.rows[0].role_id;
     const userUUID = await query("SELECT UUID()");
     const userValues = Object.values(attr);
-    const { rows } = await query("INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword, roleUUID]);
+    const { rows } = await query("INSERT INTO user (user_id, user_first_name, user_family_name, user_middle_name, user_suffix, course_id, user_email, user_password, role_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword, roleUUID]);
 
     res.status(200).json({ message: "User successfully registerd!" });
 }
