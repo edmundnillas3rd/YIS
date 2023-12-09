@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Input, Table, Container } from "../components/Globals";
 import { v4 as uuid } from "uuid";
 import YearbookPhotosModal from "../components/YearbookPhotos/YearbookPhotosModal";
@@ -9,6 +9,8 @@ export default function () {
     const [statuses, setStatuses] = useState([]);
     const [currentNode, setCurrentNode] = useState(null);
     const [displayStatus, setDisplayStatus] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -32,6 +34,12 @@ export default function () {
         })();
     }, []);
 
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}`)
+        })();
+    }, [search])
+
     const attr = [
         "Full Name",
         "Yearbook Photo Status",
@@ -48,6 +56,18 @@ export default function () {
         setDisplayStatus(false);
     };
 
+    const onChange = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const target = event.target as HTMLInputElement;
+
+        switch (target.name) {
+            case "searchStudent":
+                setSearch(target.value);
+                break;
+        }
+    }
+
     return (
         <>
             <YearbookPhotosModal
@@ -61,6 +81,8 @@ export default function () {
                 <section className="flex flex-row">
                     <Input
                         placeholder="Search the name of student"
+                        id="searchStudent"
+                        onChange={onChange}
                     />
                 </section>
                 <Table

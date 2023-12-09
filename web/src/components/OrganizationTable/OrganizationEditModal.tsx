@@ -24,21 +24,23 @@ export default function ({
     const [club, setClub] = useState();
 
     useEffect(() => {
-
-        if (!data || !data2)
+        if (!data && !data2)
             return;
 
         (async () => {
-            const { id } = data2;
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/user-club-info`, {
-                credentials: "include"
-            });
 
-            const data = await response.json();
-            if (response.ok) {
-                setPositions(data.userClubPositions);
+            if (data2?.id) {
+                const { id } = data2;
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/user-club-info`, {
+                    credentials: "include"
+                });
+
+                const data = await response.json();
+
+                if (data) {
+                    setPositions(data.userClubPositions);
+                }
             }
-
         })();
     }, [data, data2]);
 
@@ -70,7 +72,7 @@ export default function ({
             hasCloseBtn={hasCloseBtn}
             onClose={onClose}
         >
-            {positions && positions.map((position: any) => (
+            {positions.length && positions.map((position: any) => (
                 <OrganizationFillupForm
                     data={data}
                     data2={position}

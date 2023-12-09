@@ -13,6 +13,7 @@ import AwardModal from "../components/AwardTable/AwardModal";
 import AwardEditModal from "../components/AwardTable/AwardEditModal";
 import OrganizationEditModal from "../components/OrganizationTable/OrganizationEditModal";
 import PreivewModal from "../components/StudentInformation/PreivewModal";
+import SeminarModal from "../components/SeminarTable/SeminarModal";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
@@ -33,6 +34,8 @@ export default function () {
     const [awardsData, setAwardsData] = useState(null);
     const [clubsData, setClubsData] = useState(null);
 
+    // For seminars table
+
     useEffect(() => {
         (async () => {
             const clubsRouteResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
@@ -52,14 +55,8 @@ export default function () {
 
             if (indexData && clubsData && awardsData) {
                 setClubProps(indexData);
-
-
-
                 setClubsData(clubsData['clubs']);
-
-
                 setAwardsData(awardsData['awards']);
-
             }
 
         })();
@@ -165,6 +162,14 @@ export default function () {
                 data={currentAwardNode}
             />
 
+            {/* Temporary fill in the modal */}
+            <SeminarModal
+                hasCloseBtn={true}
+                isOpen={false}
+                onClose={() => {}}
+                data={null}
+            />
+
             <Container>
                 <section>
                     <h3 className="font-bold mb-5">Student Information</h3>
@@ -218,12 +223,13 @@ export default function () {
                     <Button onClick={onClickAddOrg}>Add Organization</Button>
                 </section>
                 {clubsData && <Table columns={organizationHeaders} datas={clubsData} onClickCallback={onClickOrganization} />}
-                {/* Awards & Seminars */}
+                {/* Awards */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
                     <Button onClick={onClickAddAward}>Add Award/Seminar</Button>
                 </section>
                 {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
+                {/* Seminars */}
             </Container>
         </>
 

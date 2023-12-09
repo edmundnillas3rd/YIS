@@ -17,6 +17,7 @@ export default function ({ data, data2, hasSubmit }: any) {
     const [organizations, setOrganizations] = useState();
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [disable, setDisable] = useState<boolean>(false);
     const [errMessage, setErrMessage] = useState<string>();
 
     const [confirmSave, setConfirmSave] = useState<boolean>(false);
@@ -30,23 +31,22 @@ export default function ({ data, data2, hasSubmit }: any) {
     const years = generateYearRange();
 
     useEffect(() => {
-        if (data2?.club) {
-            setClub(data2.club);
-        }
-    }, []);
 
-    useEffect(() => {
+        console.log(data, data2);
+
         if (data?.positions && data?.organizations) {
             setPositions(data.positions);
             setOrganizations(data.organizations);
         }
 
-        if (data2?.club && data2?.position && data2?.yearStarted && data2.yearEnded) {
-
-            setClub(data2.club);
-            setPosition(data2.position);
-            setYearStarted(data2.yearStarted);
-            setYearEnded(data2.yearEnded);
+        if (data2?.id && data2?.position && data2?.yearStarted && data2?.yearEnded) {
+            console.log("Executed");
+            
+            const { id, position, yearStarted, yearEnded } = data2;
+            setClub(id);
+            setPosition(position);
+            setYearStarted(yearStarted);
+            setYearEnded(yearEnded);
         }
 
     }, [data, data2]);
@@ -143,6 +143,7 @@ export default function ({ data, data2, hasSubmit }: any) {
     };
 
     const onEditChange = (state: any) => {
+        setDisable(!state);
         setConfirmDelete(false);
         setConfirmSave(false);
     };
@@ -157,7 +158,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                         label="Position"
                         name="position"
                         onChange={onChange}
-                        disabled={loading}
+                        disabled={disable}
                         datas={positions}
                         value={position}
                     />
@@ -165,7 +166,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                         label="Year Started"
                         name="yearStarted"
                         onChange={onChange}
-                        disabled={loading}
+                        disabled={disable}
                         datas={years}
                         value={yearStarted}
                     />
@@ -173,7 +174,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                         label="Year Ended"
                         name="yearEnded"
                         onChange={onChange}
-                        disabled={loading}
+                        disabled={disable}
                         datas={years}
                         value={yearEnded}
                     />
