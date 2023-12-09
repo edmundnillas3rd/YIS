@@ -16,14 +16,14 @@ export async function userClub(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT DISTINCT club_organization.club_organization_id AS id, club_organization.club_organization_name AS organization FROM user
-        INNER JOIN club
-        ON club.user_id = user.user_id
-        INNER JOIN club_organization
-        ON club.club_organization_id = club_organization.club_organization_id
-        INNER JOIN club_position
-        ON club.club_position_id = club_position.club_position_id
-        WHERE user.user_id = ?;
+        SELECT DISTINCT co.club_organization_id AS id, co.club_organization_name AS organization FROM user u
+        INNER JOIN club c
+        ON c.user_id = u.user_id
+        INNER JOIN club_organization co
+        ON c.club_organization_id = co.club_organization_id
+        INNER JOIN club_position cpos
+        ON c.club_position_id = cpos.club_position_id
+        WHERE u.user_id = ?;
     `, [userID]);
 
     res.status(200).json({
@@ -36,10 +36,10 @@ export async function userClubInfo(req: Request, res: Response) {
     const { clubID } = req.params;
 
     const { rows } = await query(`
-        SELECT club.club_id as club, club_position.club_position_id AS position, club.club_started AS yearStarted, club.club_ended AS yearEnded FROM club
-        INNER JOIN club_position
-        ON club.club_position_id = club_position.club_position_id
-        WHERE club.user_id = ? AND club.club_organization_id = ?
+        SELECT c.club_id as id, cpos.club_position_id AS position, c.club_started AS yearStarted, c.club_ended AS yearEnded FROM club c
+        INNER JOIN club_position cpos
+        ON c.club_position_id = cpos.club_position_id
+        WHERE c.user_id = ? AND c.club_organization_id = ?
     `, [userID, clubID]);
 
     res.status(200).json({
@@ -51,20 +51,19 @@ export async function userPreview(req: Request, res: Response) {
     const { userID } = req.session;
 
     const sql = `
-        SELECT DISTINCT club_organization.club_organization_name AS organizationName, club_position.club_position_name AS clubPosition, club.club_started AS yearStarted, club.club_ended AS yearEnded FROM club
-		INNER JOIN user
-		ON club.user_id = user.user_id
-		INNER JOIN club_organization
-		ON club.club_organization_id = club_organization.club_organization_id
-		INNER JOIN club_position
-		ON club.club_position_id = club_position.club_position_id
-		WHERE club.user_id = ?
+        SELECT DISTINCT co.club_organization_name AS organizationName, cpos.club_position_name AS clubPosition, c.club_started AS yearStarted, c.club_ended AS yearEnded FROM club c
+		INNER JOIN user u
+		ON c.user_id = u.user_id
+		INNER JOIN club_organization co
+		ON c.club_organization_id = co.club_organization_id
+		INNER JOIN club_position cpos
+		ON c.club_position_id = cpos.club_position_id
+		WHERE c.user_id = ?
     `;
 
     const organization = await query(sql, [userID]);
 
     let clubRecognitions = organization.rows.reduce((accumulator: any, currentValue: any) => {
-        console.log(accumulator);
 
         if (accumulator[currentValue.organizationName as string] !== undefined) {
             const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1);
@@ -89,7 +88,7 @@ export async function userPreview(req: Request, res: Response) {
         return organization;
     });
 
-    const awards = await query("SELECT award.award_attended_name AS awardAttendedName, award.award_name AS awardName, award.award_received AS awardReceived FROM award WHERE award.user_id = ?", [userID]);
+    const awards = await query("SELECT a.award_participation_name AS awardAttendedName, a.award_name AS awardName, a.award_received AS awardReceived FROM award a WHERE a.user_id = ?", [userID]);
     let awardRecognitions = awards.rows.reduce((accumulator: string, currentValue: any) => {
         const { awardAttendedName, awardName, awardReceived } = currentValue;
         if (accumulator.length === 0) {
@@ -118,8 +117,8 @@ export async function userAward(req: Request, res: Response) {
     const { userID } = req.session;
 
     const { rows } = await query(`
-        SELECT award.award_id AS id, award.award_attended_name AS awardAttendedName, award.award_name AS awardName, award.award_received AS awardReceived FROM award
-        WHERE award.user_id = ?;
+        SELECT a.award_id AS id, a.award_participation_name AS awardAttendedName, a.award_name AS awardName, a.award_received AS awardReceived FROM award a
+        WHERE a.user_id = ?;
     `, [userID]);
 
     res.status(200).json({
@@ -134,12 +133,12 @@ export async function clubUserAdd(req: Request, res: Response) {
 
     // find if user already is in a club
     const foundClub = await query(`
-        SELECT user.user_id FROM user
-        INNER JOIN club
-        ON user.user_id = club.user_id
-        INNER JOIN club_organization
-        ON club.club_organization_id = club_organization.club_organization_id
-        WHERE user.user_id = ? AND club_organization.club_organization_id = ?
+        SELECT u.user_id FROM user u
+        INNER JOIN club c
+        ON u.user_id = c.user_id
+        INNER JOIN club_organization co
+        ON c.club_organization_id = co.club_organization_id
+        WHERE u.user_id = ? AND co.club_organization_id = ?
     `, [userID, club]);
 
     if (foundClub.rows.length > 0) {
@@ -163,12 +162,12 @@ export async function clubUserPositionAdd(req: Request, res: Response) {
     const { club, position, yearStarted, yearEnded } = req.body;
 
     const foundClubBelongTo = await query(`
-        SELECT club_position.club_position_id, club_position.club_position_name, user.user_id , CONCAT(user.user_first_name, " ", user.user_family_name, " ", user.user_middle_name) AS full_name FROM user
-        INNER JOIN club
-        ON user.user_id = club.user_id
-        INNER JOIN club_position
-        ON club.club_position_id = club_position.club_position_id
-        WHERE user.user_id = ? AND club.club_id = ? AND club.club_position_id = ?;
+        SELECT cpos.club_position_id, cpos.club_position_name, u.user_id , CONCAT(u.user_first_name, " ", u.user_family_name, " ", u.user_middle_name) AS full_name FROM user u
+        INNER JOIN club c
+        ON u.user_id = c.user_id
+        INNER JOIN club_position cpos
+        ON c.club_position_id = cpos.club_position_id
+        WHERE u.user_id = ? AND c.club_id = ? AND c.club_position_id = ?;
     `, [userID, club, position]);
 
 
@@ -207,7 +206,7 @@ export async function clubUserPositionUpdate(req: Request, res: Response) {
     } = req.body;
     const { userID } = req.session;
 
-    const positionExist = await query("SELECT club_position.club_position_id AS position FROM club_position WHERE club_position.club_position_id = ?", [position]);
+    const positionExist = await query("SELECT cpos.club_position_id AS position FROM club_position cpos WHERE cpos.club_position_id = ?", [position]);
 
     if (positionExist.rows === 0) {
         return res.status(404).end();
@@ -225,7 +224,7 @@ export async function clubUserAwardUpdate(req: Request, res: Response) {
 
     await query(`
         UPDATE award
-        SET award_attended_name = ?,
+        SET award_participation_name = ?,
         award_name = ?,
         award_received = ?
         WHERE user_id = ? AND award_id = ?
@@ -237,7 +236,7 @@ export async function clubUserAwardUpdate(req: Request, res: Response) {
 export async function clubUserRemove(req: Request, res: Response) {
     const { userID } = req.session;
     const { id } = req.params;
-    const rows = await query("DELETE FROM club WHERE club.user_id = ? AND club.club_id = ?", [userID, id]);
+    const rows = await query("DELETE FROM club WHERE user_id = ? AND club_id = ?", [userID, id]);
     res.status(200).end();
 }
 
@@ -246,6 +245,6 @@ export async function awardUserRemove(req: Request, res: Response) {
     const { id } = req.params;
 
 
-    const { rows } = await query("DELETE FROM award WHERE award.user_id = ? AND award.award_id = ?", [userID, id]);
+    const { rows } = await query("DELETE FROM award WHERE user_id = ? AND award_id = ?", [userID, id]);
     res.status(200).end();
 }
