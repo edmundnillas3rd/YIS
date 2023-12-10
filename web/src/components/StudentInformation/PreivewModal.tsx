@@ -7,7 +7,8 @@ export default function ({
     onClose,
 }: ModalProps) {
 
-    const [preview, setPreview] = useState<string>();
+    const [affiliations, setAffiliations] = useState([]);
+    const [awards, setAwards] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -17,8 +18,11 @@ export default function ({
 
             const data = await response.json();
 
-            if (data?.dataPreview) {
-                setPreview(data?.dataPreview);
+            if (data) {
+                console.log(data);
+                
+                setAffiliations(data.affiliations);
+                setAwards(data.awards);
             }
         })();
     }, []);
@@ -31,7 +35,22 @@ export default function ({
         >
             <section className="flex flex-col gap-5">
                 <h3 className="font-bold">Preview</h3>
-                {preview}
+                <ul>
+                    <h3 className="font-bold">Affiliation(s)</h3>
+                    {affiliations.length && (
+                        affiliations.map(affil => (
+                            <li>{affil}</li>
+                        ))
+                    )}
+                </ul>
+                <ul>
+                    <h3 className="font-bold">Awards(s)</h3>
+                    {awards.length && (
+                        awards.map(award => (
+                            <li>{award}</li>
+                        ))
+                    )}
+                </ul>
             </section>
         </Modal>
     );

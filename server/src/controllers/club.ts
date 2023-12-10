@@ -66,16 +66,17 @@ export async function userPreview(req: Request, res: Response) {
     let clubRecognitions = organization.rows.reduce((accumulator: any, currentValue: any) => {
 
         if (accumulator[currentValue.organizationName as string] !== undefined) {
-            const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1);
+            // const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1);
+            const previousValue = accumulator[currentValue.organizationName as string]
             return {
                 ...accumulator,
-                [currentValue.organizationName as string]: removedComma.concat(` '${currentValue.clubPosition}', ${currentValue.yearStarted}-${currentValue.yearEnded}`),
+                [currentValue.organizationName as string]: previousValue.concat(` ${currentValue.clubPosition}, ${currentValue.yearStarted}-${currentValue.yearEnded}`),
             };
         }
 
         return {
             ...accumulator,
-            [currentValue.organizationName as string]: `'${currentValue.organizationName}', '${currentValue.clubPosition}', ${currentValue.yearStarted}-${currentValue.yearEnded},`,
+            [currentValue.organizationName as string]: `${currentValue.organizationName}, ${currentValue.clubPosition}, ${currentValue.yearStarted}-${currentValue.yearEnded},`,
         };
     }, {});
 
@@ -89,26 +90,32 @@ export async function userPreview(req: Request, res: Response) {
     });
 
     const awards = await query("SELECT a.award_participation_name AS awardAttendedName, a.award_name AS awardName, a.award_received AS awardReceived FROM award a WHERE a.user_id = ?", [userID]);
-    let awardRecognitions = awards.rows.reduce((accumulator: string, currentValue: any) => {
-        const { awardAttendedName, awardName, awardReceived } = currentValue;
-        if (accumulator.length === 0) {
-            return `'${awardAttendedName}', '${awardName}', ${awardReceived}`;
-        } else {
-            return `, '${awardAttendedName}', '${awardName}', ${awardReceived}`;
-        }
-    }, "");
+    let awardRecognitions = awards.rows.map((award: any) => (
+        `${award.awardAttendedName}, ${award.awardName}, ${award.awardReceived}`
+    ));
+
+    // awardRecognitions = Object.entries(awardRecognitions).map(([key, value]) => {
+    //     const award: string = clubRecognitions[key] as string;
+    //     if (award.charAt(award.length - 1) === ',') {
+    //         return award.slice(0, -1);
+    //     }
+
+    //     return award;
+    // });
 
     const formatData = [...clubRecognitions, awardRecognitions];
 
     const dataPreview = formatData.reduce((accumulator: string, currentValue: any) => {
         if (accumulator.length === 0) {
-            return `${currentValue}`;
+            return `${currentValue}\n`;
         } else {
-            return `${accumulator}, ${currentValue}`;
+            return `${accumulator}${currentValue}\n`;
         }
     }, "");
 
     res.status(200).json({
+        affiliations: clubRecognitions,
+        awards: awardRecognitions,
         dataPreview
     });
 }
