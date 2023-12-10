@@ -5,7 +5,7 @@ import { Button, Modal } from "../Globals";
 import OrganizationFillupForm from "./OrganizationFillupForm";
 
 interface Position {
-    club: string;
+    id: string;
     position: string;
     yearStarted: string;
     yearEnded: string;
@@ -20,8 +20,8 @@ export default function ({
     data2
 }: ModalProps) {
     const [positions, setPositions] = useState<Position[]>([]);
-    const [errMessage, setErrMessage] = useState<string>();
-    const [club, setClub] = useState();
+    const [errMessage, setErrMessage] = useState<string>("");
+    const [club, setClub] = useState<string>("");
 
     useEffect(() => {
         if (!data && !data2)
@@ -29,7 +29,7 @@ export default function ({
 
         (async () => {
 
-            if (data2?.id) {
+            if (data2) {
                 const { id } = data2;
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/user-club-info`, {
                     credentials: "include"
@@ -38,6 +38,7 @@ export default function ({
                 const data = await response.json();
 
                 if (data) {
+                    setClub(id);
                     setPositions(data.userClubPositions);
                 }
             }
@@ -54,16 +55,18 @@ export default function ({
             return;
         }
 
-        setPositions(state => ([
-            ...state, {
-                club: data2['id'],
-                position: "",
-                yearStarted: "",
-                yearEnded: "",
-                submitted: false
-            }
+        if (data2) {
+            setPositions(state => ([
+                ...state, {
+                    id: club,
+                    position: "",
+                    yearStarted: "",
+                    yearEnded: "",
+                    submitted: false
+                }
 
-        ]));
+            ]));
+        }
     };
 
     return (

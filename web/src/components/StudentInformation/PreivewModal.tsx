@@ -19,8 +19,6 @@ export default function ({
             const data = await response.json();
 
             if (data) {
-                console.log(data);
-                
                 setAffiliations(data.affiliations);
                 setAwards(data.awards);
             }

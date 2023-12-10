@@ -13,8 +13,8 @@ import {
 import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function ({ data, data2, hasSubmit }: any) {
-    const [positions, setPositions] = useState();
-    const [organizations, setOrganizations] = useState();
+    const [positions, setPositions] = useState<any[]>([]);
+    const [organizations, setOrganizations] = useState([]);
 
     const [loading, setLoading] = useState<boolean>(false);
     const [disable, setDisable] = useState<boolean>(false);
@@ -23,35 +23,40 @@ export default function ({ data, data2, hasSubmit }: any) {
     const [confirmSave, setConfirmSave] = useState<boolean>(false);
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
 
-    const [club, setClub] = useState<string>();
-    const [position, setPosition] = useState<string>();
-    const [yearStarted, setYearStarted] = useState<string>();
-    const [yearEnded, setYearEnded] = useState<string>();
+    const [club, setClub] = useState<string>("");
+    const [position, setPosition] = useState<string>("");
+    const [yearStarted, setYearStarted] = useState<string>("");
+    const [yearEnded, setYearEnded] = useState<string>("");
     const navigate = useNavigate();
     const years = generateYearRange();
 
     useEffect(() => {
-
-        console.log(data, data2);
-
         if (data?.positions && data?.organizations) {
             setPositions(data.positions);
             setOrganizations(data.organizations);
         }
 
-        if (data2?.id && data2?.position && data2?.yearStarted && data2?.yearEnded) {
-            console.log("Executed");
-            
+        if (data2) {
             const { id, position, yearStarted, yearEnded } = data2;
+
+            if (!id && !position && !yearStarted && !yearEnded) {
+                setClub(id);
+                setPosition(positions[0]?.id);
+                setYearStarted(years[0].toString());
+                setYearEnded(years[0].toString());
+                return;
+            }
+
             setClub(id);
             setPosition(position);
             setYearStarted(yearStarted);
             setYearEnded(yearEnded);
         }
 
-    }, [data, data2]);
+    }, [data, data2, positions]);
 
     const onChange = async (event: SyntheticEvent) => {
+        setErrMessage("");
         event.preventDefault();
         const target = event.target as HTMLInputElement;
         switch (target.name) {
@@ -74,16 +79,18 @@ export default function ({ data, data2, hasSubmit }: any) {
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
         setLoading(true);
-        console.log(club, position, yearStarted, yearEnded);
-
 
         if (club && position && yearStarted && yearEnded) {
-            const data = {
+            console.log(club, position, yearStarted, yearEnded);
+            const newData = {
                 club,
                 position,
                 yearStarted,
                 yearEnded
             };
+
+            console.log(newData);
+
 
             if (typeof hasSubmit === "boolean" && !hasSubmit) {
 
@@ -93,7 +100,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(newData)
                 });
 
                 if (response.ok) {
@@ -118,6 +125,9 @@ export default function ({ data, data2, hasSubmit }: any) {
                     navigate(0);
                 }
             }
+        } else {
+            setErrMessage("Unable to submit data, please fill in the required data");
+
         }
 
         setLoading(false);
@@ -125,7 +135,8 @@ export default function ({ data, data2, hasSubmit }: any) {
 
     const onClickSave = async (event: SyntheticEvent) => {
         event.preventDefault();
-        await onSubmitHandler(event);
+        setConfirmSave(false);
+        onSubmitHandler(event);
     };
 
     const onClickDelete = async (event: SyntheticEvent) => {
@@ -154,6 +165,8 @@ export default function ({ data, data2, hasSubmit }: any) {
                 <section
                     className="flex flex-col gap-5 mb-5"
                 >
+                    {errMessage && <p className="font-bold text-red-600">{errMessage}</p>}
+
                     <Dropdown
                         label="Position"
                         name="position"
