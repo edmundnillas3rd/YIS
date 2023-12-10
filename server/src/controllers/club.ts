@@ -299,3 +299,11 @@ export async function awardUserRemove(req: Request, res: Response) {
     const { rows } = await query("DELETE FROM award WHERE user_id = ? AND award_id = ?", [userID, id]);
     res.status(200).end();
 }
+
+export async function seminarUserRemove(req: Request, res: Response) {
+    const { userID } = req.session;
+    const { id } = req.params;
+
+    const { rows } = await query("DELETE FROM seminar WHERE user_id = ? AND seminar_id = ?", [userID, id]);
+    res.status(200).end();
+}

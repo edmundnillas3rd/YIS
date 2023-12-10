@@ -92,6 +92,19 @@ export default function ({
 
     const onClickDelete = async (event: SyntheticEvent) => {
         event.preventDefault();
+        setLoading(true);
+
+
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/user-seminar-remove`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (response.ok) {
+            navigate(0);
+            setLoading(false);
+        }
+        setLoading(false);
     }
 
     return (
