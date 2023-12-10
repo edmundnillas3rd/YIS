@@ -126,6 +126,11 @@ export default function () {
                 <section className="flex flex-col gap-1">
                     <h3 className="font-bold">Student Information</h3>
                 </section>
+                <Input 
+                    label="SCHOOL ID"
+                    name="school-id"
+                    onChange={onChange}
+                />
                 <Dropdown
                     label="YEAR GRADUATED"
                     name="course"
