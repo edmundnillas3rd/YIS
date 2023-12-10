@@ -14,6 +14,7 @@ import AwardEditModal from "../components/AwardTable/AwardEditModal";
 import OrganizationEditModal from "../components/OrganizationTable/OrganizationEditModal";
 import PreivewModal from "../components/StudentInformation/PreivewModal";
 import SeminarModal from "../components/SeminarTable/SeminarModal";
+import SeminarEdit from "../components/SeminarTable/SeminarEdit";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
@@ -35,8 +36,10 @@ export default function () {
     const [awardsData, setAwardsData] = useState(null);
 
     // For seminars table
+    const [currentSeminarNode, setCurrentSeminarNode] = useState(null);
     const [seminarsData, setSeminarsData] = useState(null);
     const [displaySeminarForm, setDisplaySeminarForm] = useState(false);
+    const [displayEditSeminar, setDisplayEditSeminar] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -65,8 +68,6 @@ export default function () {
                 setClubsData(clubsData['clubs']);
                 setAwardsData(awardsData['awards']);
                 setSeminarsData(seminarsData['seminars']);
-                console.log(seminarsData['seminars']);
-                
             }
 
         })();
@@ -148,8 +149,11 @@ export default function () {
     };
 
     const onClickSeminar = async (data: any) => {
+        console.log("Seminar row clicked", data);
+        setDisplayEditSeminar(true);
+        setCurrentSeminarNode(data);
     }
-    
+
     const onClickAddSeminar = async (event: SyntheticEvent) => {
         event.preventDefault();
         console.log("Add new seminar");
@@ -158,6 +162,11 @@ export default function () {
 
     const onCloseAddSeminar = async () => {
         setDisplaySeminarForm(false);
+    }
+
+    const onCloseEditSeminar = async () => {
+        setDisplayEditSeminar(false);
+        setCurrentSeminarNode(null);
     }
 
     return (
@@ -192,12 +201,16 @@ export default function () {
                 data={currentAwardNode}
             />
 
-            {/* Temporary fill in the modal */}
             <SeminarModal
                 hasCloseBtn={true}
                 isOpen={displaySeminarForm}
                 onClose={onCloseAddSeminar}
-                data={null}
+            />
+            <SeminarEdit
+                hasCloseBtn={true}
+                isOpen={displayEditSeminar}
+                onClose={onCloseEditSeminar}
+                data={currentSeminarNode}
             />
 
             <Container>

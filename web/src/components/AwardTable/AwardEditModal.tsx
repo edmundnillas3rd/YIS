@@ -21,15 +21,15 @@ export default function ({
     onClose,
     data
 }: ModalProps) {
-    const [id, setID] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [disable, setDisable] = useState<boolean>(true);
     const [years, setYears] = useState<number[]>();
-
+    
     // For the updating forms
-    const [awardAttendedName, setAwardAttendedName] = useState<string>();
-    const [awardName, setAwardName] = useState<string>();
-    const [awardReceived, setAwardReceived] = useState<string>();
+    const [id, setID] = useState<string>("");
+    const [awardAttendedName, setAwardAttendedName] = useState<string>("");
+    const [awardName, setAwardName] = useState<string>("");
+    const [awardReceived, setAwardReceived] = useState<string>("");
 
     const [confirmSave, setConfirmSave] = useState<boolean>(false);
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
@@ -46,8 +46,6 @@ export default function ({
             setAwardAttendedName(data['awardAttendedName']);
             setAwardName(data['awardName']);
             setAwardReceived(data['awardReceived']);
-
-
         }
     }, [data]);
 
