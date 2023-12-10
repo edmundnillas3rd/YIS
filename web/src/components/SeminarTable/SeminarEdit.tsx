@@ -3,6 +3,7 @@ import { Button, Confirm, Dropdown, Input, Modal, Spinner, Toggle } from "../Glo
 import { generateYearRange } from "../../utilities/generateYearRange";
 import { FaSave } from "react-icons/fa";
 import { MdEdit, MdDelete } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function ({
     isOpen,
@@ -15,6 +16,7 @@ export default function ({
     const [disable, setDisable] = useState<boolean>(true);
     const [confirmSave, setConfirmSave] = useState<boolean>(false);
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const [id, setID] = useState<string>("");
     const [seminarName, setSeminarName] = useState<string>("");
@@ -29,9 +31,34 @@ export default function ({
             setSeminarName(data['seminarName']);
             setSeminarDate(data['seminarDateAttended']);
             console.log(seminarName);
-            
+
         }
     }, [data]);
+
+    const onSubmitHandler = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        setLoading(true);
+        const data = {
+            seminarName,
+            seminarParticipationName,
+            seminarDate
+        }
+
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/${id}/seminar-update`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            navigate(0);
+            setLoading(false)
+        }
+        setLoading(false);
+    }
 
     const onChangeHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -59,7 +86,9 @@ export default function ({
 
     const onClickSave = async (event: SyntheticEvent) => {
         event.preventDefault();
+        onSubmitHandler(event);
     }
+
 
     const onClickDelete = async (event: SyntheticEvent) => {
         event.preventDefault();

@@ -265,6 +265,24 @@ export async function clubUserAwardUpdate(req: Request, res: Response) {
     res.status(200).end();
 }
 
+export async function clubUserSeminarUpdate(req: Request, res: Response) {
+    const { id } = req.params;
+    const { userID } = req.session;
+    const {
+        seminarName,
+        seminarParticipationName,
+        seminarDate
+    } = req.body;
+    await query(`
+        UPDATE seminar
+        SET seminar_name = ?,
+        seminar_date_attended = ?,
+        seminar_participation_name = ?
+        WHERE user_id = ? AND seminar_id = ?
+    `, [seminarName, seminarDate, seminarParticipationName, userID, id])
+    res.status(200).end();
+}
+
 // DELETE
 export async function clubUserRemove(req: Request, res: Response) {
     const { userID } = req.session;
