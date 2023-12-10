@@ -1,4 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { Button } from "../Globals/index";
 
 export default function ({ data, children, buttonRowName, onClickCallback, ...otherProps }: any) {
@@ -30,7 +31,7 @@ export default function ({ data, children, buttonRowName, onClickCallback, ...ot
             >
                 {
                     values.map((value: any, index) => (
-                        <td className="text-center" key={index}>
+                        <td className="text-center" key={uuid()}>
                             {value}
                         </td>
                     ))

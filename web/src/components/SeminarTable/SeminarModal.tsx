@@ -56,9 +56,7 @@ export default function ({
                 seminarDate
             };
 
-            // To add route for adding seminars
-
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/award-add`, {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/seminar-add`, {
                 method: "POST",
                 credentials: "include",
                 headers: {

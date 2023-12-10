@@ -26,15 +26,17 @@ export default function () {
     const [currentOrgNode, setCurrentOrgNode] = useState(null);
     const [displayOrgForm, setDisplayOrgForm] = useState(false);
     const [displayOrgEdit, setDisplayOrgEdit] = useState(false);
+    const [clubsData, setClubsData] = useState(null);
 
     // For awards table
     const [currentAwardNode, setCurrentAwardNode] = useState(null);
     const [displayAwardForm, setDisplayAwardForm] = useState(false);
     const [displayAwardEdit, setDisplayAwardEdit] = useState(false);
     const [awardsData, setAwardsData] = useState(null);
-    const [clubsData, setClubsData] = useState(null);
 
     // For seminars table
+    const [seminarsData, setSeminarsData] = useState(null);
+    const [displaySeminarForm, setDisplaySeminarForm] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -47,16 +49,24 @@ export default function () {
                 credentials: "include"
             });
 
-            const [indexData, clubsData, awardsData] = await Promise.all([
+            const userSeminarResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-seminar`, {
+                credentials: "include"
+            })
+
+            const [indexData, clubsData, awardsData, seminarsData] = await Promise.all([
                 clubsRouteResponse.json(),
                 userClubResponse.json(),
-                userAwardResponse.json()
+                userAwardResponse.json(),
+                userSeminarResponse.json()
             ]);
 
-            if (indexData && clubsData && awardsData) {
+            if (indexData && clubsData && awardsData && seminarsData) {
                 setClubProps(indexData);
                 setClubsData(clubsData['clubs']);
                 setAwardsData(awardsData['awards']);
+                setSeminarsData(seminarsData['seminars']);
+                console.log(seminarsData['seminars']);
+                
             }
 
         })();
@@ -67,10 +77,16 @@ export default function () {
     ];
 
     const awardHeaders = [
-        "Award & Seminar",
+        "Award",
         "Award/ETC",
         "Date Attended"
     ];
+
+    const seminarsHeaders = [
+        "Seminar",
+        "Seminar Participation Name",
+        "Date Attended"
+    ]
 
     const onInputChangeHandler = (event: SyntheticEvent) => {
     };
@@ -82,6 +98,10 @@ export default function () {
     const onClickPreview = async (event: SyntheticEvent) => {
         event.preventDefault();
         setDisplayPreview(true);
+    };
+
+    const onClosePreview = async () => {
+        setDisplayPreview(false);
     };
 
     const onClickOrganization = async (data: any) => {
@@ -99,10 +119,6 @@ export default function () {
         setDisplayOrgForm(false);
     };
 
-    const onClosePreview = async () => {
-        setDisplayPreview(false);
-    };
-
     const onClickAward = async (data: any) => {
         console.log("Award row clicked", data);
         setDisplayAwardEdit(true);
@@ -110,8 +126,13 @@ export default function () {
     };
 
     const onClickAddAward = async (event: SyntheticEvent) => {
+        event.preventDefault();
         console.log("Add new award");
         setDisplayAwardForm(true);
+    };
+
+    const onCloseAddAward = async () => {
+        setDisplayAwardForm(false);
     };
 
     const onCloseEditOrg = async () => {
@@ -121,14 +142,23 @@ export default function () {
 
     };
 
-    const onCloseAddAward = async () => {
-        setDisplayAwardForm(false);
-    };
-
     const onCloseEditAward = async () => {
         setDisplayAwardEdit(false);
         setCurrentAwardNode(null);
     };
+
+    const onClickSeminar = async (data: any) => {
+    }
+    
+    const onClickAddSeminar = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        console.log("Add new seminar");
+        setDisplaySeminarForm(true)
+    }
+
+    const onCloseAddSeminar = async () => {
+        setDisplaySeminarForm(false);
+    }
 
     return (
         <>
@@ -165,8 +195,8 @@ export default function () {
             {/* Temporary fill in the modal */}
             <SeminarModal
                 hasCloseBtn={true}
-                isOpen={false}
-                onClose={() => {}}
+                isOpen={displaySeminarForm}
+                onClose={onCloseAddSeminar}
                 data={null}
             />
 
@@ -226,10 +256,17 @@ export default function () {
                 {/* Awards */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-                    <Button onClick={onClickAddAward}>Add Award/Seminar</Button>
+                    <Button onClick={onClickAddAward}>Add Award</Button>
                 </section>
                 {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
                 {/* Seminars */}
+                <section className="flex flex-row gap-1 justify-between items-center">
+                    <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
+                    <Button onClick={onClickAddSeminar}>Add Seminar</Button>
+
+                </section>
+                {seminarsData && <Table columns={seminarsHeaders} datas={seminarsData} onClickCallback={onClickSeminar} />}
+
             </Container>
         </>
 

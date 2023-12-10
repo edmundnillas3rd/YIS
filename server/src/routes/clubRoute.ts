@@ -2,24 +2,27 @@ import { Router } from "express";
 const router = Router();
 
 import {
-    index, 
-    userClub, 
-    clubUserAdd, 
-    clubUserPositionAdd, 
-    userClubInfo, 
-    userPreview, 
-    awardUserAdd, 
+    index,
+    userClub,
+    clubUserAdd,
+    clubUserPositionAdd,
+    userClubInfo,
+    userPreview,
+    awardUserAdd,
     userAward,
     clubUserPositionUpdate,
     clubUserAwardUpdate,
     clubUserRemove,
-    awardUserRemove
+    awardUserRemove,
+    userSeminar,
+    seminarUserAdd
 } from "../controllers/club";
 
 // GET
 router.get("/", index);
 router.get("/user-club", userClub);
 router.get("/user-award", userAward);
+router.get("/user-seminar", userSeminar);
 router.get("/:clubID/user-club-info", userClubInfo);
 router.get("/user-preview", userPreview);
 
@@ -27,6 +30,7 @@ router.get("/user-preview", userPreview);
 router.post("/club-add", clubUserAdd);
 router.post("/position-add", clubUserPositionAdd);
 router.post("/award-add", awardUserAdd);
+router.post("/seminar-add", seminarUserAdd);
 
 // PUT
 router.put("/position-update", clubUserPositionUpdate);

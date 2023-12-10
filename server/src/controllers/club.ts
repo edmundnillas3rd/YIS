@@ -125,12 +125,24 @@ export async function userAward(req: Request, res: Response) {
 
     const { rows } = await query(`
         SELECT a.award_id AS id, a.award_participation_name AS awardAttendedName, a.award_name AS awardName, a.award_received AS awardReceived FROM award a
-        WHERE a.user_id = ?;
+        WHERE a.user_id = ?
     `, [userID]);
 
     res.status(200).json({
         awards: rows
     });
+}
+
+
+export async function userSeminar(req: Request, res: Response) {
+    const { userID } = req.session;
+    const { rows } = await query(`
+        SELECT s.seminar_id AS id, s.seminar_name AS seminarName, s.seminar_participation_name AS seminarAttendedName, s.seminar_date_attended AS seminarDateAttended FROM seminar s
+        WHERE s.user_id = ?
+    `, [userID]);
+    res.status(200).json({
+        seminars: rows
+    })
 }
 
 // POST
@@ -202,6 +214,20 @@ export async function awardUserAdd(req: Request, res: Response) {
     res.status(200).end();
 }
 
+export async function seminarUserAdd(req: Request, res: Response) {
+    const {
+        seminarParticipationName,
+        seminarName,
+        seminarDate
+    } = req.body;
+    const { userID } = req.session;
+    const SeminarGenUUID = await query("SELECT UUID()");
+    const SeminarUUID = SeminarGenUUID.rows[0]['UUID()'];
+    await query(`
+        INSERT INTO seminar VALUES (?, ?, ?, ?, ?)
+    `, [SeminarUUID, seminarName, seminarDate, seminarParticipationName, userID])
+    res.status(200).end();
+}
 
 // PUT
 export async function clubUserPositionUpdate(req: Request, res: Response) {
