@@ -1,7 +1,8 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Input, Table, Container } from "../components/Globals";
+import { Input, Table, Container, Button } from "../components/Globals";
 import { v4 as uuid } from "uuid";
 import YearbookPhotosModal from "../components/YearbookPhotos/YearbookPhotosModal";
+import { searchStudentYearbookPhotoStatus } from "../utilities/students";
 
 export default function () {
 
@@ -19,9 +20,9 @@ export default function () {
             const [userData, yearbookData] = await Promise.all([userRes.json(), yearbookRes.json()]);
 
             if (userData && yearbookData) {
-                const { yearbooks, yearbookStatuses } = yearbookData;
+                const { yearbookPhotos, yearbookStatuses } = yearbookData;
 
-                const formattedData = yearbooks.map((yearbook: any) => ({ uuid: uuid(), ...yearbook }));
+                const formattedData = yearbookPhotos.map((yearbook: any) => ({ uuid: uuid(), ...yearbook }));
 
 
                 setStudents(formattedData);
@@ -33,12 +34,6 @@ export default function () {
             }
         })();
     }, []);
-
-    useEffect(() => {
-        (async () => {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}`)
-        })();
-    }, [search])
 
     const attr = [
         "Full Name",
@@ -55,6 +50,13 @@ export default function () {
         setCurrentNode(null);
         setDisplayStatus(false);
     };
+
+    const onSubmitHandler = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const data = await searchStudentYearbookPhotoStatus(search);
+        setStudents(data.map((student: any) => ({ uuid: uuid(), ...student})));
+    }
 
     const onChange = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -78,13 +80,14 @@ export default function () {
                 data2={statuses}
             />
             <Container>
-                <section className="flex flex-row">
+                <form className="flex flex-row items-center gap-1" onSubmit={onSubmitHandler}>
                     <Input
                         placeholder="Search the name of student"
                         id="searchStudent"
                         onChange={onChange}
                     />
-                </section>
+                    <Button type="submit">Search</Button>
+                </form>
                 <Table
                     columns={attr}
                     datas={students}

@@ -32,7 +32,7 @@ export default function () {
             // }
 
             setCourses(course.courses);
-            setYearbooks(yearbook.yearbookStudents);
+            setYearbooks(yearbook.yearbook);
         })();
     }, []);
 
@@ -126,9 +126,9 @@ export default function () {
                 <section className="flex flex-col gap-1">
                     <h3 className="font-bold">Student Information</h3>
                 </section>
-                <Input 
-                    label="SCHOOL ID"
-                    name="school-id"
+                <Input
+                    title="SCHOOL ID"
+                    id="school-id"
                     onChange={onChange}
                 />
                 <Dropdown

@@ -13,16 +13,26 @@ export const config = {
 };
 
 export async function query(sql: string, values: any[] = []) {
-    const promisePool = await pool?.promise();
-    const [rows, fields]: any = await promisePool?.execute(sql, values);
+    try {
+        const promisePool = await pool?.promise();
+        const [rows, fields]: any = await promisePool?.execute(sql, values);
+
+        return {
+            rows,
+            fields
+        };
+    } catch (err) {
+        console.error(err);
+    }
 
     return {
-        rows,
-        fields
+        rows: [],
+        fields: []
     }
+
 }
 
-export default async function initializeMySQLConnection(){
+export default async function initializeMySQLConnection() {
 
     if (process.env.NODE_ENV !== "production") {
         pool = mysql.createPool(config);

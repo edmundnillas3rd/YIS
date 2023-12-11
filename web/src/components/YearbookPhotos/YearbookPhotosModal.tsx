@@ -11,16 +11,20 @@ export default function ({
 }: ModalProps) {
 
     const [statuses, setStatuses] = useState([]);
-    const [status, setStatus] = useState<string>();
+    const [status, setStatus] = useState<string>("");
+    const [currentStatus, setCurrentStatus] = useState<string>("");
     const [student, setStudent] = useState();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (data && data2) {
+            console.log(data);
+            
             setStudent(data);
             setStatuses(data2);
-            if (data2[0])
-                setStatus(data2[0]['id']);
+            if (data2[0]) {
+                setCurrentStatus(data['yearbookStatus']);
+            }
         }
     }, [data, data2]);
 
@@ -50,6 +54,10 @@ export default function ({
             hasCloseBtn={hasCloseBtn}
             onClose={onClose}
         >
+            <section className="flex flex-col gap-1 mb-5">
+                <p className="font-bold">CURRENT YEARBOOK STATUS</p>
+                <p>{currentStatus}</p>
+            </section>
             <form
                 method="POST"
                 onSubmit={onSubmit}
@@ -58,7 +66,7 @@ export default function ({
                     label="Yearbook Status"
                     name="yearbookStatus"
                     datas={statuses}
-                    defaultValue={status}
+                    value={status}
                     onChange={onChange}
                 />
 
