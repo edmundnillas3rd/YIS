@@ -162,12 +162,66 @@ export async function loginUserStudent(req: Request, res: Response) {
         return res.status(200).end();
     }
 
+    const parseEmail = (email as string);
+    const emailParts = parseEmail.split('@');
+    
+    let userRole = "";
+
+
+    if (emailParts.length !== 2) {
+        
+        const studentSchoolID = parseEmail.split("-");
+
+        if (studentSchoolID.length !== 3) {
+            return res.status(404).json({
+                error: "Invalid user email and password"
+            });
+        }
+
+        if (studentSchoolID[0].length !== 4 || studentSchoolID[1].length !== 4 || studentSchoolID[2].length !== 1) {
+            return res.status(404).json({
+                error: "Invalid user email and password"
+            });
+        }
+
+        const data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name STUDENT`);
+        userRole = data.rows[0].name;
+
+    } else {
+        const account = emailParts[0];
+        const address = emailParts[1];
+
+        let parts = address.split(".");
+
+        let data: any;
+
+        if (parts[0] === "admin") {
+            data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'ADMIN'`);
+
+        } else if (parts[0] === "coadmin") {
+            data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'CO-ADMIN'`);
+        } else { 
+            return res.status(404).json({
+                error: "Invalid user email and password"
+            });
+        }
+
+        if (data.length === 0) {
+            return res.status(404).json({
+                error: "Unable to determine role status"
+            });
+        }
+
+        userRole = data.rows[0].name;
+
+    }
+
     const user = await query(`
         SELECT user.user_id AS id, user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email AS email, user.user_password AS password, role.role_name AS role FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
-        WHERE user.user_email = ? AND role.role_name = 'STUDENT'
-    `, [email]);
+        WHERE user.user_email = ? AND role.role_name = ?
+    `, [email, userRole]);
 
     if (user.rows.length === 0) {
         return res.status(401).json({ error: "Invalid user email and password" });
