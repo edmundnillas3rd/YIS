@@ -2,6 +2,7 @@ export default function ({ children, ...otherProps }: any) {
     return (
         <section className={`
             flex
+            flex-auto
             flex-col
             gap-1
             p-5

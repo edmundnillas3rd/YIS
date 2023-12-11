@@ -8,7 +8,7 @@ export default function Main() {
         <>
             <AuthProvider>
                 <Navbar />
-                <main className="relative">
+                <main className="flex flex-auto relative">
                     <Outlet />
                 </main>
                 <Footer />

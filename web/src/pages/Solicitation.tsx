@@ -51,6 +51,8 @@ export default function () {
 
 
             if (course && soli && yearbook) {
+                console.log(course, soli, yearbook);
+                
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
 

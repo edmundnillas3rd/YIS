@@ -12,7 +12,7 @@ const CollegeItem = ({ src, url, children }: CollegeItemProps) => (
         className="flex flex-row md:border-0 border-2 border-zinc-400 p-5 justify-center items-center gap-5 rounded transition-all ease-in bg-transparent hover:bg-zinc-200"
         to={url}
     >
-        <figure className="w-96 h-96">
+        <figure className="w-56 h-56">
             <img className="max-w-none w-full h-full" src={src} alt="college" />
         </figure>
         {/* <section className="flex-col justify-center items-center">
@@ -23,7 +23,7 @@ const CollegeItem = ({ src, url, children }: CollegeItemProps) => (
 
 export default function Colleges() {
     return (
-        <article className="flex flex-col w-full md:flex-row gap-10 py-10 md:overflow-x-auto">
+        <article className="flex flex-col w-full md:grid md:grid-cols-2 gap-10 py-10 md:overflow-x-auto">
             <CollegeItem src="/assets/cabe.png" url="/colleges/cabe">
                 {/* <p className="text-center font-bold text-base">CABE</p>
                 <p className="text-xs text-center font-bold text-gray-500">COLLEGE OF ACCOUNTANCY, BUSINESS AND ENTREPRENEURSHIP</p> */}

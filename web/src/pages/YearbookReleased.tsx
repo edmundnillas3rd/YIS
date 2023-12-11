@@ -25,14 +25,14 @@ export default function () {
             const yearbookRes = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks`);
             const courseRes = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`);
 
-            const [yearbook, course] = await Promise.all([yearbookRes.json(), courseRes.json()])
+            const [yearbookData, coursesData] = await Promise.all([yearbookRes.json(), courseRes.json()])
             // const data = await courseRes.json();
             // if (data?.courses) {
             //     setCourses(data.courses);
             // }
 
-            setCourses(course.courses);
-            setYearbooks(yearbook.yearbook);
+            setCourses(coursesData.courses);
+            setYearbooks(yearbookData.yearbook);
         })();
     }, []);
 
@@ -111,100 +111,105 @@ export default function () {
             })
         } else {
             console.log("Complete All Required Fields");
-            
+
         }
     };
 
+    const onClick = async () => {
+        
+    }
+
     return courses && (
         <>
-        <Container>
-            <form
-                onSubmit={onSubmit}
-                method="POST"
-                className="flex flex-col gap-1"
-            >
-                <section className="flex flex-col gap-1">
-                    <h3 className="font-bold">Student Information</h3>
-                </section>
-                <Input
-                    title="SCHOOL ID"
-                    id="school-id"
-                    onChange={onChange}
-                />
-                <Dropdown
-                    label="YEAR GRADUATED"
-                    name="course"
-                    datas={years}
-                />
-                <Dropdown
-                    label="COURSE"
-                    name="course"
-                    datas={courses}
-                    onClick={(e: SyntheticEvent) => setCourse((e.target as HTMLInputElement).value)}
-                />
-                <section className="flex flex-row flex-wrap gap-1">
+            <Container>
+                <form
+                    onSubmit={onSubmit}
+                    method="POST"
+                    className="flex flex-col gap-1"
+                >
+                    <section className="flex flex-col gap-1">
+                        <h3 className="font-bold">Student Information</h3>
+                    </section>
                     <Input
-                        title="FIRST NAME"
-                        id="firstName"
+                        title="SCHOOL ID"
+                        id="school-id"
                         onChange={onChange}
                     />
-                    <Input
-                        title="LAST NAME"
-                        id="lastName"
-                        onChange={onChange}
+                    <Dropdown
+                        label="YEAR GRADUATED"
+                        name="course"
+                        datas={years}
                     />
-                    <Input
-                        title="MIDDLE NAME"
-                        id="middleName"
-                        onChange={onChange}
+                    <Dropdown
+                        label="COURSE"
+                        name="course"
+                        datas={courses}
+                        onClick={(e: SyntheticEvent) => setCourse((e.target as HTMLInputElement).value)}
                     />
-                    <Input
-                        title="SUFFIX"
-                        id="suffix"
-                        onChange={onChange}
+                    <section className="flex flex-row flex-wrap gap-1">
+                        <Input
+                            title="FIRST NAME"
+                            id="firstName"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="LAST NAME"
+                            id="lastName"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="MIDDLE NAME"
+                            id="middleName"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="SUFFIX"
+                            id="suffix"
+                            onChange={onChange}
+                        />
+                    </section>
+                    <section className="flex flex-col gap-1 mt-5">
+                        <h3 className="font-bold">Care Of (Relation)</h3>
+                    </section>
+                    <section className="flex flex-row flex-wrap gap-1">
+                        <Input
+                            title="FIRST NAME"
+                            id="cfFirstName"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="LAST NAME"
+                            id="cfLastName"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="MIDDLE NAME"
+                            id="cfmiddleName"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="SUFFIX"
+                            id="cfSuffix"
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="RELATION TO STUDENT"
+                            id="cfRelation"
+                            onChange={onChange}
+                        />
+                    </section>
+                    <section className="flex flex-row justify-end">
+                        <Button onClick={onSubmit}>Submit</Button>
+                    </section>
+                </form>
+            </Container>
+            <Container>
+                {yearbooks && (
+                    <Table columns={["NAME", "YEABOOK STATUS", "DATE RELEASED"]} datas={yearbooks} onClickCallback={onClick}
                     />
-                </section>
-                <section className="flex flex-col gap-1 mt-5">
-                    <h3 className="font-bold">Care Of (Relation)</h3>
-                </section>
-                <section className="flex flex-row flex-wrap gap-1">
-                    <Input
-                        title="FIRST NAME"
-                        id="cfFirstName"
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="LAST NAME"
-                        id="cfLastName"
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="MIDDLE NAME"
-                        id="cfmiddleName"
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="SUFFIX"
-                        id="cfSuffix"
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="RELATION TO STUDENT"
-                        id="cfRelation"
-                        onChange={onChange}
-                    />
-                </section>
-                <section className="flex flex-row justify-end">
-                <Button onClick={onSubmit}>Submit</Button>
-                </section>
-            </form>
-        </Container>
-        <Container>
-            <Table columns={["NAME", "YEABOOK STATUS", "DATE RELEASED"]} datas={yearbooks} onClickCallback={function (data: any): void {
-                    throw new Error("Function not implemented.");
-                } }            
-            />
-        </Container>
+                )
+                }
+            </Container>
         </>
     );
 }

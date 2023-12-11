@@ -83,7 +83,7 @@ export default function Main() {
     };
 
     return (
-        <article className="flex flex-col md:flex-row py-10 md:p-0 md:h-full">
+        <article className="flex flex-auto flex-col md:flex-row py-10 md:p-0 md:h-full">
             {<figure key={currentIndex} className={`${backgroundClassStyle} w-1/2 bg-center hidden md:block md:h-screen`} style={{
                 backgroundImage: `url(${images[currentIndex]})`
             }} />}
