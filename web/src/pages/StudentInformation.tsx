@@ -1,4 +1,5 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { FaEye } from "react-icons/fa";
 import { AuthContext } from "../context/AuthProvider";
 import {
@@ -37,10 +38,10 @@ export default function () {
 
     // For seminars table
     const [currentSeminarNode, setCurrentSeminarNode] = useState(null);
-    const [seminarsData, setSeminarsData] = useState(null);
     const [displaySeminarForm, setDisplaySeminarForm] = useState(false);
     const [displayEditSeminar, setDisplayEditSeminar] = useState(false);
-
+    const [seminarsData, setSeminarsData] = useState(null);
+    
     useEffect(() => {
         (async () => {
             const clubsRouteResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
@@ -65,9 +66,9 @@ export default function () {
 
             if (indexData && clubsData && awardsData && seminarsData) {
                 setClubProps(indexData);
-                setClubsData(clubsData['clubs']);
-                setAwardsData(awardsData['awards']);
-                setSeminarsData(seminarsData['seminars']);
+                setClubsData(clubsData['clubs'].map((club: any) => ({ uuid: uuid(), ...club})));
+                setAwardsData(awardsData['awards'].map((award: any) => ({ uuid: uuid(), ...award})));
+                setSeminarsData(seminarsData['seminars'].map((seminar: any) => ({ uuid: uuid(), ...seminar})));
             }
 
         })();
