@@ -46,7 +46,7 @@ export default function ({
                     <>
                         <ul>
                             <h3 className="font-bold">Affiliation(s)</h3>
-                            {affiliations.length && (
+                            {affiliations && (
                                 affiliations.map(affil => (
                                     <li key={affil?.key}>{affil?.value}</li>
                                 ))
@@ -54,7 +54,7 @@ export default function ({
                         </ul>
                         <ul>
                             <h3 className="font-bold">Awards(s)</h3>
-                            {awards.length && (
+                            {awards && (
                                 awards.map(award => (
                                     <li key={award?.key}>{award?.value}</li>
                                 ))

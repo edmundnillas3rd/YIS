@@ -85,7 +85,7 @@ export default function () {
 
     const seminarsHeaders = [
         "Seminar",
-        "Seminar Participation Name",
+        "Role",
         "Date Attended"
     ]
 

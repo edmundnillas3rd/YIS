@@ -18,12 +18,13 @@ export default function ({
 
     useEffect(() => {
         if (data && data2) {
-            console.log(data);
+            console.log(data2);
             
             setStudent(data);
             setStatuses(data2);
             if (data2[0]) {
                 setCurrentStatus(data['yearbookStatus']);
+                setStatus(data2[0]['id']);
             }
         }
     }, [data, data2]);
@@ -36,7 +37,7 @@ export default function ({
 
     const onSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
-        if (student) {
+        if (student && status) {
             const { id } = student;
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${status}/${id}/status-update`, {
                 method: "PUT"
@@ -45,6 +46,9 @@ export default function ({
             if (response.ok) {
                 navigate(0);
             }
+        } else {
+            console.log(status);
+            
         }
     };
 

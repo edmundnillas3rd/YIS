@@ -86,13 +86,13 @@ export default function ({
                 method="POST"
                 className="flex flex-col gap-5">
                 <Input
-                    title="Seminar Participation"
-                    id="seminar-participation_name"
+                    title="Seminar"
+                    id="seminar-name"
                     onChange={onChange}
                 />
                 <Input
-                    title="Seminar"
-                    id="seminar-name"
+                    title="Role"
+                    id="seminar-participation_name"
                     onChange={onChange}
                 />
                 <Dropdown

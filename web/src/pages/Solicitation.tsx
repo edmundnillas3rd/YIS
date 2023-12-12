@@ -183,7 +183,6 @@ export default function () {
     };
 
     const soliFilters = [
-        "--FILTER USERS--",
         "ALL",
         "RETURNED",
         "UNRETURNED",
@@ -225,7 +224,7 @@ export default function () {
     ];
 
     return (
-        <>
+        <article className="flex flex-col">
             <SoliciitationModal
                 hasCloseBtn={true}
                 isOpen={!!currentNode}
@@ -351,6 +350,6 @@ export default function () {
                 )
                 }
             </Container>
-        </>
+        </article>
     );
 }

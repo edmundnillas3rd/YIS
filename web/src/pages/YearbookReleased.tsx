@@ -120,7 +120,7 @@ export default function () {
     }
 
     return courses && (
-        <>
+        <article className="flex flex-col justify-center w-full">
             <Container>
                 <form
                     onSubmit={onSubmit}
@@ -210,6 +210,6 @@ export default function () {
                 )
                 }
             </Container>
-        </>
+        </article>
     );
 }

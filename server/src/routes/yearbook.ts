@@ -9,7 +9,7 @@ router.get("/", index);
 router.post("/search-yearbook-photo", searchStudentYearbookPhoto);
 
 // PUT
-router.put("/:status/:user_id/status-update", statusUpdate);
+router.put("/:status/:userID/status-update", statusUpdate);
 router.put("/release-yearbook", releaseYearbook);
 
 export default router;

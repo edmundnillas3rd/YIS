@@ -7,7 +7,7 @@ export async function index(req: Request, res: Response) {
     `);
 
     const yearbookPhotos = await query(`
-        SELECT yearbook_photos.yearbook_photos_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(yearbook_photos.yearbook_photos_date_released, 'N/A') AS dateReleased FROM yearbook_photos
+        SELECT yearbook_photos.yearbook_photos_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(DATE_FORMAT(yearbook_photos.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased FROM yearbook_photos
         INNER JOIN user
         ON yearbook_photos.user_id = user.user_id
         INNER JOIN yearbook_status
@@ -36,13 +36,31 @@ export async function index(req: Request, res: Response) {
 
 // PUT
 export async function statusUpdate(req: Request, res: Response) {
-    const { status, user_id } = req.params;
+    const { status, userID } = req.params;
 
-    const results = await query(`
-        UPDATE yearbook_photos
-        SET yearbook_photos.yearbook_status_id = ?
-        WHERE yearbook_photos.yearbook_photos_id = ?
-    `, [status, user_id]);
+    const statusData = await query(`
+        SELECT yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_id = ?
+    `, [status]);
+
+    const statusName = statusData.rows[0]['name'];
+
+    let results: any;
+
+    if (statusName === "RELEASED") {
+        results = await query(`
+            UPDATE yearbook_photos
+            SET yearbook_photos.yearbook_status_id = ?,
+            yearbook_photos_date_released = CURRENT_TIMESTAMP
+            WHERE yearbook_photos.yearbook_photos_id = ?
+        `, [status, userID]);
+    } else if (statusName === "PENDING") {
+        results = await query(`
+            UPDATE yearbook_photos
+            SET yearbook_photos.yearbook_status_id = ?,
+            yearbook_photos_date_released = NULL
+            WHERE yearbook_photos.yearbook_photos_id = ?
+        `, [status, userID]);
+    }
 
     res.status(200).end();
 }
