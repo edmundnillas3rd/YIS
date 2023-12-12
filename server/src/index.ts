@@ -14,7 +14,7 @@ import userRoute from "./routes/userRoute";
 import solicitationRoute from "./routes/solicitationRoute";
 import courseRoute from "./routes/courseRoute";
 import clubRoute from "./routes/clubRoute";
-import yearbookRoute from "./routes/yearbook";
+import yearbookRoute from "./routes/yearbookRoute";
 import { config } from "./services/mysqldb";
 
 declare module 'express-session' {
