@@ -1,4 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { FaCirclePlus } from "react-icons/fa6";
 
 import { Button, Modal } from "../Globals";
@@ -39,7 +40,7 @@ export default function ({
 
                 if (data) {
                     setClub(id);
-                    setPositions(data.userClubPositions);
+                    setPositions(data.userClubPositions.map((pos: any) => ({ uuid: uuid(), ...pos })));
                 }
             }
         })();
@@ -77,6 +78,7 @@ export default function ({
         >
             {positions.length && positions.map((position: any) => (
                 <OrganizationFillupForm
+                    key={position.uuid}
                     data={data}
                     data2={position}
                     hasSubmit={position?.submitted}

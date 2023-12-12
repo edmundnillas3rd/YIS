@@ -91,12 +91,12 @@ export default function ({
                 method="POST"
                 className="flex flex-col gap-5">
                 <Input
-                    title="Award Attended Name"
+                    title="Award"
                     id="award-attended"
                     onChange={onChange}
                 />
                 <Input
-                    title="Award Attended Name"
+                    title="Award/ETC"
                     id="award-name"
                     onChange={onChange}
                 />
