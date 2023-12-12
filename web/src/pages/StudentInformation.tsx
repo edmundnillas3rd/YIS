@@ -16,6 +16,7 @@ import OrganizationEditModal from "../components/OrganizationTable/OrganizationE
 import PreivewModal from "../components/StudentInformation/PreivewModal";
 import SeminarModal from "../components/SeminarTable/SeminarModal";
 import SeminarEdit from "../components/SeminarTable/SeminarEdit";
+import { suffixRegex } from "../utilities/regex";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
@@ -230,6 +231,10 @@ export default function () {
                             value={currentUser['familyName']}
                             disabled={disable}
                             autoComplete="family-name"
+                            pattern={"[a-zA-Z]{3}{45}"}
+                            min={3}
+                            max={45}
+                            required
                         />
                         <Input
                             title="FIRST NAME"
@@ -238,6 +243,10 @@ export default function () {
                             value={currentUser['firstName']}
                             disabled={disable}
                             autoComplete="first-name"
+                            pattern={"[a-zA-Z]{3}{45}"}
+                            min={3}
+                            max={45}
+                            required
                         />
                         <Input
                             title="MIDDLE NAME"
@@ -245,6 +254,10 @@ export default function () {
                             onChange={onInputChangeHandler}
                             value={currentUser['middleName']}
                             disabled={disable}
+                            pattern={"[a-zA-Z]{3}{45}"}
+                            min={3}
+                            max={45}
+                            required
                         />
                         <Input
                             title="SUFFIX"
@@ -252,6 +265,10 @@ export default function () {
                             onChange={onInputChangeHandler}
                             value={currentUser['suffix']}
                             disabled={disable}
+                            pattern={suffixRegex}
+                            min={3}
+                            max={45}
+                            required
                         />
                     </form>
                 )}
