@@ -13,7 +13,7 @@ interface SelectionProps {
 
 const Selection = ({ index, src, url, callbackFn, children, disabled = false }: SelectionProps) => (
     !disabled ?
-        <NavLink className="text-left flex w-2/3 flex-row items-center gap-10 py-3 px-2 rounded transition-all ease-in bg-transparent hover:bg-zinc-200"
+        <NavLink className="text-left font-bold text-base flex w-2/3 flex-row items-center gap-10 py-3 px-2 rounded transition-all ease-in bg-transparent hover:bg-zinc-200"
             to={url}
             onMouseEnter={e => {
                 e.preventDefault();
@@ -28,7 +28,7 @@ const Selection = ({ index, src, url, callbackFn, children, disabled = false }: 
             <figure>
                 <img className="max-w-none w-14 h-14" src={src} alt="icon" />
             </figure>
-            <p className="font-bold text-base">{children}</p>
+            {children}
         </NavLink> :
         <button className="text-left flex w-2/3 flex-row items-center gap-10 py-3 px-2 rounded transition-all ease-in bg-transparent hover:bg-zinc-200 cursor-not-allowed"
             onMouseEnter={e => {
@@ -67,8 +67,8 @@ export default function Main() {
 
     const images = [
         "/assets/cjc-logo.png",
-        "/assets/envelope.png",
         "/assets/norbert-building.png",
+        "/assets/envelope.png",
         "/assets/graduation-photo.png",
         "/assets/yearbook-stock.jpg"
     ];
@@ -88,35 +88,37 @@ export default function Main() {
                 backgroundImage: `url(${images[currentIndex]})`
             }} />}
             <section className="flex flex-auto flex-col gap-0 justify-center items-center">
-                {/* {!disabled && (role === "admin") &&
-                    (
-                        <>
-                            <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
-                            <h3 className="font-bold w-3/5 text-left mb-3">Admin Section</h3>
-                            <Selection index={1} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
-                                <p>SOLICITATION</p>
-                            </Selection>
-                            <hr className="bg-slate-950 opacity-40 w-3/5 my-5 h-0.5" />
-                            <h3 className="font-bold w-3/5 text-left mb-3">Student Section</h3>
-                        </>
-                    )} */}
-                <Selection index={1} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
-                    SOLICITATION
-                </Selection>
-                <Selection index={2} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
+                <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
+                    <p>SERVICES</p>
+                    <hr className="bg-zinc-950" />
+                </section>
+                <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
                     COLLEGES
                 </Selection>
-                <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
-                    YEARBOOK PHOTOS
-                </Selection>
-                {/* {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
+
+                {currentUser && currentUser['role'] === "ADMIN" && (
+                    <>
+                        <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
+                            <p>ADMIN & STAFF</p>
+                            <hr className="bg-zinc-950" />
+                        </section>
+                        <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                            SOLICITATION
+                        </Selection>
+                        <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
+                            YEARBOOK PHOTOS
+                        </Selection>
+                        {/* {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
                     YEARBOOK RELEASED
                     {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
                 </Selection>} */}
-                {<Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
-                    YEARBOOK RELEASED
-                    {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
-                </Selection>}
+                        {<Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
+                            YEARBOOK RELEASED
+                            <p className="font-bold text-slate-500">(Please get the claim stub)</p>
+                        </Selection>}
+                    </>
+
+                )}
             </section>
         </article>
     );

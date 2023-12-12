@@ -15,7 +15,8 @@ export default function Navbar() {
     const onClickHandler = async (e: SyntheticEvent) => {
         setLoading(true);
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/logout`, {
-            method: "POST"
+            method: "POST",
+            credentials: "include"
         });
         const { url } = await response.json();
         if (response.ok) {

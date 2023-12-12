@@ -53,8 +53,7 @@ export default function Auth() {
                     <input
                         id="email"
                         name="email"
-                        type="email"
-                        autoComplete="email"
+                        type="text"
                         required
                         className="block w-full rounded-t-md border-1 border-gray-300  border-b-gray-50 py-1.5 text-gray-700 shadow-sm ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         placeholder="Email"

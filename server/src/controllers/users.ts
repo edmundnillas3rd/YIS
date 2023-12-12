@@ -184,7 +184,7 @@ export async function loginUserStudent(req: Request, res: Response) {
             });
         }
 
-        const data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name STUDENT`);
+        const data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'STUDENT'`);
         userRole = data.rows[0].name;
 
     } else {
@@ -220,8 +220,8 @@ export async function loginUserStudent(req: Request, res: Response) {
         SELECT user.user_id AS id, user.user_first_name, user.user_middle_name, user.user_family_name, user.user_email AS email, user.user_password AS password, role.role_name AS role FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
-        WHERE user.user_email = ? AND role.role_name = ?
-    `, [email, userRole]);
+        WHERE (user.user_email = ? OR user.user_school_id = ?) AND role.role_name = ?
+    `, [email, email, userRole]);
 
     if (user.rows.length === 0) {
         return res.status(401).json({ error: "Invalid user email and password" });
