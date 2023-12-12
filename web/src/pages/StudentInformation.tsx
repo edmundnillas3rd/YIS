@@ -229,6 +229,7 @@ export default function () {
                             onChange={onInputChangeHandler}
                             value={currentUser['familyName']}
                             disabled={disable}
+                            autoComplete="family-name"
                         />
                         <Input
                             title="FIRST NAME"
@@ -236,6 +237,7 @@ export default function () {
                             onChange={onInputChangeHandler}
                             value={currentUser['firstName']}
                             disabled={disable}
+                            autoComplete="first-name"
                         />
                         <Input
                             title="MIDDLE NAME"
