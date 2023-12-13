@@ -50,9 +50,9 @@ export async function yearbookReleased(req: Request, res: Response) {
  `, [firstName, lastName, middleName, suffix]);
 
 
-    if (foundUser.rows.length === 0) {
+    if (foundUser.rows.length > 0) {
         return res.status(404).json({
-            error: "Student not found"
+            error: "Student already been released a yearbook"
         });
     }
 
