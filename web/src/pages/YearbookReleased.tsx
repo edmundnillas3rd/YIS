@@ -3,7 +3,7 @@ import { Button, Dropdown, Input, Container, Table } from "../components/Globals
 import { v4 as uuid } from "uuid";
 import { generateYearRange } from "../utilities/generateYearRange";
 import YearbookReleasedModal from "../components/YearbookRelease/YearbookReleasedModal";
-import { suffixRegex } from "../utilities/regex";
+import { capitalizeRegex, suffixRegex } from "../utilities/regex";
 
 export default function () {
 
@@ -155,7 +155,7 @@ export default function () {
                         title="SCHOOL ID"
                         id="school-id"
                         onChange={onChange}
-                        pattern={"[a-zA-Z]{3}{45}"}
+                        pattern={capitalizeRegex}
                         min={3}
                         max={45}
                     />
@@ -176,7 +176,7 @@ export default function () {
                             title="FIRST NAME"
                             id="firstName"
                             onChange={onChange}
-                            pattern={"[a-zA-Z]{3}{45}"}
+                            pattern={capitalizeRegex}
                             min={3}
                             max={45}
                             required
@@ -185,7 +185,7 @@ export default function () {
                             title="LAST NAME"
                             id="lastName"
                             onChange={onChange}
-                            pattern={"[a-zA-Z]{3}{45}"}
+                            pattern={capitalizeRegex}
                             min={3}
                             max={45}
                             required
@@ -195,7 +195,7 @@ export default function () {
                                 title="MIDDLE NAME"
                                 id="middleName"
                                 onChange={onChange}
-                                pattern={"[a-zA-Z]{3}{45}"}
+                                pattern={capitalizeRegex}
                                 min={3}
                                 max={45}
                                 required
@@ -222,26 +222,31 @@ export default function () {
                             title="FIRST NAME"
                             id="cfFirstName"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="LAST NAME"
                             id="cfLastName"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="MIDDLE NAME"
                             id="cfmiddleName"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="SUFFIX"
                             id="cfSuffix"
                             onChange={onChange}
+                            pattern={suffixRegex}
                         />
                         <Input
                             title="RELATION TO STUDENT"
                             id="cfRelation"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                     </section>
                     <section className="flex flex-row justify-end">

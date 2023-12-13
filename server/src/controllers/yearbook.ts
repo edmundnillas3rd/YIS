@@ -46,8 +46,14 @@ export async function yearbookReleased(req: Request, res: Response) {
 
     // User
     const foundUser = await query(`
-     SELECT user_id AS id FROM user WHERE user_first_name = ? AND user_family_name = ? AND user_middle_name = ? AND user_suffix = ?
- `, [firstName, lastName, middleName, suffix]);
+        SELECT user_id AS id FROM yearbook yb
+        INNER JOIN user u
+        ON yb.user_id = u.user_id
+        INNER JOIN yearbook_status ybs
+        ON yb.yearbook_status_id = ybs.yearbook_status_id
+        WHERE u.user_first_name = ? AND u.user_family_name = ? AND u.user_middle_name = ? AND u.user_suffix = ?
+        AND (ybs.yearbook_status_name = 'RELEASED' OR ybs.yearbook_status_name = 'PENDING')
+    `, [firstName, lastName, middleName, suffix]);
 
 
     if (foundUser.rows.length > 0) {

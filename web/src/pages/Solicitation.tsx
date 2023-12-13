@@ -10,6 +10,7 @@ import {
 } from "../components/Globals";
 import { useNavigate } from "react-router-dom";
 import SoliciitationModal from "../components/Solicitation/SoliciitationModal";
+import { capitalizeRegex, suffixRegex } from "../utilities/regex";
 
 export default function () {
 
@@ -251,27 +252,27 @@ export default function () {
                             title="FIRST NAME"
                             id="firstName"
                             onChange={onChange}
-                            pattern="[A-Z]+"
+                            pattern={capitalizeRegex}
                             required
                         />
                         <Input
                             title="LAST NAME"
                             id="lastName"
                             onChange={onChange}
-                            pattern="[A-Z]+"
+                            pattern={capitalizeRegex}
                             required
                         />
                         <Input
                             title="MIDDLE NAME"
                             id="middleName"
                             onChange={onChange}
-                            pattern="[A-Z]+"
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="SUFFIX"
                             id="suffix"
                             onChange={onChange}
-                            pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
+                            pattern={{suffixRegex}}
                         />
                         <Input
                             title="SOLICITATION FORM # (EX. 2023-2010)"
@@ -290,27 +291,31 @@ export default function () {
                             title="FIRST NAME"
                             id="cfFirstName"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="LAST NAME"
                             id="cfLastName"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="MIDDLE NAME"
                             id="cfmiddleName"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                         <Input
                             title="SUFFIX"
                             id="cfSuffix"
                             onChange={onChange}
-                            pattern={`(IX|X|IV|V?(I{0,3})|SR|JR|)?`}
+                            pattern={suffixRegex}
                         />
                         <Input
                             title="RELATION"
                             id="cfRelation"
                             onChange={onChange}
+                            pattern={capitalizeRegex}
                         />
                     </section>
                     <Button>
@@ -326,6 +331,7 @@ export default function () {
                 <section className="flex flex-row gap-5">
                     <Input
                         placeholder="Search the name of student"
+                        pattern={capitalizeRegex}
                     />
                     <Dropdown
                         label=""
