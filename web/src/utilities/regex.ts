@@ -1,0 +1,1 @@
+export const suffixRegex = "(IX|X|IV|V?(I{0,3})|SR|JR|)?";

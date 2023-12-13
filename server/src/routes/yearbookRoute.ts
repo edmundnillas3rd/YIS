@@ -11,6 +11,6 @@ router.post("/yearbook-released", yearbookReleased);
 
 // PUT
 router.put("/:status/:userID/status-update", statusYearbookPhotosUpdate);
-router.put("/:status/:userID/status-update-yearbook", statusYearbookUpdate);
+router.put("/:status/:yearbookID/status-update-yearbook", statusYearbookUpdate);
 
 export default router;

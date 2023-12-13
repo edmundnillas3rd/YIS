@@ -1,5 +1,5 @@
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Button, Dropdown, Modal } from "../Globals";
+import { Button, Dropdown, Input, Modal } from "../Globals";
 import { useNavigate } from "react-router-dom";
 
 export default function ({
@@ -13,40 +13,53 @@ export default function ({
     const [statuses, setStatuses] = useState([]);
     const [status, setStatus] = useState<string>("");
     const [currentStatus, setCurrentStatus] = useState<string>("");
-    const [student, setStudent] = useState();
+    const [yearbookID, setYearbookID] = useState<string>("");
+
     const navigate = useNavigate();
 
     useEffect(() => {
         if (data && data2) {
-            setStudent(data);
+            setYearbookID(data['id']);
             setStatuses(data2);
+
+            if (data?.yearbookStatus) {
+                setCurrentStatus(data.yearbookStatus);
+            }
+
             if (data2[0]) {
-                setCurrentStatus(data['yearbookStatus']);
+                console.log(data);
+
                 setStatus(data2[0]['id']);
             }
+
         }
     }, [data, data2]);
 
-    const onChange = async (event: SyntheticEvent) => {
-        event.preventDefault();
-        const target = event.target as HTMLInputElement;
-        setStatus(target.value);
-    };
-
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
-        if (student && status) {
-            const { id } = student;
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${status}/${id}/status-update`, {
-                method: "PUT"
+
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${status}/${yearbookID}/status-update-yearbook`, {
+                method: "PUT",
+                credentials: "include",
             });
 
             if (response.ok) {
                 navigate(0);
             }
-        } else {
-            console.log(status);
-            
+        } catch (err) {
+            console.error(err);
+        }
+
+    };
+
+    const onChange = async (event: SyntheticEvent) => {
+        const target = event.target as HTMLInputElement;
+        switch (target.name) {
+            case "status":
+                setStatus(target.value);
+                break;
         }
     };
 
@@ -60,20 +73,17 @@ export default function ({
                 <p className="font-bold">CURRENT YEARBOOK STATUS</p>
                 <p>{currentStatus}</p>
             </section>
-            <form
-                method="POST"
-                onSubmit={onSubmitHandler}
-            >
+            <form method="PUT" onSubmit={onSubmitHandler}>
                 <Dropdown
-                    label="Yearbook Status"
-                    name="yearbookStatus"
+                    label="Status"
+                    name="status"
                     datas={statuses}
                     value={status}
                     onChange={onChange}
                 />
 
                 <section className="flex flex-row justify-end mt-5">
-                    <Button type="submit">Update</Button>
+                    <Button type="submit">Submit</Button>
                 </section>
             </form>
         </Modal>

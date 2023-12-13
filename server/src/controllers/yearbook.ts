@@ -121,14 +121,7 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
 }
 
 export async function statusYearbookUpdate(req: Request, res: Response) {
-    const {
-        firstName,
-        lastName,
-        middleName,
-        course,
-        suffix
-    } = req.body;
-    const { status, userID } = req.params;
+    const { status, yearbookID } = req.params;
 
     let results: any;
 
@@ -143,19 +136,19 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
             UPDATE yearbook
             INNER JOIN user
             ON yearbook.user_id = user.user_id
-            SET yearbook_status_id = ?,
-            yearbook_released_date = CURRENT_TIMESTAMP
-            WHERE user.user_first_name = ? AND user.user_family_name = ? AND user.user_middle_name = ? AND user.user_suffix AND user.user_id = ?
-        `, [status, firstName, lastName, middleName, suffix, userID]);
+            SET yearbook.yearbook_status_id = ?,
+            yearbook.yearbook_date_released = CURRENT_TIMESTAMP
+            WHERE yearbook.yearbook_id = ?
+        `, [status, yearbookID]);
     } else if (statusName === "PENDING") {
         results = await query(`
             UPDATE yearbook
             INNER JOIN user
             ON yearbook.user_id = user.user_id
-            SET yearbook_status_id = ?,
-            yearbook_released_date = NULL
-            WHERE user.user_first_name = ? AND user.user_family_name = ? AND user.user_middle_name = ? AND user.user_suffix AND user.user_id = ?
-    `, [status, firstName, lastName, middleName, suffix, userID]);
+            SET yearbook.yearbook_status_id = ?,
+            yearbook.yearbook_date_released = NULL
+            WHERE yearbook.yearbook_id = ?
+    `, [status, yearbookID]);
     }
 
     res.status(200).end();
