@@ -67,7 +67,7 @@ export async function userPreview(req: Request, res: Response) {
 
         if (accumulator[currentValue.organizationName as string] !== undefined) {
             // const removedComma = (accumulator[currentValue.organizationName as string]).slice(0, -1);
-            const previousValue = accumulator[currentValue.organizationName as string]
+            const previousValue = accumulator[currentValue.organizationName as string];
             return {
                 ...accumulator,
                 [currentValue.organizationName as string]: previousValue.concat(` ${currentValue.clubPosition}, ${currentValue.yearStarted}-${currentValue.yearEnded}`),
@@ -89,8 +89,10 @@ export async function userPreview(req: Request, res: Response) {
         return organization;
     });
 
-    const awards = await query("SELECT a.award_participation_name AS awardAttendedName, a.award_name AS awardName, a.award_received AS awardReceived FROM award a WHERE a.user_id = ?", [userID]);
-    let awardRecognitions = awards.rows.map((award: any) => (
+    const awards = await query(`
+        SELECT a.award_participation_name AS awardAttendedName, a.award_name AS awardName, a.award_received AS awardReceived FROM award a WHERE a.user_id = ?
+    `, [userID]);
+    const awardRecognitions = awards.rows.map((award: any) => (
         `${award.awardAttendedName}, ${award.awardName}, ${award.awardReceived}`
     ));
 
@@ -103,7 +105,16 @@ export async function userPreview(req: Request, res: Response) {
     //     return award;
     // });
 
-    const formatData = [...clubRecognitions, awardRecognitions];
+    const seminars = await query(`
+        SELECT s.seminar_name AS seminarName, s.seminar_date_attended AS seminarDateAttended, s.seminar_role AS role FROM seminar s 
+        WHERE s.user_id = ?
+    `, [userID]);
+
+    const seminarsRecognitions = seminars.rows.map((seminar: any) => (
+        `${seminar.seminarName}, ${seminar.role}, ${seminar.seminarDateAttended}`
+    ))
+
+    const formatData = [...clubRecognitions, awardRecognitions, seminarsRecognitions];
 
     const dataPreview = formatData.reduce((accumulator: string, currentValue: any) => {
         if (accumulator.length === 0) {
@@ -116,6 +127,7 @@ export async function userPreview(req: Request, res: Response) {
     res.status(200).json({
         affiliations: clubRecognitions,
         awards: awardRecognitions,
+        seminars: seminarsRecognitions,
         dataPreview
     });
 }
@@ -137,12 +149,12 @@ export async function userAward(req: Request, res: Response) {
 export async function userSeminar(req: Request, res: Response) {
     const { userID } = req.session;
     const { rows } = await query(`
-        SELECT s.seminar_id AS id, s.seminar_name AS seminarName, s.seminar_participation_name AS seminarAttendedName, s.seminar_date_attended AS seminarDateAttended FROM seminar s
+        SELECT s.seminar_id AS id, s.seminar_name AS seminarName, s.seminar_role AS seminarAttendedName, s.seminar_date_attended AS seminarDateAttended FROM seminar s
         WHERE s.user_id = ?
     `, [userID]);
     res.status(200).json({
         seminars: rows
-    })
+    });
 }
 
 // POST
@@ -225,7 +237,7 @@ export async function seminarUserAdd(req: Request, res: Response) {
     const SeminarUUID = SeminarGenUUID.rows[0]['UUID()'];
     await query(`
         INSERT INTO seminar VALUES (?, ?, ?, ?, ?)
-    `, [SeminarUUID, seminarName, seminarDate, seminarParticipationName, userID])
+    `, [SeminarUUID, seminarName, seminarDate, seminarParticipationName, userID]);
     res.status(200).end();
 }
 
@@ -277,9 +289,9 @@ export async function clubUserSeminarUpdate(req: Request, res: Response) {
         UPDATE seminar
         SET seminar_name = ?,
         seminar_date_attended = ?,
-        seminar_participation_name = ?
+        seminar_role = ?
         WHERE user_id = ? AND seminar_id = ?
-    `, [seminarName, seminarDate, seminarParticipationName, userID, id])
+    `, [seminarName, seminarDate, seminarParticipationName, userID, id]);
     res.status(200).end();
 }
 

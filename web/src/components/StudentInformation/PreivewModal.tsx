@@ -10,6 +10,7 @@ export default function ({
 
     const [affiliations, setAffiliations] = useState<any[]>([]);
     const [awards, setAwards] = useState<any[]>([]);
+    const [seminars, setSeminars] = useState<any[]>([]);
 
     useEffect(() => {
         (async () => {
@@ -22,17 +23,18 @@ export default function ({
             if (data) {
                 setAffiliations(data.affiliations.map((affil: any) => ({ key: uuid(), value: affil })));
                 setAwards(data.awards.map((award: any) => ({ key: uuid(), value: award })));
+                setSeminars(data.seminars.map((seminar: any) => ({ key: uuid(), value: seminar })));
             }
         })();
     }, []);
 
     useEffect(() => {
 
-        if (affiliations && awards) {
-            console.log(affiliations, awards);
+        if (affiliations && awards && seminars) {
+            console.log(affiliations, awards && seminars);
 
         }
-    }, [affiliations, awards])
+    }, [affiliations, awards, seminars]);
 
     return (
         <Modal
@@ -40,15 +42,15 @@ export default function ({
             hasCloseBtn={hasCloseBtn}
             onClose={onClose}
         >
-            <section className="flex flex-col gap-5">
+            <section className="flex flex-col gap-5 p-5">
                 <h3 className="font-bold">Preview</h3>
-                {affiliations && awards && (
+                {affiliations && awards && seminars && (
                     <>
                         <ul>
                             <h3 className="font-bold">Affiliation(s)</h3>
                             {affiliations && (
                                 affiliations.map(affil => (
-                                    <li key={affil?.key}>{affil?.value}</li>
+                                    <li className="list-disc" key={affil?.key}>{affil?.value}</li>
                                 ))
                             )}
                         </ul>
@@ -56,7 +58,15 @@ export default function ({
                             <h3 className="font-bold">Awards(s)</h3>
                             {awards && (
                                 awards.map(award => (
-                                    <li key={award?.key}>{award?.value}</li>
+                                    <li className="list-disc" key={award?.key}>{award?.value}</li>
+                                ))
+                            )}
+                        </ul>
+                        <ul>
+                            <h3 className="font-bold">Seminars(s)</h3>
+                            {seminars && (
+                                seminars.map(semi => (
+                                    <li className="list-disc" key={semi?.key}>{semi?.value}</li>
                                 ))
                             )}
                         </ul>

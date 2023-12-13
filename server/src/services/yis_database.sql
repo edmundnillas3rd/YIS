@@ -91,7 +91,7 @@ CREATE TABLE `seminar` (
   `seminar_id` varchar(36) NOT NULL,
   `seminar_name` varchar(45) NOT NULL,
   `seminar_date_attended` date DEFAULT NULL,
-  `seminar_participation_name` varchar(45) NOT NULL,
+  `seminar_role` varchar(45) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   PRIMARY KEY (`seminar_id`),
   KEY `user_idx` (`user_id`),
