@@ -17,7 +17,7 @@ export async function index(req: Request, res: Response) {
     const yearbook = await query(`
         SELECT yb.yearbook_id AS id, 
         CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, 
-        c.course_name AS course,
+        c.course_abbreviation AS course,
         COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
         ybs.yearbook_status_name AS yearbookStatus, 
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,

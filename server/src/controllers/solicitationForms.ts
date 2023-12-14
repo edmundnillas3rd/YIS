@@ -5,7 +5,7 @@ import { query } from "../services/mysqldb";
 export async function index(req: Request, res: Response) {
     const sql = `
     SELECT solicitation_form.user_id AS id,
-        course.course_name AS course, 
+        course.course_abbreviation AS course, 
         CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
         solicitation_form.solicitation_number AS soliNumber,
         COALESCE(CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix), 'N/A') AS careOfFullName,
@@ -44,7 +44,7 @@ export async function getUserSolicitation(req: Request, res: Response) {
 
     const sql = `
     SELECT solicitation_form.user_id AS id,
-        course.course_name AS course, 
+        course.course_abbreviation AS course, 
         CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
         solicitation_form.solicitation_number AS soliNumber,
         CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix) AS careOfFullName,
