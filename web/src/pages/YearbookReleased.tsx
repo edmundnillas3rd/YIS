@@ -12,12 +12,14 @@ export default function () {
     const [courses, setCourses] = useState<string>("");
     const [yearbooks, setYearbooks] = useState([]);
     const [statuses, setStatuses] = useState([]);
+    const [errMessage, setErrMessage] = useState<string>("");
 
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [middleName, setMiddleName] = useState<string>("");
     const [course, setCourse] = useState<string>("");
     const [suffix, setSuffix] = useState<string>("");
+    const [yearGraduated, setYearGraduated] = useState<string>("");
 
     const [cfFirstName, setCfFirstName] = useState<string>("");
     const [cfLastName, setCfLastName] = useState<string>("");
@@ -34,8 +36,9 @@ export default function () {
 
             const [yearbookData, coursesData] = await Promise.all([yearbookRes.json(), courseRes.json()]);
 
-            if (coursesData.courses) {
+            if (coursesData.courses && years) {
                 setCourse(coursesData.courses[0]['id']);
+                setYearGraduated(years[0].toString());
             }
 
             setCourses(coursesData.courses);
@@ -47,6 +50,7 @@ export default function () {
     const onChange = (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
+        setErrMessage("");
 
         switch (target.name) {
             case "firstName":
@@ -63,6 +67,9 @@ export default function () {
                 break;
             case "course":
                 setCourse(target.value);
+                break;
+            case "yearGraduated":
+                setYearGraduated(target.value);
                 break;
             case "cfFirstName":
                 setCfFirstName(target.value);
@@ -105,23 +112,36 @@ export default function () {
                 lastName,
                 middleName,
                 suffix,
-                course
+                course,
+                yearGraduated
             };
 
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/yearbook-released`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/yearbook-released`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
 
-            });
+                });
+            } catch (err: any) {
+                console.log(err);
+            }
         } else {
-            console.log("Complete All Required Fields");
-
+            setErrMessage("Complete all required fields marked with (*)");
         }
     };
+
+    const yearbookReleasedHeaders = [
+        "NAME",
+        "COURSE",
+        "YEAR GRADUATED",
+        "YEARBOOK STATUS",
+        "DATE RELEASED",
+        "CARE OF"
+    ];
 
     const onClick = async (data: any) => {
         setDisplayYearbookModal(true);
@@ -161,8 +181,9 @@ export default function () {
                     />
                     <Dropdown
                         label="YEAR GRADUATED"
-                        name="course"
+                        name="yearGraduated"
                         datas={years}
+                        onChange={onChange}
                     />
                     <Dropdown
                         label="COURSE"
@@ -179,7 +200,7 @@ export default function () {
                             pattern={capitalizeRegex}
                             min={3}
                             max={45}
-                            required
+                            required={true}
                         />
                         <Input
                             title="LAST NAME"
@@ -188,7 +209,7 @@ export default function () {
                             pattern={capitalizeRegex}
                             min={3}
                             max={45}
-                            required
+                            required={true}
                         />
                         <section className="flex flex-col gap-1 items-center ">
                             <Input
@@ -198,7 +219,7 @@ export default function () {
                                 pattern={capitalizeRegex}
                                 min={3}
                                 max={45}
-                                required
+                                required={true}
                             />
                             <p className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</p>
                         </section>
@@ -249,14 +270,15 @@ export default function () {
                             pattern={capitalizeRegex}
                         />
                     </section>
-                    <section className="flex flex-row justify-end">
+                    <section className="flex flex-row justify-end items-center gap-1">
+                        {errMessage && <p className="font-bold text-red-400">{errMessage}</p>}
                         <Button onClick={onSubmit}>Submit</Button>
                     </section>
                 </form>
             </Container>
             <Container>
                 {yearbooks && (
-                    <Table columns={["NAME", "YEABOOK STATUS", "DATE RELEASED"]} datas={yearbooks} onClickCallback={onClick}
+                    <Table columns={yearbookReleasedHeaders} datas={yearbooks} onClickCallback={onClick}
                     />
                 )
                 }

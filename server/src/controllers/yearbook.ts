@@ -15,11 +15,22 @@ export async function index(req: Request, res: Response) {
     `);
 
     const yearbook = await query(`
-        SELECT yearbook.yearbook_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(yearbook.yearbook_date_released, 'N/A') AS dateReleased FROM yearbook
-        INNER JOIN user
-        ON yearbook.user_id = user.user_id
-        INNER JOIN yearbook_status
-        ON yearbook.yearbook_status_id = yearbook_status.yearbook_status_id
+        SELECT yb.yearbook_id AS id, 
+        CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, 
+        c.course_name AS course,
+        COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
+        ybs.yearbook_status_name AS yearbookStatus, 
+        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
+        COALESCE(CONCAT(co.first_name, ' ', co.family_name, ' ', co.middle_name, ' ', co.suffix), 'N/A') AS carefOf
+        FROM yearbook yb
+        INNER JOIN user u
+        ON yb.user_id = u.user_id
+        INNER JOIN course c
+        ON u.course_id = c.course_id
+        LEFT JOIN care_of co
+        ON yb.yearbook_care_of = co.care_of_id
+        INNER JOIN yearbook_status ybs
+        ON yb.yearbook_status_id = ybs.yearbook_status_id
     `);
 
     const yearbookPaymentStatuses = await query(`
@@ -41,37 +52,57 @@ export async function yearbookReleased(req: Request, res: Response) {
         lastName,
         middleName,
         suffix,
-        course
+        course,
+        yearGraduated
     } = req.body;
 
     // User
     const foundUser = await query(`
-        SELECT user_id AS id FROM yearbook yb
+        SELECT u.user_id AS id FROM yearbook yb
         INNER JOIN user u
         ON yb.user_id = u.user_id
         INNER JOIN yearbook_status ybs
         ON yb.yearbook_status_id = ybs.yearbook_status_id
         WHERE u.user_first_name = ? AND u.user_family_name = ? AND u.user_middle_name = ? AND u.user_suffix = ?
-        AND (ybs.yearbook_status_name = 'RELEASED' OR ybs.yearbook_status_name = 'PENDING')
-    `, [firstName, lastName, middleName, suffix]);
+        AND u.course_id = ?
+        AND ybs.yearbook_status_name = 'PENDING'
+    `, [firstName, lastName, middleName, suffix, course]);
 
 
-    if (foundUser.rows.length > 0) {
+    if (foundUser.rows.length === 0) {
         return res.status(404).json({
-            error: "Student already been released a yearbook"
+            error: "Student entry doesn't exist or yearbook already claimed."
         });
     }
 
     const userID = foundUser.rows[0]['id'];
 
 
-    // Care of
-    const genCareOfUUID = await query('SELECT UUID()');
-    const CareOfUUID = genCareOfUUID.rows[0]['UUID()'];
-    const careOfValues = Object.values(careOf);
-    const careOfResults = await query(`
-        INSERT INTO care_of VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [CareOfUUID, userID, ...careOfValues]);
+    let CareOfUUID;
+
+    const {
+        cfFirstName,
+        cfLastName,
+        cfMiddleName,
+        cfRelation
+    } = careOf;
+
+    if (
+        cfFirstName &&
+        cfLastName &&
+        cfMiddleName &&
+        cfRelation
+    ) {
+        // Care of
+        const genCareOfUUID = await query('SELECT UUID()');
+        CareOfUUID = genCareOfUUID.rows[0]['UUID()'];
+        const careOfValues = Object.values(careOf);
+        const careOfResults = await query(`
+                INSERT INTO care_of VALUES (?, ?, ?, ?, ?, ?, ?)
+            `, [CareOfUUID, userID, ...careOfValues]);
+
+    }
+
 
     // Yearbook Status
     const yearbookStatus = await query(`
@@ -85,6 +116,72 @@ export async function yearbookReleased(req: Request, res: Response) {
     }
 
     const yearbookStatusID = yearbookStatus.rows[0]['id'];
+
+    const yearbookData = await query(`
+        SELECT yb.yearbook_id AS id, yb.yearbook_status_id AS statusID FROM yearbook yb
+        WHERE yb.user_id = ?
+    `, [userID]);
+
+    // If a yearbook already exist
+    if (yearbookData.rows.length > 0) {
+        const yearbookID = yearbookData.rows[0]['id'];
+        const statusID = yearbookData.rows[0]['statusID'];
+
+        const statusData = await query(`
+            SELECT ybs.yearbook_status_name AS statusName FROM yearbook_status ybs
+            WHERE ybs.yearbook_status_id = ?
+        `, [statusID]);
+
+        const statusName = statusData.rows[0]['statusName'];
+        if (statusName === "PENDING") {
+            const releasedData = await query(`
+                SELECT ybs.yearbook_status_id AS id FROM yearbook_status ybs
+                WHERE ybs.yearbook_status_name = 'RELEASED'
+            `);
+
+            const releasedStatusID = releasedData.rows[0]['id'];
+            const yearbookUpdateData = await query(`
+                UPDATE yearbook
+                INNER JOIN user
+                ON yearbook.user_id = user.user_id
+                SET yearbook.yearbook_status_id = ?,
+                user.user_year_graduated = ?,
+                yearbook.yearbook_date_released = CURRENT_TIMESTAMP
+                WHERE yearbook.yearbook_id = ?
+            `, [releasedStatusID, yearGraduated, yearbookID]);
+
+            if (yearbookUpdateData.rows.length > 0) {
+                return res.status(200).json({
+                    message: "Succesfully update an entry"
+                });
+            } else {
+                return res.status(404).json({
+                    error: "Failed to update an entry"
+                });
+            }
+        }
+        // } else if (statusName === "RELEASED") {
+        //     const yearbookUpdateData = await query(`
+        //         UPDATE yearbook 
+        //         INNER JOIN user
+        //         ON yearbook.user_id = user.user_id
+        //         SET yearbook.yearbook_status_id = ?,
+        //         yearbook.yearbook_date_released = NULL
+        //         WHERE yearbook.yearbook_id = ?
+        //     `, [statusID, yearbookID]);
+
+        //     if (yearbookUpdateData.rows.length > 0) {
+        //         return res.status(200).json({
+        //             message: "Succesfully update an entry"
+        //         });
+        //     } else {
+        //         return res.status(404).json({
+        //             error: "Failed to update an entry"
+        //         });
+        //     }
+        // }
+
+    }
 
     // Yearbook
     const genYearbookUUID = await query('SELECT UUID()');
@@ -143,6 +240,7 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
             INNER JOIN user
             ON yearbook.user_id = user.user_id
             SET yearbook.yearbook_status_id = ?,
+            user.user_year_graduated = YEAR(CURRENT_TIMESTAMP),
             yearbook.yearbook_date_released = CURRENT_TIMESTAMP
             WHERE yearbook.yearbook_id = ?
         `, [status, yearbookID]);
@@ -152,6 +250,7 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
             INNER JOIN user
             ON yearbook.user_id = user.user_id
             SET yearbook.yearbook_status_id = ?,
+            user.user_year_graduated = NULL,
             yearbook.yearbook_date_released = NULL
             WHERE yearbook.yearbook_id = ?
     `, [status, yearbookID]);
