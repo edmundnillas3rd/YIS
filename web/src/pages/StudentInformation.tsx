@@ -16,7 +16,7 @@ import OrganizationEditModal from "../components/OrganizationTable/OrganizationE
 import PreivewModal from "../components/StudentInformation/PreivewModal";
 import SeminarModal from "../components/SeminarTable/SeminarModal";
 import SeminarEdit from "../components/SeminarTable/SeminarEdit";
-import { suffixRegex } from "../utilities/regex";
+import { capitalizeRegex, suffixRegex } from "../utilities/regex";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
@@ -42,7 +42,7 @@ export default function () {
     const [displaySeminarForm, setDisplaySeminarForm] = useState(false);
     const [displayEditSeminar, setDisplayEditSeminar] = useState(false);
     const [seminarsData, setSeminarsData] = useState(null);
-    
+
     useEffect(() => {
         (async () => {
             const clubsRouteResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
@@ -56,7 +56,7 @@ export default function () {
 
             const userSeminarResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs/user-seminar`, {
                 credentials: "include"
-            })
+            });
 
             const [indexData, clubsData, awardsData, seminarsData] = await Promise.all([
                 clubsRouteResponse.json(),
@@ -67,9 +67,9 @@ export default function () {
 
             if (indexData && clubsData && awardsData && seminarsData) {
                 setClubProps(indexData);
-                setClubsData(clubsData['clubs'].map((club: any) => ({ uuid: uuid(), ...club})));
-                setAwardsData(awardsData['awards'].map((award: any) => ({ uuid: uuid(), ...award})));
-                setSeminarsData(seminarsData['seminars'].map((seminar: any) => ({ uuid: uuid(), ...seminar})));
+                setClubsData(clubsData['clubs'].map((club: any) => ({ uuid: uuid(), ...club })));
+                setAwardsData(awardsData['awards'].map((award: any) => ({ uuid: uuid(), ...award })));
+                setSeminarsData(seminarsData['seminars'].map((seminar: any) => ({ uuid: uuid(), ...seminar })));
             }
 
         })();
@@ -89,7 +89,7 @@ export default function () {
         "Seminar",
         "Role",
         "Date Attended"
-    ]
+    ];
 
     const onInputChangeHandler = (event: SyntheticEvent) => {
     };
@@ -154,22 +154,22 @@ export default function () {
         console.log("Seminar row clicked", data);
         setDisplayEditSeminar(true);
         setCurrentSeminarNode(data);
-    }
+    };
 
     const onClickAddSeminar = async (event: SyntheticEvent) => {
         event.preventDefault();
         console.log("Add new seminar");
-        setDisplaySeminarForm(true)
-    }
+        setDisplaySeminarForm(true);
+    };
 
     const onCloseAddSeminar = async () => {
         setDisplaySeminarForm(false);
-    }
+    };
 
     const onCloseEditSeminar = async () => {
         setDisplayEditSeminar(false);
         setCurrentSeminarNode(null);
-    }
+    };
 
     return (
         <>
@@ -248,28 +248,34 @@ export default function () {
                             max={45}
                             required
                         />
-                        <Input
-                            title="MIDDLE NAME"
-                            id="middle-name"
-                            onChange={onInputChangeHandler}
-                            value={currentUser['middleName']}
-                            disabled={disable}
-                            pattern={"[a-zA-Z]{3}{45}"}
-                            min={3}
-                            max={45}
-                            required
-                        />
-                        <Input
-                            title="SUFFIX"
-                            id="suffix"
-                            onChange={onInputChangeHandler}
-                            value={currentUser['suffix']}
-                            disabled={disable}
-                            pattern={suffixRegex}
-                            min={3}
-                            max={45}
-                            required
-                        />
+                        <section className="flex flex-col gap-1 items-center ">
+                            <Input
+                                title="MIDDLE NAME"
+                                id="middleName"
+                                onChange={onInputChangeHandler}
+                                value={currentUser['middleName']}
+                                disabled={disable}
+                                pattern={capitalizeRegex}
+                                min={3}
+                                max={45}
+                                required={true}
+                            />
+                            <p className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</p>
+                        </section>
+                        <section className="flex flex-col gap-1 items-center">
+                            <Input
+                                title="SUFFIX"
+                                id="suffix"
+                                onChange={onInputChangeHandler}
+                                value={currentUser['suffix']}
+                                disabled={disable}
+                                pattern={suffixRegex}
+                                min={3}
+                                max={45}
+                                required={true}
+                            />
+                            <p className="text-zinc-500 font-bold">EX. SR, JR, I, II, III</p>
+                        </section>
                     </form>
                 )}
                 <section className="flex flex-row gap-1 justify-end items-center mb-5">
