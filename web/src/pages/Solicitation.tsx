@@ -11,9 +11,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import SoliciitationModal from "../components/Solicitation/SoliciitationModal";
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
+import { searchStudentSolicitationStatus } from "../utilities/students";
 
 export default function () {
-
+    const [search, setSearch] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [courses, setCourses] = useState();
     const [solis, setSolis] = useState([]);
@@ -78,6 +79,11 @@ export default function () {
 
     }, []);
 
+    useEffect(() => {
+        console.log(search);
+
+    }, [search]);
+
     const onChange = (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
@@ -117,6 +123,12 @@ export default function () {
                 setCfRelation(target.value);
                 break;
         }
+    };
+
+    const onChangeSearch = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.target as HTMLInputElement;
+        setSearch(target.value);
     };
 
     const onSubmit = async (event: SyntheticEvent) => {
@@ -169,6 +181,16 @@ export default function () {
             navigate(0);
             setLoading(false);
         }
+    };
+
+    const onSearchSubmit = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const data = await searchStudentSolicitationStatus(search);
+        const filteredData = data.map((solicitationForm: any) => ({ uuid: uuid(), ...solicitationForm }));
+        setDatas({
+            filteredData
+        });
     };
 
     const onClick = async (data: any) => {
@@ -327,18 +349,26 @@ export default function () {
                 </form>
             </Container>
             <Container>
-                <section className="flex flex-row gap-5">
+                <form
+                    onSubmit={onSearchSubmit}
+                    method="POST"
+                    className="flex flex-row gap-5"
+                >
                     <Input
                         placeholder="Search the name of student"
                         pattern={capitalizeRegex}
+                        onChange={onChangeSearch}
                     />
+                    <section className="flex flex-row justify-end">
+                        <Button>Search</Button>
+                    </section>
                     <Dropdown
                         label=""
                         name="filterSoli"
                         datas={soliFilters}
                         onChange={onChangeFilter}
                     />
-                </section>
+                </form>
 
                 {datas?.filteredData ? (
                     <Table

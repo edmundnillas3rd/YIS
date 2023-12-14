@@ -68,7 +68,7 @@ export async function searchStudentYearbookPhotoStatus(fullName: string): Promis
             body: JSON.stringify({
                 search: fullName
             })
-        })
+        });
 
         const { searchResults, error } = await response.json();
 
@@ -76,9 +76,34 @@ export async function searchStudentYearbookPhotoStatus(fullName: string): Promis
             console.log(error);
             return;
         }
-        
+
         return searchResults;
     } catch (err) {
         console.error(err);
+    }
+}
+
+export async function searchStudentSolicitationStatus(fullName: string) {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/search-solicitation-form`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                search: fullName
+            })
+        });
+
+        const { searchResults, error } = await response.json();
+        if (error) {
+            console.log(error);
+            return;
+        }
+
+        return searchResults;
+    } catch (error) {
+        console.log(error);
+        
     }
 }

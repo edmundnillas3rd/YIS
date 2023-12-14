@@ -6,6 +6,7 @@ import {
     claimSolicitation,
     getUserSolicitation,
     returnSolicitation,
+    searchSolicitationForm,
     submitSolicitation,
     solicitationUpdate
 } from "../controllers/solicitationForms";
@@ -16,6 +17,7 @@ router.get("/return-solicitation", returnSolicitation);
 router.get("/:id", getUserSolicitation);
 
 // POST
+router.post("/search-solicitation-form", searchSolicitationForm)
 router.post("/submit-solicitation", submitSolicitation);
 router.post("/solicitation-claim", claimSolicitation);
 

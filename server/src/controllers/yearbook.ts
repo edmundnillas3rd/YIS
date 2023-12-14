@@ -262,7 +262,11 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
 export async function searchStudentYearbookPhoto(req: Request, res: Response) {
     const { search } = req.body;
     const { rows } = await query(`
-        SELECT yp.yearbook_photos_id AS id, CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, ys.yearbook_status_name AS yearbookStatus , COALESCE(yp.yearbook_photos_date_released, 'N/A') AS dateReleased FROM yearbook_photos yp
+        SELECT 
+        yp.yearbook_photos_id AS id, 
+        CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, 
+        ys.yearbook_status_name AS yearbookStatus , COALESCE(yp.yearbook_photos_date_released, 'N/A') AS dateReleased 
+        FROM yearbook_photos yp
         INNER JOIN yearbook_status ys
         ON yp.yearbook_status_id = ys.yearbook_status_id
         INNER JOIN user u

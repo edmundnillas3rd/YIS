@@ -81,6 +81,47 @@ export async function returnSolicitation(req: Request, res: Response) {
     });
 }
 
+export async function searchSolicitationForm(req: Request, res: Response) {
+    const { search } = req.body;
+
+    const { rows } = await query(`
+        SELECT
+        sf.user_id AS id,
+        c.course_abbreviation AS course, 
+        CONCAT(u.user_first_name, " ", u.user_middle_name, " ", u.user_family_name, " ", u.user_suffix) AS fullName,
+        sf.solicitation_number as soliNumber,
+        COALESCE(CONCAT(cof.first_name, " ", cof.middle_name, " ", cof.family_name, " ", cof.suffix), 'N/A') AS careOfFullName,
+        COALESCE(cof.relation_status, 'N/A') AS relationStatus,
+        srs.status_name AS returnedStatus,
+        COALESCE(sf.solicitation_date_returned, 'N/A') AS dateReturned,
+        sps.status_name AS paymentStatus,
+        sf.solicitation_yearbook_payment AS paymentAmount,
+        sf.solicitation_or_number AS ORnumber
+        FROM solicitation_form sf
+        INNER JOIN user u
+        ON sf.user_id = u.user_id
+        INNER JOIN course c
+        ON u.course_id = c.course_id
+        LEFT JOIN care_of cof
+        ON sf.solicitation_care_of = cof.care_of_id
+        INNER JOIN solicitation_returned_status srs
+        ON sf.solicitation_returned_status_id = srs.solicitation_returned_status_id
+        INNER JOIN solicitation_payment_status sps
+        ON sf.solicitation_payment_status_id = sps.solicitation_payment_status_id
+        WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix), ?)
+    `, [`^${search}`]);
+
+    if (rows.length === 0) {
+        return res.status(404).json({
+            error: "Student Not Found"
+        });
+    }
+
+    res.status(200).json({
+        searchResults: rows
+    });
+}
+
 export async function submitSolicitation(req: Request, res: Response) {
     const {
         careOf,
@@ -154,9 +195,9 @@ export async function submitSolicitation(req: Request, res: Response) {
     }
 
     if (result) {
-       return res.status(200).end();
+        return res.status(200).end();
     } else {
-       return res.status(400).end();
+        return res.status(400).end();
     }
     // const genSolicitationUUID = await query("SELECT UUID()");
     // const SolicitationUUID = genSolicitationUUID.rows[0]['UUID()'];
