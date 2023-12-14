@@ -19,7 +19,7 @@ router.get("/:id", getUserSolicitation);
 router.post("/submit-solicitation", submitSolicitation);
 router.post("/solicitation-claim", claimSolicitation);
 
-// PATCH
-router.patch("/solicitation-update", solicitationUpdate);
+// PUT
+router.put("/solicitation-update", solicitationUpdate);
 
 export default router;

@@ -52,8 +52,6 @@ export default function () {
 
 
             if (course && soli && yearbook) {
-                console.log(course, soli, yearbook);
-                
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
 
@@ -187,13 +185,14 @@ export default function () {
         "ALL",
         "RETURNED",
         "UNRETURNED",
+        "LOST"
     ];
 
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
 
-        if (target.value === "RETURNED" || target.value === "UNRETURNED") {
+        if (target.value === "RETURNED" || target.value === "UNRETURNED" || target.value === "LOST") {
             console.log(target.value);
 
             let filterData = solis.filter(soli => (soli['returnedStatus'] === `${target.value}`));
@@ -240,7 +239,7 @@ export default function () {
                     onSubmit={onSubmit}
                 >
                     <h3 className="font-bold">Student Information</h3>
-                    <section className="flex flex-row flex-wrap gap-1">
+                    <section className="flex flex-row flex-wrap items-center gap-1">
                         {courses && <Dropdown
                             label="COURSE"
                             name="course"
@@ -272,7 +271,7 @@ export default function () {
                             title="SUFFIX"
                             id="suffix"
                             onChange={onChange}
-                            pattern={{suffixRegex}}
+                            pattern={suffixRegex}
                         />
                         <Input
                             title="SOLICITATION FORM # (EX. 2023-2010)"

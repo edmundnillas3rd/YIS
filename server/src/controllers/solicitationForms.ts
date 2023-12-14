@@ -11,7 +11,7 @@ export async function index(req: Request, res: Response) {
         COALESCE(CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix), 'N/A') AS careOfFullName,
         COALESCE(care_of.relation_status, 'N/A') AS relationStatus,
         solicitation_returned_status.status_name AS returnedStatus, 
-        COALESCE(DATE_FORMAT(solicitation_form.solicitation_date_returned, '%m/%d/%Y'), 'N/A') AS dateReturned,
+        COALESCE(solicitation_form.solicitation_date_returned, 'N/A') AS dateReturned,
         solicitation_payment_status.status_name AS paymentStatus,
         solicitation_form.solicitation_yearbook_payment AS paymentAmount,
         solicitation_form.solicitation_or_number AS ORnumber
@@ -147,15 +147,16 @@ export async function submitSolicitation(req: Request, res: Response) {
             UPDATE solicitation_form
             INNER JOIN user
             ON solicitation_form.user_id = user.user_id
-            SET solicitation_form.solicitation_returned_status_id = ?
+            SET solicitation_form.solicitation_returned_status_id = ?,
+            solicitation_form.solicitation_yearbook_payment = 400
             WHERE user.user_first_name = ? AND user.user_family_name = ? AND user.user_middle_name = ? AND user.user_suffix = ? AND user.course_id = ? AND solicitation_form.solicitation_number = ?
         `, [statusResult.rows[0]['id'], firstName, lastName, middleName, suffix, course, soliNum]);
     }
 
     if (result) {
-        res.status(200).end();
+       return res.status(200).end();
     } else {
-        res.status(400).end();
+       return res.status(400).end();
     }
     // const genSolicitationUUID = await query("SELECT UUID()");
     // const SolicitationUUID = genSolicitationUUID.rows[0]['UUID()'];
@@ -166,8 +167,6 @@ export async function submitSolicitation(req: Request, res: Response) {
     //     CareOfUUID,
     //     ...SolicitationValues
     // ]);
-
-    res.status(200).end();
 }
 
 export async function claimSolicitation(req: Request, res: Response) {
@@ -225,20 +224,87 @@ export async function claimSolicitation(req: Request, res: Response) {
 export async function solicitationUpdate(req: Request, res: Response) {
     const {
         id,
+        soliNumber,
         status,
         dateReturned,
+        paymentAmount,
+        paymentStatus,
         ornumber,
-        paymentStatus
     } = req.body;
 
-    const results = await query(`
-        UPDATE solicitation_form
-        SET solicitation_returned_status_id = ?,
-        solicitation_date_returned = STR_TO_DATE(?, '%m/%d/%Y'),
-        solicitation_or_number = ?,
-        solicitation_payment_status_id = ?
-        WHERE solicitation_form.user_id = ?
-    `, [status, dateReturned, ornumber, paymentStatus, id])
+
+    // Payment Status
+    // const solicitationPaymentData = await query(`
+    //     SELECT status_name AS name FROM solicitation_payment_status
+    //     WHERE solicitation_payment_status_id = ?
+    // `, [paymentStatus]);
+
+    // const solicitationPaymentStatusName = solicitationPaymentData.rows[0]['name'];
+    // if (solicitationPaymentStatusName === "") {
+
+    // }
+
+    let formattedDate = dateReturned;
+
+    if (formattedDate === "N/A") {
+        formattedDate = null;
+    }
+
+    // Returned Status
+    const solicitationStatusData = await query(`
+        SELECT status_name AS name FROM solicitation_returned_status
+        WHERE solicitation_returned_status_id = ?
+    `, [status]);
+
+    const solicitationStatusName = solicitationStatusData.rows[0]['name'];
+
+    let solicitationStatusResults: any;
+    if (solicitationStatusName === "UNRETURNED") {
+        const unpdaidStatusData = await query(`
+            SELECT solicitation_payment_status_id AS id FROM solicitation_payment_status
+            WHERE status_name = 'UNPAID'
+        `);
+
+        const paymentStatusID = unpdaidStatusData.rows[0]['id'];
+
+        solicitationStatusResults = await query(`
+            UPDATE solicitation_form
+            SET solicitation_returned_status_id = ?,
+            solicitation_date_returned = NULL,
+            solicitation_yearbook_payment = 0,
+            solicitation_payment_status_id = ?,
+            solicitation_or_number = ?
+            WHERE solicitation_form.user_id = ? AND solicitation_form.solicitation_number = ?
+        `, [status, paymentStatusID, ornumber, id, soliNumber]);
+    } else if (solicitationStatusName === "RETURNED") {
+        solicitationStatusResults = await query(`
+            UPDATE solicitation_form
+            SET solicitation_returned_status_id = ?,
+            solicitation_date_returned = ?,
+            solicitation_yearbook_payment = ?,
+            solicitation_payment_status_id = ?,
+            solicitation_or_number = ?
+            WHERE solicitation_form.user_id = ? AND solicitation_form.solicitation_number = ?
+        `, [status, formattedDate, paymentAmount, paymentStatus, ornumber, id, soliNumber]);
+    } else if (solicitationStatusName === "LOST") {
+
+        const penaltyData = await query(`
+            SELECT solicitation_payment_status_id AS id FROM solicitation_payment_status
+            WHERE status_name = 'PENALTY'
+        `);
+
+        const penaltyID = penaltyData.rows[0]['id'];
+
+        solicitationStatusResults = await query(`
+            UPDATE solicitation_form
+            SET solicitation_returned_status_id = ?,
+            solicitation_date_returned = NULL,
+            solicitation_yearbook_payment = 200,
+            solicitation_payment_status_id = ?,
+            solicitation_or_number = ?
+            WHERE solicitation_form.user_id = ? AND solicitation_number = ?
+    `, [status, penaltyID, ornumber, id, soliNumber]);
+    }
 
     res.status(200).end();
 }

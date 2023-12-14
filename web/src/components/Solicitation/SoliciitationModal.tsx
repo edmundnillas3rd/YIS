@@ -25,8 +25,10 @@ export default function ({
     const [id, setID] = useState<string>();
     const [status, setStatus] = useState<string>();
     const [dateReturned, setDateReturned] = useState<string>();
-    const [ornumber, setORNumber] = useState<string>();
     const [paymentStatus, setPaymentStatus] = useState<string>();
+    const [paymentAmount, setPaymentAmount] = useState<string>();
+    const [ornumber, setORNumber] = useState<string>();
+    const [soliNumber, setSoliNumber] = useState<string>();
 
     const [disable, setDisable] = useState<boolean>(false);
     const [confirmSave, setConfirmSave] = useState<boolean>(false);
@@ -36,6 +38,8 @@ export default function ({
 
     useEffect(() => {
         if (data && data2) {
+            console.log(data);
+            
             setSoli(data);
             setStatuses(data2.statuses);
             setPaymentStatuses(data2.yearbookPaymentStatuses);
@@ -50,8 +54,10 @@ export default function ({
             setPaymentStatus(filteredPaymentStatus[0]['id']);
 
             setID(data['id']);
+            setPaymentAmount(data['paymentAmount']);
             setORNumber(data['ORnumber']);
             setDateReturned(data['dateReturned']);
+            setSoliNumber(data['soliNumber']);
         }
     }, [data, data2]);
 
@@ -67,6 +73,9 @@ export default function ({
             case "dateReturned":
                 setDateReturned(target.value);
                 break;
+            case "payment":
+                setPaymentAmount(target.value);
+                break;
             case "ornumber":
                 setORNumber(target.value);
                 break;
@@ -81,14 +90,16 @@ export default function ({
 
         const data = {
             id,
+            soliNumber,
             status,
             dateReturned,
+            paymentAmount,
+            paymentStatus,
             ornumber,
-            paymentStatus
         };
 
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/solicitation-update`, {
-            method: "PATCH",
+            method: "PUT",
             credentials: "include",
             headers: {
                 "Content-Type": "application/json"
@@ -112,7 +123,7 @@ export default function ({
             onClose={onClose}
             data={data}
         >
-            {soli && status && paymentStatus && (
+            {soli && (
                 <section
                     className="flex flex-col gap-2"
                 >
@@ -128,14 +139,22 @@ export default function ({
                     <Input
                         title="DATE RETURNED"
                         id="dateReturned"
-                        defaultValue={dateReturned}
+                        value={dateReturned}
+                        disabled={disable}
+                        type="date"
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="PAYMENT"
+                        id="payment"
+                        value={paymentAmount}
                         disabled={disable}
                         onChange={onChange}
                     />
                     <Input
                         title="OR NUMBER"
                         id="ornumber"
-                        defaultValue={ornumber}
+                        value={ornumber}
                         disabled={disable}
                         onChange={onChange}
                     />
