@@ -88,20 +88,20 @@ export default function Main() {
                 backgroundImage: `url(${images[currentIndex]})`
             }} />}
             <section className="flex flex-auto flex-col gap-0 justify-center items-center">
-                <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
+                {/* <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
                     <p>SERVICES</p>
                     <hr className="bg-zinc-950" />
-                </section>
+                </section> */}
                 <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
                     COLLEGES
                 </Selection>
 
-                {currentUser && currentUser['role'] === "ADMIN" && (
+                {/* {currentUser && currentUser['role'] === "ADMIN" && (
                     <>
                         <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
                             <p>ADMIN & STAFF</p>
                             <hr className="bg-zinc-950" />
-                        </section>
+                        </section> */}
                         <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
                             SOLICITATION
                         </Selection>
@@ -116,9 +116,8 @@ export default function Main() {
                             YEARBOOK RELEASED
                             <p className="font-bold text-slate-500">(Please get the claim stub)</p>
                         </Selection>}
-                    </>
-
-                )}
+                    {/* </>
+                )} */}
             </section>
         </article>
     );
