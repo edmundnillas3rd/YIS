@@ -4,9 +4,10 @@ export default function ({
     onChange,
     pattern,
     required,
+    width = "",
     ...otherProps }: any) {
     return (
-        <section className="flex flex-auto flex-col">
+        <section className={`flex flex-col ${width}`}>
             <label
                 htmlFor={id}
                 className={`block text-sm font-bold leading-6 text-gray-900 ${required ? "after:text-lg after:ml-1 after:text-red-400 after:content-['*'] " : " "}`}

@@ -85,6 +85,7 @@ export default function () {
                         placeholder="Search the name of student"
                         id="searchStudent"
                         onChange={onChange}
+                        width="flex-auto"
                     />
                     <Button type="submit">Search</Button>
                 </form>

@@ -12,7 +12,8 @@ import {
     searchStudentPaid,
     searchStudentUnreturned,
     searchStudentRecipient,
-    getStudentUnreturned
+    getStudentUnreturned,
+    updateUsername
 } from "../controllers/users";
 
 // GET
@@ -29,5 +30,8 @@ router.post("/student-search", searchStudent);
 router.post("/student-search-recipient", searchStudentRecipient);
 router.post("/student-search-paid", searchStudentPaid);
 router.post("/student-search-unreturned", searchStudentUnreturned);
+
+// PUT
+router.put("/update-name", updateUsername);
 
 export default router;

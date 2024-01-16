@@ -24,6 +24,8 @@ export default function ({
                 setAffiliations(data.affiliations.map((affil: any) => ({ key: uuid(), value: affil })));
                 setAwards(data.awards.map((award: any) => ({ key: uuid(), value: award })));
                 setSeminars(data.seminars.map((seminar: any) => ({ key: uuid(), value: seminar })));
+                console.log(data);
+                
             }
         })();
     }, []);
@@ -44,35 +46,36 @@ export default function ({
         >
             <section className="flex flex-col gap-5 p-5">
                 <h3 className="font-bold">Preview</h3>
-                {affiliations && awards && seminars && (
-                    <>
                         <ul>
-                            <h3 className="font-bold">Affiliation(s)</h3>
-                            {affiliations && (
-                                affiliations.map(affil => (
-                                    <li className="list-disc" key={affil?.key}>{affil?.value}</li>
-                                ))
+                            {affiliations.length > 0 && (
+                                <>
+                                    <h3 className="font-bold">Affiliation(s)</h3>
+                                    {affiliations.map(affil => (
+                                        <li className="list-disc" key={affil?.key}>{affil?.value}</li>
+                                    ))}
+                                </>
                             )}
                         </ul>
                         <ul>
-                            <h3 className="font-bold">Awards(s)</h3>
-                            {awards && (
-                                awards.map(award => (
-                                    <li className="list-disc" key={award?.key}>{award?.value}</li>
-                                ))
+                            {awards.length > 0 && (
+                                <>
+                                    <h3 className="font-bold">Awards(s)</h3>
+                                    {awards.map(award => (
+                                        <li className="list-disc" key={award?.key}>{award?.value}</li>
+                                    ))}
+                                </>
                             )}
                         </ul>
                         <ul>
-                            <h3 className="font-bold">Seminars(s)</h3>
-                            {seminars && (
-                                seminars.map(semi => (
-                                    <li className="list-disc" key={semi?.key}>{semi?.value}</li>
-                                ))
+                            {seminars.length > 0 && (
+                                <>
+                                    <h3 className="font-bold">Seminars(s)</h3>
+                                    {seminars.map(semi => (
+                                        <li className="list-disc" key={semi?.key}>{semi?.value}</li>
+                                    ))}
+                                </>
                             )}
                         </ul>
-                    </>
-                )
-                }
             </section>
         </Modal>
     );

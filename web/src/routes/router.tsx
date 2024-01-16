@@ -9,6 +9,8 @@ import StudentInformation from "../pages/StudentInformation";
 import Solicitation from "../pages/Solicitation";
 import YearbookPhotos from "../pages/YearbookPhotos";
 import YearbookReleased from "../pages/YearbookReleased";
+import Admin from "../pages/Admin";
+import YearbookPreview from "../pages/YearbookPreview";
 
 const router = createBrowserRouter([
     {
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             {
+                path: "yearbook-preview",
+                element: <YearbookPreview />
+            },
+            {
                 path: "solicitation",
                 element: <Solicitation />
             },
@@ -44,7 +50,7 @@ const router = createBrowserRouter([
             },
             {
                 path: "yearbook-released",
-                element: <YearbookReleased/>
+                element: <YearbookReleased />
             }
 
         ]
@@ -56,6 +62,16 @@ const router = createBrowserRouter([
             {
                 path: ":college",
                 element: <StudentInformation />
+            }
+        ]
+    },
+    {
+        path: "/admin",
+        element: <Layout />,
+        children: [
+            {
+                index: true,
+                element: <Admin />
             }
         ]
     }

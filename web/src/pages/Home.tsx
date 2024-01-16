@@ -95,29 +95,32 @@ export default function Main() {
                 <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
                     COLLEGES
                 </Selection>
+                <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-preview" callbackFn={callbackFn}>
+                    YEARBOOK PREVIEW
+                </Selection>
 
-                {/* {currentUser && currentUser['role'] === "ADMIN" && (
+                {currentUser && currentUser['role'] === "ADMIN" && (
                     <>
-                        <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
+                        {/* <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
                             <p>ADMIN & STAFF</p>
                             <hr className="bg-zinc-950" />
                         </section> */}
-                        <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                        <Selection index={3} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
                             SOLICITATION
                         </Selection>
-                        <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
+                        <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
                             YEARBOOK PHOTOS
                         </Selection>
                         {/* {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
                     YEARBOOK RELEASED
                     {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
                 </Selection>} */}
-                        {<Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
+                        {<Selection index={5} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
                             YEARBOOK RELEASED
                             <p className="font-bold text-slate-500">(Please get the claim stub)</p>
                         </Selection>}
-                    {/* </>
-                )} */}
+                    </>
+                )}
             </section>
         </article>
     );

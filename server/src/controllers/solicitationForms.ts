@@ -6,7 +6,7 @@ export async function index(req: Request, res: Response) {
     const sql = `
     SELECT solicitation_form.user_id AS id,
         course.course_abbreviation AS course, 
-        CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
+        CONCAT(user.user_first_name, " ", COALESCE(user.user_middle_name, ''), " ", user.user_family_name, " ", COALESCE(user.user_suffix, '')) AS fullName,
         solicitation_form.solicitation_number AS soliNumber,
         COALESCE(CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix), 'N/A') AS careOfFullName,
         COALESCE(care_of.relation_status, 'N/A') AS relationStatus,
@@ -45,7 +45,7 @@ export async function getUserSolicitation(req: Request, res: Response) {
     const sql = `
     SELECT solicitation_form.user_id AS id,
         course.course_abbreviation AS course, 
-        CONCAT(user.user_first_name, " ", user.user_middle_name, " ", user.user_family_name, " ", user.user_suffix) AS fullName,
+        CONCAT(user.user_first_name, " ", COALESCE(user.user_middle_name, ''), " ", user.user_family_name, " ", COALESCE(user.user_suffix, '')) AS fullName,
         solicitation_form.solicitation_number AS soliNumber,
         CONCAT(care_of.first_name, " ", care_of.middle_name, " ", care_of.family_name, " ", care_of.suffix) AS careOfFullName,
         solicitation_returned_status.status_name AS returnedStatus, 
@@ -88,7 +88,7 @@ export async function searchSolicitationForm(req: Request, res: Response) {
         SELECT
         sf.user_id AS id,
         c.course_abbreviation AS course, 
-        CONCAT(u.user_first_name, " ", u.user_middle_name, " ", u.user_family_name, " ", u.user_suffix) AS fullName,
+        CONCAT(u.user_first_name, " ", COALESCE(u.user_middle_name, ''), " ", u.user_family_name, " ", COALESCE(u.user_suffix, '')) AS fullName,
         sf.solicitation_number as soliNumber,
         COALESCE(CONCAT(cof.first_name, " ", cof.middle_name, " ", cof.family_name, " ", cof.suffix), 'N/A') AS careOfFullName,
         COALESCE(cof.relation_status, 'N/A') AS relationStatus,
@@ -108,7 +108,7 @@ export async function searchSolicitationForm(req: Request, res: Response) {
         ON sf.solicitation_returned_status_id = srs.solicitation_returned_status_id
         INNER JOIN solicitation_payment_status sps
         ON sf.solicitation_payment_status_id = sps.solicitation_payment_status_id
-        WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix), ?)
+        WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')), ?)
     `, [`^${search}`]);
 
     if (rows.length === 0) {
@@ -189,7 +189,7 @@ export async function submitSolicitation(req: Request, res: Response) {
             INNER JOIN user
             ON solicitation_form.user_id = user.user_id
             SET solicitation_form.solicitation_returned_status_id = ?,
-            solicitation_form.solicitation_yearbook_payment = 400
+            solicitation_form.solicitation_yearbook_payment = 2200
             WHERE user.user_first_name = ? AND user.user_family_name = ? AND user.user_middle_name = ? AND user.user_suffix = ? AND user.course_id = ? AND solicitation_form.solicitation_number = ?
         `, [statusResult.rows[0]['id'], firstName, lastName, middleName, suffix, course, soliNum]);
     }

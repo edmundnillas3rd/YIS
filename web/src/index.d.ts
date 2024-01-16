@@ -15,3 +15,11 @@ interface ModalProps {
     data?: any;
     data2?: any;
 };
+
+
+interface Student {
+    firstName: String;
+    familyName: String;
+    middleName: String;
+    suffix: String;
+}

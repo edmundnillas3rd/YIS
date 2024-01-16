@@ -164,12 +164,12 @@ export async function loginUserStudent(req: Request, res: Response) {
 
     const parseEmail = (email as string);
     const emailParts = parseEmail.split('@');
-    
+
     let userRole = "";
 
 
     if (emailParts.length !== 2) {
-        
+
         const studentSchoolID = parseEmail.split("-");
 
         if (studentSchoolID.length !== 3) {
@@ -200,7 +200,7 @@ export async function loginUserStudent(req: Request, res: Response) {
 
         } else if (parts[0] === "coadmin") {
             data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'CO-ADMIN'`);
-        } else { 
+        } else {
             return res.status(404).json({
                 error: "Invalid user email and password"
             });
@@ -369,4 +369,26 @@ export async function searchStudentUnreturned(req: Request, res: Response) {
     res.status(200).json({
         results: rows
     });
+}
+
+// PUT
+export async function updateUsername(req: Request, res: Response) {
+    const { familyName, middleName, firstName, suffix } = req.body;
+    const { userID } = req.session;
+
+    const results = await query(`
+        UPDATE user
+        SET user_first_name = ?,
+        user_family_name = ?,
+        user_middle_name = ?,
+        user_suffix = ?
+        WHERE user_id = ?
+    `, [firstName, familyName, middleName, suffix, userID])
+
+    if (results.rows.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully update student " });
+    } else {
+        return res.status(404).json({ error: "Unable to find a user with the same name "});
+    }
+    
 }

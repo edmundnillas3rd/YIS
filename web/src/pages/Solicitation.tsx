@@ -339,13 +339,15 @@ export default function () {
                             pattern={capitalizeRegex}
                         />
                     </section>
-                    <Button>
-                        {loading ? (
-                            <Spinner />
-                        ) : (
-                            "Submit"
-                        )}
-                    </Button>
+                    <section className="flex flex-row justify-end">
+                        <Button>
+                            {loading ? (
+                                <Spinner />
+                            ) : (
+                                "Submit"
+                            )}
+                        </Button>
+                    </section>
                 </form>
             </Container>
             <Container>
@@ -358,6 +360,7 @@ export default function () {
                         placeholder="Search the name of student"
                         pattern={capitalizeRegex}
                         onChange={onChangeSearch}
+                        width="flex-auto"
                     />
                     <section className="flex flex-row justify-end">
                         <Button>Search</Button>

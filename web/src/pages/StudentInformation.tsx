@@ -1,12 +1,14 @@
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaSave } from "react-icons/fa";
 import { AuthContext } from "../context/AuthProvider";
 import {
     Input,
     Button,
     Table,
-    Container
+    Container,
+    Toggle,
+    Confirm
 } from "../components/Globals/index";
 
 import OrganizationModal from "../components/OrganizationTable/OrganizationModal";
@@ -17,13 +19,21 @@ import PreivewModal from "../components/StudentInformation/PreivewModal";
 import SeminarModal from "../components/SeminarTable/SeminarModal";
 import SeminarEdit from "../components/SeminarTable/SeminarEdit";
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
+import { MdEdit, MdDelete } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function () {
     const [currentUser, setCurrentUser] = useContext(AuthContext);
     const [disable, setDisable] = useState(true);
+    const [loading, setLoading] = useState<boolean>(false);
     const [clubProps, setClubProps] = useState(null);
 
     const [displayPreview, setDisplayPreview] = useState(false);
+    const [confirmSave, setConfirmSave] = useState<boolean>(false);
+    const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+    const navigate = useNavigate();
+
+    const [student, setStudent] = useState<Student>();
 
     // For clubs & organizations table
     const [currentOrgNode, setCurrentOrgNode] = useState(null);
@@ -75,6 +85,18 @@ export default function () {
         })();
     }, []);
 
+    useEffect(() => {
+        console.log(currentUser);
+        if (currentUser) {
+            setStudent({
+                firstName: currentUser.firstName,
+                familyName: currentUser.familyName,
+                middleName: currentUser.middleName,
+                suffix: currentUser.suffix
+            })
+        }
+    }, [currentUser])
+
     const organizationHeaders = [
         "Organization"
     ];
@@ -92,6 +114,38 @@ export default function () {
     ];
 
     const onInputChangeHandler = (event: SyntheticEvent) => {
+        const target = event.target as HTMLInputElement;
+
+        console.log(target.value);
+        
+        switch (target.name) {
+            case "first-name":
+                setStudent((state: any) => ({
+                    ...state,
+                    firstName: target.value
+                }));
+                break;
+            case "middleName":
+                console.log(target.value);
+                
+                setStudent((state: any) => ({
+                    ...state,
+                    middleName: target.value
+                }));
+                break;
+            case "family-name":
+                setStudent((state: any) => ({
+                    ...state,
+                    familyName: target.value
+                }));
+                break;
+            case "suffix":
+                setStudent((state: any) => ({
+                    ...state,
+                    suffix: target.value
+                }));
+                break;
+        }
     };
 
     const onSubmitHandler = (event: SyntheticEvent) => {
@@ -171,6 +225,36 @@ export default function () {
         setCurrentSeminarNode(null);
     };
 
+    const onClickSave = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        setLoading(true);
+        setDisable(true);
+        console.log(student);
+        
+        if (student?.familyName && student?.firstName && student?.middleName) {
+
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/update-name`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(student)
+            });
+
+            if (response.ok) {
+                setLoading(false);
+                console.log("Successfully updated user entry");
+                navigate(0);
+            }
+        }
+    };
+
+    const onEditChange = (state: any) => {
+        setDisable(!state);
+        setConfirmSave(false);
+    };
+
     return (
         <>
             <PreivewModal
@@ -219,7 +303,7 @@ export default function () {
                 <section>
                     <h3 className="font-bold mb-5">Student Information</h3>
                 </section>
-                {currentUser && (
+                {student && (
                     <form
                         className="flex flex-col md:flex-row flex-wrap gap-2"
                         method="POST"
@@ -228,37 +312,40 @@ export default function () {
                             title="FAMILY NAME"
                             id="family-name"
                             onChange={onInputChangeHandler}
-                            value={currentUser['familyName']}
+                            value={student["familyName"]}
                             disabled={disable}
                             autoComplete="family-name"
-                            pattern={"[a-zA-Z]{3}{45}"}
+                            pattern={capitalizeRegex}
                             min={3}
                             max={45}
                             required
+
                         />
                         <Input
                             title="FIRST NAME"
                             id="first-name"
                             onChange={onInputChangeHandler}
-                            value={currentUser['firstName']}
+                            value={student["firstName"]}
                             disabled={disable}
                             autoComplete="first-name"
-                            pattern={"[a-zA-Z]{3}{45}"}
+                            pattern={capitalizeRegex}
                             min={3}
                             max={45}
                             required
+
                         />
                         <section className="flex flex-col gap-1 items-center ">
                             <Input
                                 title="MIDDLE NAME"
                                 id="middleName"
                                 onChange={onInputChangeHandler}
-                                value={currentUser['middleName']}
+                                value={student["middleName"]}
                                 disabled={disable}
                                 pattern={capitalizeRegex}
                                 min={3}
                                 max={45}
-                                required={true}
+                                required
+
                             />
                             <p className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</p>
                         </section>
@@ -267,17 +354,33 @@ export default function () {
                                 title="SUFFIX"
                                 id="suffix"
                                 onChange={onInputChangeHandler}
-                                value={currentUser['suffix']}
+                                value={student['suffix']}
                                 disabled={disable}
                                 pattern={suffixRegex}
                                 min={3}
                                 max={45}
-                                required={true}
+
                             />
                             <p className="text-zinc-500 font-bold">EX. SR, JR, I, II, III</p>
                         </section>
                     </form>
                 )}
+                <section>
+                    <Toggle name="Edit" icon={<MdEdit />} onChange={onEditChange}>
+                        {(!confirmSave) && (
+                            <Button onClick={(e: any) => { setConfirmSave(true); }}>
+                                Save
+                                <FaSave />
+                            </Button>
+                        )}
+                        {confirmSave && (
+                            <Confirm
+                                onConfirm={onClickSave}
+                                onCancel={(e: any) => setConfirmSave(false)}
+                            />
+                        )}
+                    </Toggle>
+                </section>
                 <section className="flex flex-row gap-1 justify-end items-center mb-5">
                     <Button
                         onClick={onClickPreview}
