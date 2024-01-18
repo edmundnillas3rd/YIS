@@ -26,7 +26,7 @@ export default function () {
 
     // Student
     const [firstName, setFirstName] = useState<string>("");
-    const [lastName, setLastName] = useState<string>("");
+    const [familyName, setFamilyName] = useState<string>("");
     const [middleName, setMiddleName] = useState<string>("");
     const [suffix, setSuffix] = useState<string>("");
     const [course, setCourse] = useState<string>("");
@@ -53,6 +53,8 @@ export default function () {
 
 
             if (course && soli && yearbook) {
+                console.log(soli);
+                
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
 
@@ -92,8 +94,8 @@ export default function () {
             case "firstName":
                 setFirstName(target.value);
                 break;
-            case "lastName":
-                setLastName(target.value);
+            case "familyName":
+                setFamilyName(target.value);
                 break;
             case "middleName":
                 setMiddleName(target.value);
@@ -150,7 +152,7 @@ export default function () {
         }
 
         if (firstName &&
-            lastName &&
+            familyName &&
             middleName &&
             suffix &&
             course &&
@@ -161,14 +163,14 @@ export default function () {
         const data = {
             careOf,
             firstName,
-            lastName,
+            familyName,
             middleName,
             suffix,
             course,
             soliNum
         };
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/submit-solicitation`, {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/solicitation-claim`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -205,7 +207,7 @@ export default function () {
 
     const soliFilters = [
         "ALL",
-        "RETURNED",
+        "RETURNED ALL",
         "UNRETURNED",
         "LOST"
     ];
@@ -214,7 +216,7 @@ export default function () {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
 
-        if (target.value === "RETURNED" || target.value === "UNRETURNED" || target.value === "LOST") {
+        if (target.value === "RETURNED ALL" || target.value === "UNRETURNED" || target.value === "LOST") {
             console.log(target.value);
 
             let filterData = solis.filter(soli => (soli['returnedStatus'] === `${target.value}`));
@@ -235,14 +237,14 @@ export default function () {
     const attr = [
         "COURSE",
         "NAME",
-        "SOLI #",
+        "SOLI #'s",
         "CARE OF",
-        "CARE OF RELATION",
         "SOLI STATUS",
+        "LOST OR #",
         "DATE RETURNED",
-        "PAYMENT STATUS",
-        "PAYMENT",
-        "OR #"
+        "YEARBOOK PAYMENT",
+        "OR #",
+        "FULL PAYMENT",
     ];
 
     return (
@@ -278,7 +280,7 @@ export default function () {
                         />
                         <Input
                             title="LAST NAME"
-                            id="lastName"
+                            id="familyName"
                             onChange={onChange}
                             pattern={capitalizeRegex}
                             required
@@ -299,7 +301,7 @@ export default function () {
                             title="SOLICITATION FORM # (EX. 2023-2010)"
                             id="solicitationFormNum"
                             onChange={onChange}
-                            pattern={"\\d{4}"}
+                            pattern={"\\d{4}-\\d{4}"}
                             required
                         />
                     </section>

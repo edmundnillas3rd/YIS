@@ -9,8 +9,9 @@ import StudentInformation from "../pages/StudentInformation";
 import Solicitation from "../pages/Solicitation";
 import YearbookPhotos from "../pages/YearbookPhotos";
 import YearbookReleased from "../pages/YearbookReleased";
-import Admin from "../pages/Admin";
 import YearbookPreview from "../pages/YearbookPreview";
+import Settings from "../layouts/Settings";
+import { UploadFile } from "../components/Admin/";
 
 const router = createBrowserRouter([
     {
@@ -70,8 +71,14 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             {
-                index: true,
-                element: <Admin />
+                path: "settings",
+                element: <Settings />,
+                children: [
+                    {
+                        index: true,
+                        element: <UploadFile/>
+                    }
+                ]
             }
         ]
     }

@@ -1,4 +1,7 @@
 import { Router } from "express";
+import multer from "multer";
+const upload = multer({ dest: "uploads/"})
+
 const router = Router();
 
 import {
@@ -8,7 +11,8 @@ import {
     returnSolicitation,
     searchSolicitationForm,
     submitSolicitation,
-    solicitationUpdate
+    solicitationUpdate,
+    uploadData
 } from "../controllers/solicitationForms";
 
 // GET
@@ -20,6 +24,7 @@ router.get("/:id", getUserSolicitation);
 router.post("/search-solicitation-form", searchSolicitationForm)
 router.post("/submit-solicitation", submitSolicitation);
 router.post("/solicitation-claim", claimSolicitation);
+router.post("/upload-solicitation-file", upload.single("solicitation-sheet"), uploadData);
 
 // PUT
 router.put("/solicitation-update", solicitationUpdate);

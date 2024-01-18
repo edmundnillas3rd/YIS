@@ -58,6 +58,11 @@ export default function Navbar() {
                 case "yearbook-released":
                     setTitle("Yearbook Released");
                     break;
+                case "admin":
+                    setTitle("Admin");
+                    setDisplay(true);
+
+                    break;
             }
         }
     };
