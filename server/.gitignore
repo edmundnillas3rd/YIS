@@ -1,3 +1,6 @@
+# Misc
+/uploads/
+
 **/.vscode/
 **/dist/
 **/node_modules
