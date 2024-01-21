@@ -239,12 +239,14 @@ export default function () {
         "NAME",
         "SOLI #'s",
         "CARE OF",
+        "CARE OF RELATION",
         "SOLI STATUS",
         "LOST OR #",
         "DATE RETURNED",
         "YEARBOOK PAYMENT",
         "OR #",
         "FULL PAYMENT",
+        "PAYMENT STATUS"
     ];
 
     return (

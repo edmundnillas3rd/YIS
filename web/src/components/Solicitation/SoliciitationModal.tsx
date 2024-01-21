@@ -46,11 +46,11 @@ export default function ({
             const filteredStatus = data2.statuses.filter((s: any) =>
                 (data['returnedStatus'] === s['name'])
             );
-            // setStatus(filteredStatus[0]['id']);
+            setStatus(filteredStatus[0]['id']);
 
             const filteredPaymentStatus = data2.yearbookPaymentStatuses.filter((p: any) => (data['paymentStatus'] === p['name']));
 
-            // setPaymentStatus(filteredPaymentStatus[0]['id']);
+            setPaymentStatus(filteredPaymentStatus[0]['id']);
 
             setID(data['id']);
             setPaymentAmount(data['paymentAmount']);
