@@ -24,6 +24,7 @@ export default function ({
 
     const [id, setID] = useState<string>();
     const [status, setStatus] = useState<string>();
+    const [statusData, setStatusData] = useState<string>();
     const [dateReturned, setDateReturned] = useState<string>();
     const [paymentStatus, setPaymentStatus] = useState<string>();
     const [paymentAmount, setPaymentAmount] = useState<string>();
@@ -46,17 +47,25 @@ export default function ({
             const filteredStatus = data2.statuses.filter((s: any) =>
                 (data['returnedStatus'] === s['name'])
             );
+
+            console.log(filteredStatus);
+            
             setStatus(filteredStatus[0]['id']);
 
             const filteredPaymentStatus = data2.yearbookPaymentStatuses.filter((p: any) => (data['paymentStatus'] === p['name']));
 
-            setPaymentStatus(filteredPaymentStatus[0]['id']);
+            if (filteredPaymentStatus[0]['id']) {
+                setPaymentStatus(filteredPaymentStatus[0]['id']);
+            } else {
+                setPaymentStatus("N/A");
+            }
 
             setID(data['id']);
             setPaymentAmount(data['paymentAmount']);
             setORNumber(data['ORnumber']);
             setDateReturned(data['dateReturned']);
             setSoliNumber(data['soliNumber']);
+            setStatusData(data['returnedStatusData']);
         }
     }, [data, data2]);
 

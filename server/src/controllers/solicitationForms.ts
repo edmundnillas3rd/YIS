@@ -10,6 +10,7 @@ import { Request, Response } from "express";
 
 import { query } from "../services/mysqldb";
 import { parseStudentName } from '../utils/student';
+import { parseSoliNum } from '../utils/solicitation';
 
 export async function index(req: Request, res: Response) {
     // const sql = `
@@ -42,14 +43,21 @@ export async function index(req: Request, res: Response) {
             course AS course, 
             student_name AS fullName,
             soli_numbers AS soliNumber,
-            care_of AS careOfFullName,
-            COALESCE(solicitation_returned_status, 'UNRETURNED') AS returnedStatus, 
+            COALESCE(care_of, 'N/A') AS careOfFullName,
+            COALESCE(care_of_relation, 'N/A') AS careOfRelation,
+            COALESCE(solicitation_returned_status, 'UNRETURNED') AS returnedStatusData, 
             COALESCE(lost_or_number, 'N/A') as lostORNumber,
             COALESCE(date_returned, 'N/A') AS dateReturned,
             COALESCE(yearbook_payment, 'N/A') AS paymentAmount,
             COALESCE(or_number, 'N/A') AS ORnumber,
-            COALESCE(full_payment, 0) as fullPayment
-            FROM solicitation_form_raw
+            COALESCE(full_payment, 0) as fullPayment,
+            COALESCE(sps.status_name, 'N/A') as paymentStatus,
+            srs.status_name AS returnedStatus
+            FROM solicitation_form_raw sfr
+            LEFT JOIN solicitation_payment_status sps
+            ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
+            LEFT JOIN solicitation_returned_status srs
+            ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
     `;
 
 
@@ -367,29 +375,46 @@ export async function uploadData(req: Request, res: Response) {
         //     rowData[key] = row[key];
         // });
 
-        const soliForm = await query(`
-            SELECT full_payment FROM solicitation_form_raw WHERE solicitation_form_raw_id = LAST_INSERT_ID()
+        const genUUID = await query(`SELECT UUID()`);
+        const UUID = genUUID.rows[0]['UUID()'];
+
+        const soliStatus = await query(`
+            SELECT solicitation_returned_status_id AS id, status_name AS name FROM solicitation_returned_status
         `);
+
+        let rs = null;
+        if (row['RETURNED ALL / UNRETURNED SOLI']) {
+            const formattedCol = row['RETURNED ALL / UNRETURNED SOLI'].split(" ");
+            if (formattedCol[0] === "RETURNED") {
+                rs = soliStatus.rows.find((ps: any) => (ps.name === "RETURNED ALL"));
+            } else {
+                rs = soliStatus.rows.find((ps: any) => (ps.name === "UNRETURNED"));
+            }
+        } else {
+            rs = soliStatus.rows.find((ps: any) => (ps.name === "UNRETURNED"));
+        }
+
+        console.log(rs);
 
         const paymentStatus = await query(`
             SELECT solicitation_payment_status_id AS id, status_name AS name FROM solicitation_payment_status 
         `);
 
         let ps = null;
-
         if (row['FULL PAYMENT']) {
             const formattedCol = row['FULL PAYMENT'].split(" ");
             if (row['FULL PAYMENT'] === "CHARGE TO TUITION") {
                 ps = paymentStatus.rows.find((ps: any) => (ps.name === "CHARGE TO TUITION"));
-            } else if (Number.parseInt(row['FULL PAYMENT']) === 0) {
-                ps = paymentStatus.rows.find((ps: any) => (ps.name === "UNPAID"));
             } else if (!isNaN(new Date(formattedCol[1]) as any) && Number.parseInt(row['FULL PAYMENT']) !== 0) {
                 ps = paymentStatus.rows.find((ps: any) => (ps.name === "FULLY-PAID"));
             }
+        } else {
+            ps = paymentStatus.rows.find((ps: any) => (ps.name === "UNPAID"));
         }
 
         await query(`
             INSERT INTO solicitation_form_raw (
+                solicitation_form_raw_id,
                 student_name, 
                 course, 
                 soli_numbers, 
@@ -400,8 +425,10 @@ export async function uploadData(req: Request, res: Response) {
                 yearbook_payment, 
                 or_number, 
                 full_payment,
-                solicitation_payment_status_id
+                solicitation_payment_status_id,
+                solicitation_returned_status_id
             ) VALUES (
+                ?,
                 ?, 
                 ?, 
                 NULLIF(?, ''), 
@@ -412,8 +439,10 @@ export async function uploadData(req: Request, res: Response) {
                 NULLIF(?, ''),
                 NULLIF(?, ''),
                 NULLIF(?, ''),
+                ?,
                 ?
             )`, [
+            UUID,
             typeof row["NAME OF STUDENT"] === "undefined" ? null : row["NAME OF STUDENT"],
             typeof row["COURSE"] === "undefined" ? null : row["COURSE"],
             typeof row["SOLI #'s"] === "undefined" ? null : row["SOLI #'s"],
@@ -424,7 +453,8 @@ export async function uploadData(req: Request, res: Response) {
             typeof row["YEARBOOK PAYMENT"] === "undefined" ? null : row["YEARBOOK PAYMENT"],
             typeof row["OR #"] === "undefined" ? null : row["OR #"],
             typeof row["FULL PAYMENT"] === "undefined" ? null : row["FULL PAYMENT"],
-            ps?.id ?? null
+            ps?.id ?? null,
+            rs?.id ?? null
         ]);
 
 
