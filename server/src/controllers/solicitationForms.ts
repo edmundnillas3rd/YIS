@@ -347,8 +347,6 @@ export async function uploadData(req: Request, res: Response) {
     XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false }).forEach(async (row: any) => {
         const keys = Object.keys(row);
 
-        console.log(row);
-
         // keys.forEach(async (key: any) => {
         //     if (key === "NAME OF STUDENT") {
         //         const parsedName: Student = await parseStudentName(row[key]);
@@ -369,7 +367,28 @@ export async function uploadData(req: Request, res: Response) {
         //     rowData[key] = row[key];
         // });
 
-        const results = await query(`
+        const soliForm = await query(`
+            SELECT full_payment FROM solicitation_form_raw WHERE solicitation_form_raw_id = LAST_INSERT_ID()
+        `);
+
+        const paymentStatus = await query(`
+            SELECT solicitation_payment_status_id AS id, status_name AS name FROM solicitation_payment_status 
+        `);
+
+        let ps = null;
+
+        if (row['FULL PAYMENT']) {
+            const formattedCol = row['FULL PAYMENT'].split(" ");
+            if (row['FULL PAYMENT'] === "CHARGE TO TUITION") {
+                ps = paymentStatus.rows.find((ps: any) => (ps.name === "CHARGE TO TUITION"));
+            } else if (Number.parseInt(row['FULL PAYMENT']) === 0) {
+                ps = paymentStatus.rows.find((ps: any) => (ps.name === "UNPAID"));
+            } else if (!isNaN(new Date(formattedCol[1]) as any) && Number.parseInt(row['FULL PAYMENT']) !== 0) {
+                ps = paymentStatus.rows.find((ps: any) => (ps.name === "FULLY-PAID"));
+            }
+        }
+
+        await query(`
             INSERT INTO solicitation_form_raw (
                 student_name, 
                 course, 
@@ -380,9 +399,21 @@ export async function uploadData(req: Request, res: Response) {
                 date_returned, 
                 yearbook_payment, 
                 or_number, 
-                full_payment
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
+                full_payment,
+                solicitation_payment_status_id
+            ) VALUES (
+                ?, 
+                ?, 
+                NULLIF(?, ''), 
+                NULLIF(?, ''), 
+                NULLIF(?, ''), 
+                NULLIF(?, ''),
+                STR_TO_DATE(NULLIF(?, ''), '%m/%d/%Y'), 
+                NULLIF(?, ''),
+                NULLIF(?, ''),
+                NULLIF(?, ''),
+                ?
+            )`, [
             typeof row["NAME OF STUDENT"] === "undefined" ? null : row["NAME OF STUDENT"],
             typeof row["COURSE"] === "undefined" ? null : row["COURSE"],
             typeof row["SOLI #'s"] === "undefined" ? null : row["SOLI #'s"],
@@ -393,8 +424,21 @@ export async function uploadData(req: Request, res: Response) {
             typeof row["YEARBOOK PAYMENT"] === "undefined" ? null : row["YEARBOOK PAYMENT"],
             typeof row["OR #"] === "undefined" ? null : row["OR #"],
             typeof row["FULL PAYMENT"] === "undefined" ? null : row["FULL PAYMENT"],
-
+            ps?.id ?? null
         ]);
+
+
+        // const paymentStatusID = '';
+        // 
+        // await query(`
+        // INSERT INTO solicitation_form_status (
+        // solicitation_form_status_id,
+        // solicitation_payment_status_id
+        // ) VALUES (
+        // LAST_INSERT_ID(),
+        // ?
+        // )
+        // `, [paymentStatusID])
     });
 
     res.status(200).end();
