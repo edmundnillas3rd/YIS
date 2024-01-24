@@ -13,6 +13,7 @@ import YearbookPreview from "../pages/YearbookPreview";
 import Settings from "../layouts/Settings";
 import { UploadFile } from "../components/Admin/";
 import Student from "../components/Admin/Student";
+import Staff from "../components/Admin/Staff";
 
 const router = createBrowserRouter([
     {
@@ -77,11 +78,15 @@ const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <UploadFile/>
+                        element: <UploadFile />
                     },
                     {
                         path: "manage-students",
-                        element: <Student/>
+                        element: <Student />
+                    },
+                    {
+                        path: "manage-staff",
+                        element: <Staff />
                     }
                 ]
             }

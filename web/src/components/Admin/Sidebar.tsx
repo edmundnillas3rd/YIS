@@ -22,7 +22,7 @@ export default function () {
                 MANAGE STUDENTS
             </Link>
             <Link
-                to="" replace
+                to="/admin/settings/manage-staff" replace
                 className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 2 ? 'bg-red-600 text-zinc-100' : ''}`}
                 onClick={e => setCurrentIndex(2)}
             >

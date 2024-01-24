@@ -1,7 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Dropdown, Input, Table } from "../Globals";
 import { useNavigate } from "react-router-dom";
-import StudentModal from "./Stutdent/StudentModal";
+import StaffModel from "./Staff/StaffModal";
 
 export default function () {
 
@@ -9,14 +9,10 @@ export default function () {
     const [middleName, setMiddleName] = useState<string>();
     const [familyName, setFamilyName] = useState<string>();
     const [suffix, setSuffix] = useState<string>();
-    const [schoolID, setSchoolID] = useState<string>();
-    const [yearGraduated, setYearGraduated] = useState<string>();
+    const [email, setEmail] = useState<string>();
     const [password, setPassword] = useState<string>();
-    const [course, setCourse] = useState<string>();
-
-    const [courses, setCourses] = useState();
-    const [students, setStudents] = useState([]);
-    const [rawData, setRawData] = useState<any>();
+    const [staffs, setStaffs] = useState([]);
+    const [rawData, setRawData] = useState([]);
 
     const [currentNode, setCurrentNode] = useState<any>();
 
@@ -26,26 +22,20 @@ export default function () {
         (async () => {
             try {
                 const courseResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`);
-                const userStudentsResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/users`);
+                const userCOAdminResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/users`);
 
                 const [courseData, userStudentsData] = await Promise.all([
                     courseResponse.json(),
-                    userStudentsResponse.json()
+                    userCOAdminResponse.json()
                 ]);
 
                 const { courses } = courseData;
-                const { studentUsers } = userStudentsData;
+                const { coadminUsers } = userStudentsData;
 
 
-                if (courses) {
-                    setCourse(courses[0]['id']);
-                    setCourses(courses);
-                }
-
-                if (studentUsers) {
-                    setStudents(studentUsers.map(({ ...attr }: any) => ({ ...attr })));
-                    setRawData(studentUsers);
-                    
+                if (coadminUsers) {
+                    setStaffs(coadminUsers.map(({ ...attr }: any) => ({ ...attr })));
+                    setRawData(coadminUsers);
                 }
 
 
@@ -61,9 +51,7 @@ export default function () {
         "MIDDLE NAME",
         "FAMILY NAME",
         "SUFFIX",
-        "YEAR GRADUATED",
-        "COURSE",
-        "SCHOOL ID"
+        "EMAIL"
     ];
 
     const onChange = async (event: SyntheticEvent) => {
@@ -82,17 +70,11 @@ export default function () {
             case "suffix":
                 setSuffix(target.value);
                 break;
-            case "schoolID":
-                setSchoolID(target.value);
+            case "email":
+                setEmail(target.value);
                 break;
             case "password":
                 setPassword(target.value);
-                break;
-            case "yearGraduated":
-                setYearGraduated(target.value);
-                break;
-            case "course":
-                setCourse(target.value);
                 break;
         }
     };
@@ -105,14 +87,12 @@ export default function () {
             middleName,
             familyName,
             suffix,
-            schoolID,
-            password,
-            yearGraduated,
-            course
+            email,
+            password
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/user-signup`, {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/coadmin-signup`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -140,12 +120,11 @@ export default function () {
 
     return (
         <>
-            <StudentModal
+            <StaffModel
                 hasCloseBtn={true}
                 isOpen={!!currentNode}
                 onClose={onCloseModal}
                 data={currentNode}
-                data2={courses}
             />
             <Container>
 
@@ -174,24 +153,14 @@ export default function () {
                     </section>
                     <section className="flex flex-row gap-1">
                         <Input
-                            title="SCHOOL ID"
-                            id="schoolID"
+                            title="EMAIL"
+                            id="email"
                             onChange={onChange}
                         />
                         <Input
                             title="PASSWORD"
                             id="password"
                             type="password"
-                            onChange={onChange}
-                        />
-                        <Input
-                            title="YEAR GRADUATED"
-                            id="yearGraduated"
-                            onChange={onChange}
-                        />
-                        <Dropdown
-                            label="COURSE"
-                            datas={courses}
                             onChange={onChange}
                         />
                     </section>
@@ -203,7 +172,7 @@ export default function () {
                 <Table
                     onClickCallback={onClickHandler}
                     columns={attr}
-                    datas={students}
+                    datas={staffs}
                 />
             </Container>
         </>

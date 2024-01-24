@@ -13,7 +13,8 @@ export async function index(req: Request, res: Response) {
         u.user_family_name AS familyName,
         u.user_suffix AS suffix,
         u.user_year_graduated AS yearGraduated,
-        c.course_abbreviation AS course
+        c.course_abbreviation AS course,
+        u.user_school_id AS schoolID
         FROM user u
         INNER JOIN role
         ON u.role_id = role.role_id
@@ -21,10 +22,25 @@ export async function index(req: Request, res: Response) {
         ON u.course_id = c.course_id
         WHERE role.role_name = 'STUDENT'
     `;
-    const { rows } = await query(sql);
+    const student = await query(sql);
+
+    const coadmin = await query(`
+        SELECT 
+        u.user_id AS id, 
+        u.user_first_name AS firstName,
+        u.user_middle_name AS middleName,
+        u.user_family_name AS familyName,
+        u.user_suffix AS suffix,
+        u.user_email AS email
+        FROM user u
+        INNER JOIN role
+        ON u.role_id = role.role_id
+        WHERE role.role_name = 'CO-ADMIN'
+    `);
 
     res.status(200).json({
-        studentUsers: rows
+        studentUsers: student.rows,
+        coadminUsers: coadmin.rows
     });
 }
 
@@ -143,7 +159,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         password,
         yearGraduated,
         course
-     } = req.body;
+    } = req.body;
 
     const queriedRole = await query("SELECT role_id FROM role WHERE role.role_name = 'STUDENT'");
 
@@ -190,7 +206,7 @@ export async function signupUserStudent(req: Request, res: Response) {
             ?
         )
     `, [
-        userUUID.rows[0]['UUID()'], 
+        userUUID.rows[0]['UUID()'],
         firstName,
         familyName,
         middleName,
@@ -198,7 +214,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         course,
         yearGraduated,
         schoolID,
-        hashedPassword, 
+        hashedPassword,
         roleUUID
     ]);
 
@@ -423,6 +439,70 @@ export async function searchStudentUnreturned(req: Request, res: Response) {
     });
 }
 
+export async function signupCoAdmin(req: Request, res: Response) {
+    const {
+        firstName,
+        middleName,
+        familyName,
+        suffix,
+        email,
+        password,
+    } = req.body;
+
+    const queriedRole = await query("SELECT role_id FROM role WHERE role.role_name = 'CO-ADMIN'");
+
+    let roleUUID: any;
+    // if no 'USER' roles exist
+    if (queriedRole.rows.length === 0) {
+        roleUUID = await query("SELECT UUID() AS id");
+        await query("INSERT INTO role VALUES (?, 'CO-ADMIN')", [roleUUID[0]['id']]);
+    }
+
+    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_email FROM user");
+
+    if (existingUser.rows[0].email !== undefined && existingUser.rows[0].email === email) {
+        return res.status(400).json({ error: "User already exist!" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    roleUUID = queriedRole.rows[0].role_id;
+    const userUUID = await query("SELECT UUID()");
+    const { rows } = await query(`
+        INSERT INTO user (
+            user_id, 
+            user_first_name, 
+            user_family_name, 
+            user_middle_name, 
+            user_suffix, 
+            user_email,
+            user_password, 
+            role_id
+        ) VALUES (
+            ?,
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?
+        )
+    `, [
+        userUUID.rows[0]['UUID()'],
+        firstName,
+        familyName,
+        middleName,
+        suffix,
+        email,
+        hashedPassword,
+        roleUUID
+    ]);
+
+    res.status(200).json({ message: "User successfully registerd!" });
+}
+
 export async function signupAdmin(req: Request, res: Response) {
 
     const { email, password, ...attr } = req.body;
@@ -451,7 +531,10 @@ export async function signupAdmin(req: Request, res: Response) {
     const { rows } = await query("INSERT INTO user (user_id, user_first_name, user_family_name, user_middle_name, user_suffix, course_id, user_email, user_password, role_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword, roleUUID]);
 
     res.status(200).json({ message: "admin successfully registered!" });
+
 }
+
+
 
 // PUT
 export async function updateUsername(req: Request, res: Response) {
@@ -465,12 +548,113 @@ export async function updateUsername(req: Request, res: Response) {
         user_middle_name = ?,
         user_suffix = ?
         WHERE user_id = ?
-    `, [firstName, familyName, middleName, suffix, userID])
+    `, [firstName, familyName, middleName, suffix, userID]);
 
     if (results.rows.affectedRows > 0) {
         return res.status(200).json({ message: "Successfully update student " });
     } else {
-        return res.status(404).json({ error: "Unable to find a user with the same name "});
+        return res.status(404).json({ error: "Unable to find a user with the same name " });
     }
-    
+
+}
+
+export async function updateStudentInfo(req: Request, res: Response) {
+    const {
+        id,
+        firstName,
+        familyName,
+        middleName,
+        suffix,
+        schoolID,
+        password,
+        yearGraduated,
+        course
+    } = req.body;
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await query(`
+        UPDATE user
+        SET user_first_name = ?,
+        user_middle_name = ?,
+        user_family_name = ?,
+        user_suffix = ?,
+        user_school_id = ?,
+        user_password = ?,
+        user_year_graduated = ?,
+        course_id = ?
+        WHERE user_id = ?
+    `, [
+        firstName,
+        familyName,
+        middleName,
+        suffix,
+        schoolID,
+        hashedPassword,
+        yearGraduated,
+        course,
+        id
+    ]);
+
+    res.status(200).end();
+}
+
+export async function updateCoAdminInfo(req: Request, res: Response) {
+    const {
+        id,
+        firstName,
+        familyName,
+        middleName,
+        suffix,
+        email,
+        password,
+    } = req.body;
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await query(`
+        UPDATE user
+        SET user_first_name = ?,
+        user_middle_name = ?,
+        user_family_name = ?,
+        user_suffix = ?,
+        user_email = ?,
+        user_password = ?
+        WHERE user_id = ?
+    `, [
+        firstName,
+        familyName,
+        middleName,
+        suffix,
+        email,
+        hashedPassword,
+        id
+    ]);
+
+    res.status(200).end();
+}
+
+// DELETE
+export async function deleteStudent(req: Request, res: Response) {
+    const { id } = req.params;
+
+    await query(`
+        DELETE FROM user
+        WHERE user_id = ?
+    `, [id]);
+
+    res.status(200).end();
+}
+
+export async function deleteCoAdmin(req: Request, res: Response) {
+    const { id } = req.params;
+
+    await query(`
+        DELETE FROM user
+        WHERE user_id = ?
+    `, [id]);
+
+    res.status(200).end();
 }
