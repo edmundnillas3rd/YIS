@@ -10,7 +10,6 @@ import { Request, Response } from "express";
 
 import { query } from "../services/mysqldb";
 import { parseStudentName } from '../utils/student';
-import { parseSoliNum } from '../utils/solicitation';
 
 export async function index(req: Request, res: Response) {
     // const sql = `
@@ -181,11 +180,11 @@ export async function searchSolicitationForm(req: Request, res: Response) {
         ON sfr.course = c.course_id
         WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR (REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) AND c.course_id = ?)
     `, [
-        `^${search}`, 
-        `^${search}`, 
-        `^${search}`, 
         `^${search}`,
-        `^${search}`, 
+        `^${search}`,
+        `^${search}`,
+        `^${search}`,
+        `^${search}`,
         `^${search}`,
         course]);
 
@@ -400,6 +399,55 @@ export async function uploadData(req: Request, res: Response) {
         const genUUID = await query(`SELECT UUID()`);
         const UUID = genUUID.rows[0]['UUID()'];
 
+        const course = typeof row["COURSE"] === "undefined" ? '' : row["COURSE"];
+
+        const courses = await query(`
+            SELECT course_id AS id, course_name AS name FROM course WHERE course_abbreviation = ?
+        `, [course]);
+
+        const parseName = await parseStudentName(row["NAME OF STUDENT"]);
+
+        // await query(`
+        //     INSERT INTO user (
+        //         user_id,
+        //         user_first_name,
+        //         user_middle_name,
+        //         user_family_name,
+        //         user_suffix,
+        //         user_email, 
+        //         user_password,
+        //         user_year_graduated,
+        //         user_school_id,
+        //         role_id,
+        //         course_id
+        //     ) VALUES (
+        //         ?,
+        //         NULLIF(?, ''),
+        //         NULLIF(?, ''),
+        //         NULLIF(?, ''),
+        //         NULLIF(?, ''),
+        //         ?,
+        //         ?,
+        //         ?,
+        //         ?,
+        //         ?,
+        //         ?
+        //     )
+        // `, [
+        //     UUID,
+        //     parseName.firstName,
+        //     parseName.middleName,
+        //     parseName.familyName,
+        //     '',
+        //     process.env.DEFAULT_EMAIL,
+        //     hashedPassword,
+        //     null,
+        //     null,
+        //     typeof courses.rows[0] === "undefined" ? null : courses.rows[0]["id"],
+        //     typeof roles.rows[0] === "undefined" ? null : roles.rows[0]["id"]
+        // ]);
+
+
         const soliStatus = await query(`
             SELECT solicitation_returned_status_id AS id, status_name AS name FROM solicitation_returned_status
         `);
@@ -431,14 +479,6 @@ export async function uploadData(req: Request, res: Response) {
         } else {
             ps = paymentStatus.rows.find((ps: any) => (ps.name === "UNPAID"));
         }
-
-        const course = typeof row["COURSE"] === "undefined" ? '' : row["COURSE"];
-
-        const courses = await query(`
-            SELECT course_id AS id, course_name AS name FROM course WHERE course_abbreviation = ?
-        `, [course]);
-
-        const parseName = await parseStudentName(row["NAME OF STUDENT"]);
 
         await query(`
             INSERT INTO solicitation_form_raw (
@@ -489,6 +529,31 @@ export async function uploadData(req: Request, res: Response) {
             typeof row["FULL PAYMENT"] === "undefined" ? null : row["FULL PAYMENT"],
             ps?.id ?? null,
             rs?.id ?? null
+        ]);
+
+        const yearbookStatuses = await query(`
+            SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
+        `);
+
+        await query(`
+            INSERT INTO yearbook (
+                yearbook_id,
+                soli_form_id,
+                yearbook_status_id,
+                yearbook_care_of,
+                yearbook_date_released
+            ) VALUES (
+                UUID(),
+                ?,
+                ?,
+                ?,
+                ?
+            )
+        `, [
+            UUID,
+            typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
+            null,
+            null
         ]);
     });
 

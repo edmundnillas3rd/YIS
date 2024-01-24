@@ -6,31 +6,49 @@ export async function index(req: Request, res: Response) {
         SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status
     `);
 
-    let yearbookPhotos = await query(`
-        SELECT DISTINCT yearbook_photos.yearbook_photos_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', COALESCE(user.user_middle_name, ''), ' ', COALESCE(user.user_suffix, '')) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(DATE_FORMAT(yearbook_photos.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased FROM yearbook_photos
-        INNER JOIN user
-        ON yearbook_photos.user_id = user.user_id
-        INNER JOIN yearbook_status
-        ON yearbook_photos.yearbook_status_id = yearbook_status.yearbook_status_id
-    `);
+    // let yearbookPhotos = await query(`
+    // SELECT DISTINCT yearbook_photos.yearbook_photos_id AS id, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', COALESCE(user.user_middle_name, ''), ' ', COALESCE(user.user_suffix, '')) AS fullName, yearbook_status.yearbook_status_name AS yearbookStatus, COALESCE(DATE_FORMAT(yearbook_photos.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased FROM yearbook_photos
+    // INNER JOIN user
+    // ON yearbook_photos.user_id = user.user_id
+    // INNER JOIN yearbook_status
+    // ON yearbook_photos.yearbook_status_id = yearbook_status.yearbook_status_id
+    // `);
+
+    // const yearbook = await query(`
+    // SELECT yb.yearbook_id AS id, 
+    // CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, 
+    // c.course_abbreviation AS course,
+    // COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
+    // ybs.yearbook_status_name AS yearbookStatus, 
+    // COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
+    // COALESCE(CONCAT(co.first_name, ' ', co.family_name, ' ', co.middle_name, ' ', co.suffix), 'N/A') AS carefOf
+    // FROM yearbook yb
+    // INNER JOIN user u
+    // ON yb.user_id = u.user_id
+    // INNER JOIN course c
+    // ON u.course_id = c.course_id
+    // LEFT JOIN care_of co
+    // ON yb.yearbook_care_of = co.care_of_id
+    // INNER JOIN yearbook_status ybs
+    // ON yb.yearbook_status_id = ybs.yearbook_status_id
+    // `);
 
     const yearbook = await query(`
         SELECT yb.yearbook_id AS id, 
-        CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, 
+        CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, '')) AS fullName,
         c.course_abbreviation AS course,
-        COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
-        ybs.yearbook_status_name AS yearbookStatus, 
-        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
-        COALESCE(CONCAT(co.first_name, ' ', co.family_name, ' ', co.middle_name, ' ', co.suffix), 'N/A') AS carefOf
+        COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
+        ybs.yearbook_status_name AS yearbookStatus,
+        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased
         FROM yearbook yb
-        INNER JOIN user u
-        ON yb.user_id = u.user_id
-        INNER JOIN course c
-        ON u.course_id = c.course_id
-        LEFT JOIN care_of co
-        ON yb.yearbook_care_of = co.care_of_id
-        INNER JOIN yearbook_status ybs
+        LEFT JOIN solicitation_form_raw sfr
+        ON yb.soli_form_id = sfr.solicitation_form_raw_id
+        LEFT JOIN course c
+        ON sfr.course = c.course_id
+        LEFT JOIN yearbook_status ybs
         ON yb.yearbook_status_id = ybs.yearbook_status_id
+
     `);
 
     const yearbookPaymentStatuses = await query(`
@@ -39,7 +57,7 @@ export async function index(req: Request, res: Response) {
 
     res.status(200).json({
         yearbookStatuses: yearbookStatus.rows,
-        yearbookPhotos: yearbookPhotos.rows,
+        // yearbookPhotos: yearbookPhotos.rows,
         yearbook: yearbook.rows,
         yearbookPaymentStatuses: yearbookPaymentStatuses.rows
     });

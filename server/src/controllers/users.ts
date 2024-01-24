@@ -129,13 +129,13 @@ export async function signupUserStudent(req: Request, res: Response) {
 
     const { email, password, ...attr } = req.body;
 
-    const queriedRole = await query("SELECT role_id FROM role WHERE role.role_name = 'USER'");
+    const queriedRole = await query("SELECT role_id FROM role WHERE role.role_name = 'STUDENT'");
 
-    let roleUUID: QueryRow;
+    let roleUUID: any;
     // if no 'USER' roles exist
     if (queriedRole.rows.length === 0) {
-        roleUUID = await query("SELECT UUID()");
-        await query("INSERT INTO role VALUES (?, 'USER')", [roleUUID]);
+        roleUUID = await query("SELECT UUID() AS id");
+        await query("INSERT INTO role VALUES (?, 'USER')", [roleUUID[0]['id']]);
     }
 
     const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_email FROM user");
@@ -200,6 +200,8 @@ export async function loginUserStudent(req: Request, res: Response) {
 
         } else if (parts[0] === "coadmin") {
             data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'CO-ADMIN'`);
+        } else if (parts[0] === "cjc") {
+            data = await query(`SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'STUDENT'`);
         } else {
             return res.status(404).json({
                 error: "Invalid user email and password"
@@ -369,6 +371,36 @@ export async function searchStudentUnreturned(req: Request, res: Response) {
     res.status(200).json({
         results: rows
     });
+}
+
+export async function signupAdmin(req: Request, res: Response) {
+
+    const { email, password, ...attr } = req.body;
+
+    const queriedRole = await query("SELECT role_id FROM role WHERE role.role_name = 'ADMIN'");
+
+    let roleUUID: any;
+    // if no 'USER' roles exist
+    if (queriedRole.rows.length === 0) {
+        roleUUID = await query("SELECT UUID() AS id");
+        await query("INSERT INTO role VALUES (?, 'USER')", [roleUUID[0]['id']]);
+    }
+
+    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_email FROM user");
+
+    if (existingUser.rows[0]?.email !== undefined && existingUser.rows[0].email === email) {
+        return res.status(400).json({ error: "ADMIN already exist!" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    roleUUID = queriedRole.rows[0].role_id;
+    const userUUID = await query("SELECT UUID()");
+    const userValues = Object.values(attr);
+    const { rows } = await query("INSERT INTO user (user_id, user_first_name, user_family_name, user_middle_name, user_suffix, course_id, user_email, user_password, role_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword, roleUUID]);
+
+    res.status(200).json({ message: "admin successfully registered!" });
 }
 
 // PUT

@@ -4,9 +4,14 @@ import { v4 as uuid } from "uuid";
 import { generateYearRange } from "../utilities/generateYearRange";
 import YearbookReleasedModal from "../components/YearbookRelease/YearbookReleasedModal";
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
+import { searchStudentSolicitationStatus } from "../utilities/students";
 
 export default function () {
 
+    const [search, setSearch] = useState<string>("");
+    const [datas, setDatas] = useState({
+        filteredData: []
+    });
     const [currentNode, setCurrentNode] = useState<any>();
     const [displayYearbookModal, setDisplayYearbookModal] = useState<boolean>(false);
     const [courses, setCourses] = useState<string>("");
@@ -137,11 +142,33 @@ export default function () {
     const yearbookReleasedHeaders = [
         "NAME",
         "COURSE",
-        "YEAR GRADUATED",
         "YEARBOOK STATUS",
         "DATE RELEASED",
-        "CARE OF"
+        "CARE OF",
+        "CARE OF RELATION"
     ];
+
+    const onSearchSubmit = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const data = await searchStudentSolicitationStatus(search, course);
+        const filteredData = data.map(({ firstName, middleName, lastName, ...attr }: any) => ({ uuid: uuid(), ...attr }));
+        setDatas({
+            filteredData
+        });
+    };
+
+    const onChangeSearch = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.target as HTMLInputElement;
+        setSearch(target.value);
+    };
+
+    const onChangeFilter = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        const target = event.target as HTMLInputElement;
+
+    };
 
     const onClick = async (data: any) => {
         setDisplayYearbookModal(true);
@@ -276,6 +303,30 @@ export default function () {
                     </section>
                 </form>
             </Container>
+            <Container>
+                <form
+                    onSubmit={onSearchSubmit}
+                    method="POST"
+                    className="flex flex-row gap-5"
+                >
+                    <Input
+                        placeholder="Search the name of student"
+                        pattern={capitalizeRegex}
+                        onChange={onChangeSearch}
+                        width="flex-auto"
+                    />
+                    <section className="flex flex-row justify-end">
+                        <Button>Search</Button>
+                    </section>
+                    <Dropdown
+                        label=""
+                        name="filterSoli"
+                        datas={years}
+                        onChange={onChangeFilter}
+                    />
+                </form>
+            </Container>
+
             <Container>
                 {yearbooks && (
                     <Table columns={yearbookReleasedHeaders} datas={yearbooks} onClickCallback={onClick}
