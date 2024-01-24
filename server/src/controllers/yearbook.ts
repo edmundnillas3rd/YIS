@@ -223,7 +223,7 @@ export async function yearbookReleased(req: Request, res: Response) {
 
 // PUT
 export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
-    const { status, userID } = req.params;
+    const { id, status, date } = req.body;
 
     const statusData = await query(`
         SELECT yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_id = ?
@@ -231,23 +231,42 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
 
     const statusName = statusData.rows[0]['name'];
 
+    let formattedDate: any = date;
+
+    if (formattedDate === "N/A") {
+        formattedDate = null;
+    }
+
     let results: any;
 
     if (statusName === "RELEASED") {
         results = await query(`
             UPDATE yearbook_photos
-            SET yearbook_photos.yearbook_status_id = ?,
-            yearbook_photos_date_released = CURRENT_TIMESTAMP
-            WHERE yearbook_photos.yearbook_photos_id = ?
-        `, [status, userID]);
+            SET yearbook_photos_status_id = ?,
+            yearbook_photos_date_released = ?
+            WHERE yearbook_photos_id = ?
+        `, [status, formattedDate, id]);
     } else if (statusName === "PENDING") {
         results = await query(`
             UPDATE yearbook_photos
-            SET yearbook_photos.yearbook_status_id = ?,
+            SET yearbook_photos_status_id = ?,
             yearbook_photos_date_released = NULL
-            WHERE yearbook_photos.yearbook_photos_id = ?
-        `, [status, userID]);
+            WHERE yearbook_photos_id = ?
+        `, [status, id]);
     }
+
+    // let formattedDate: any = date;
+    // 
+    // if (formattedDate === "N/A") {
+    // formattedDate = null;
+    // }
+    // 
+    // results = await query(`
+    // UPDATE yearbook_photos
+    // SET yearbook_photos_status_id = ?,
+    // yearbook_photos_date_released = ?
+    // WHERE yearbook_photos_id = ?
+    // `, [status, formattedDate, id]);
 
     res.status(200).end();
 }

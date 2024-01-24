@@ -36,9 +36,9 @@ export default function () {
     }, []);
 
     const attr = [
-        "Full Name",
-        "Yearbook Photo Status",
-        "Date Released"
+        "FULL NAME",
+        "YEARBOOK PHOTOS STATUS",
+        "DATE RELEASED"
     ];
 
     const onClick = async (data: any) => {
