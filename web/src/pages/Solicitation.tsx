@@ -19,6 +19,7 @@ export default function () {
     const [courses, setCourses] = useState();
     const [solis, setSolis] = useState([]);
     const [datas, setDatas] = useState({
+        rawData: [],
         filteredData: []
     });
     const [statuses, setStatuses] = useState({});
@@ -54,17 +55,18 @@ export default function () {
 
             if (course && soli && yearbook) {
                 console.log(soli);
-                
+
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
 
-                const formattedData = soli.solis.map(({ firstName, middleName, lastName, ...attr}: any) => ({
+                const formattedData = soli.solis.map(({ firstName, middleName, lastName, suffix, ...attr }: any) => ({
                     uuid: uuid(),
                     ...attr
                 }));
 
                 setSolis(formattedData);
                 setDatas({
+                    rawData: soli.solis,
                     filteredData: formattedData
                 });
 
@@ -188,10 +190,11 @@ export default function () {
 
         const data = await searchStudentSolicitationStatus(`${familyName}, ${firstName} ${middleName}`, course);
 
-        const filteredData = data.map(({ firstName, middleName, lastName, ...attr}: any) => ({ uuid: uuid(), ...attr }));
-        setDatas({
+        const filteredData = data.map(({ firstName, middleName, lastName, suffix, ...attr }: any) => ({ uuid: uuid(), ...attr }));
+        setDatas(state => ({
+            ...state,
             filteredData
-        });
+        }));
 
         setLoading(false);
 
@@ -201,14 +204,15 @@ export default function () {
         event.preventDefault();
 
         const data = await searchStudentSolicitationStatus(search, course);
-        const filteredData = data.map(({ firstName, middleName, lastName, ...attr}: any) => ({ uuid: uuid(), ...attr }));
-        setDatas({
+        const filteredData = data.map(({ firstName, middleName, lastName, suffix, ...attr }: any) => ({ uuid: uuid(), ...attr }));
+        setDatas(state => ({
+            ...state,
             filteredData
-        });
+        }));
     };
 
     const onClick = async (data: any) => {
-        setCurrentNode(data);
+        setCurrentNode(datas.rawData.find((raw: any) => raw.id === data.id) as any);
         console.log(data);
 
     };
@@ -237,10 +241,12 @@ export default function () {
 
 
             setDatas(soli => ({
+                ...soli,
                 filteredData: filterData
             }));
         } else {
             setDatas(soli => ({
+                ...soli,
                 filteredData: solis
             }));
         }

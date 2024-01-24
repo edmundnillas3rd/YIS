@@ -44,6 +44,7 @@ export async function index(req: Request, res: Response) {
             COALESCE(sfr.first_name, '') AS firstName,
             COALESCE(sfr.middle_name, '') AS middleName,
             COALESCE(sfr.family_name, '') AS lastName,
+            COALESCE(sfr.suffix, '') as suffix,
             soli_numbers AS soliNumber,
             COALESCE(care_of, 'N/A') AS careOfFullName,
             COALESCE(care_of_relation, 'N/A') AS careOfRelation,
@@ -582,6 +583,12 @@ export async function uploadData(req: Request, res: Response) {
 export async function solicitationUpdate(req: Request, res: Response) {
     const {
         id,
+        firstName,
+        middleName,
+        familyName,
+        suffix,
+        careOf,
+        relation,
         soliNumber,
         status,
         dateReturned,
@@ -590,6 +597,7 @@ export async function solicitationUpdate(req: Request, res: Response) {
         paymentAmount,
         paymentStatus,
         ornumber,
+        lostOrNumber
     } = req.body;
 
     let formattedDate = dateReturned;
@@ -602,15 +610,39 @@ export async function solicitationUpdate(req: Request, res: Response) {
     solicitationStatusResults = await query(`
             UPDATE solicitation_form_raw
             SET solicitation_returned_status_id = ?,
+            first_name = ?,
+            middle_name = ?,
+            family_name = ?,
+            suffix = ?,
+            care_of = NULLIF(?, ''),
+            care_of_relation = NULLIF(?, ''),
             date_returned = ?,
             yearbook_payment = ?,
             solicitation_payment_status_id = ?,
-            or_number = ?,
+            or_number = NULLIF(?, ''),
+            lost_or_number = NULLIF(?, ''),
             soli_numbers = ?,
-            returned_solis = ?,
-            unreturned_solis = ?
+            returned_solis = NULLIF(?, ''),
+            unreturned_solis = NULLIF(?, '')
             WHERE solicitation_form_raw_id = ?
-        `, [status, formattedDate, paymentAmount, paymentStatus, ornumber, soliNumber, returnedSolis, unreturnedSolis, id]);
+        `, [
+            status, 
+            firstName,
+            middleName,
+            familyName,
+            suffix,
+            careOf,
+            relation,
+            formattedDate, 
+            paymentAmount, 
+            paymentStatus, 
+            ornumber,
+            lostOrNumber,
+            soliNumber, 
+            returnedSolis, 
+            unreturnedSolis, 
+            id
+        ]);
 
     res.status(200).end();
 }

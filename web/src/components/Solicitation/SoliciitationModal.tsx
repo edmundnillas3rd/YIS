@@ -23,8 +23,13 @@ export default function ({
     const [paymentStatuses, setPaymentStatuses] = useState();
 
     const [id, setID] = useState<string>();
+    const [firstName, setFirstName] = useState<string>();
+    const [familyName, setFamilyName] = useState<string>();
+    const [middleName, setMiddleName] = useState<string>();
+    const [suffix, setSuffix] = useState<string>();
     const [status, setStatus] = useState<string>();
-    const [statusData, setStatusData] = useState<string>();
+    const [careOf, setCareOf] = useState<string>();
+    const [relation, setRelation] = useState<string>();
     const [returnedSolis, setReturnedSolis] = useState<string>();
     const [unreturnedSolis, setUnreturnedSolis] = useState<string>();
     const [dateReturned, setDateReturned] = useState<string>();
@@ -61,8 +66,16 @@ export default function ({
                 setPaymentStatus("N/A");
             }
 
+
             setID(data['id']);
+            setFirstName(data['firstName']);
+            setFamilyName(data['lastName']);
+            setMiddleName(data['middleName']);
+            setSuffix(data['suffix']);
+            setCareOf(data['careOfFullName']);
+            setRelation(data['careOfRelation']);
             setPaymentAmount(data['paymentAmount']);
+            setLostORNumber(data['lostORNumber']);
             setORNumber(data['ORnumber']);
             setDateReturned(data['dateReturned']);
             setSoliNumber(data['soliNumber']);
@@ -80,11 +93,26 @@ export default function ({
             case "status":
                 setStatus(target.value);
                 break;
+            case "firstName":
+                setFirstName(target.value);
+                break;
+            case "familyName":
+                setFamilyName(target.value);
+                break;
+            case "middleName":
+                setMiddleName(target.value);
+                break;
             case "dateReturned":
                 setDateReturned(target.value);
                 break;
             case "soliNums":
                 setSoliNumber(target.value);
+                break;
+            case "careof":
+                setCareOf(target.value);
+                break;
+            case "relation":
+                setRelation(target.value);
                 break;
             case "payment":
                 setPaymentAmount(target.value);
@@ -112,6 +140,12 @@ export default function ({
 
         const data = {
             id,
+            firstName,
+            middleName,
+            familyName,
+            suffix,
+            careOf,
+            relation,
             soliNumber,
             status,
             dateReturned,
@@ -120,6 +154,7 @@ export default function ({
             paymentAmount,
             paymentStatus,
             ornumber,
+            lostOrNumber
         };
 
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/solicitation-update`, {
@@ -149,9 +184,63 @@ export default function ({
         >
             {soli && (
                 <section
-                    className="flex flex-col gap-2"
+                    className="flex flex-col gap-2 mt-5"
                 >
-                    <h3 className="font-bold">{soli['fullName']}<br />SOLI FORM # {soli['soliNumber']}</h3>
+                    <div className="flex flex-row justify-between items-center gap-1">
+
+                        <h3 className="font-bold">
+                            Soli #'s {soli['soliNumber']}
+                        </h3>
+                        <Toggle
+                            name="Edit"
+                            onChange={onToggleChange}
+                        >
+                            {!confirmSave && (
+                                <Button
+                                    onClick={(e: any) => { setConfirmSave(true); }}
+                                >
+                                    Save
+                                    <FaSave />
+                                </Button>
+                            )}
+                            {confirmSave && (
+                                <Confirm
+                                    onConfirm={onClickSave}
+                                    onCancel={(e: any) => setConfirmSave(false)}
+                                />
+                            )}
+                        </Toggle>
+                    </div>
+                    <section className="flex flex-row gap-1">
+                        <Input
+                            title="FIRST NAME"
+                            id="firstName"
+                            value={firstName}
+                            disabled={disable}
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="FAMILY NAME"
+                            id="familyName"
+                            value={familyName}
+                            disabled={disable}
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="MIDDLE NAME"
+                            id="middleName"
+                            value={middleName}
+                            disabled={disable}
+                            onChange={onChange}
+                        />
+                        <Input
+                            title="SUFFIX"
+                            id="suffix"
+                            value={suffix}
+                            disabled={disable}
+                            onChange={onChange}
+                        />
+                    </section>
                     <Dropdown
                         label="STATUS"
                         name="status"
@@ -172,6 +261,20 @@ export default function ({
                         title="SOLI #'s"
                         id="soliNums"
                         value={soliNumber}
+                        disabled={disable}
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="Care Of"
+                        id="careof"
+                        value={careOf}
+                        disabled={disable}
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="Care Of Relation"
+                        id="relation"
+                        value={relation}
                         disabled={disable}
                         onChange={onChange}
                     />
@@ -218,25 +321,7 @@ export default function ({
                         datas={paymentStatuses}
                         onChange={onChange}
                     />
-                    <Toggle
-                        name="Edit"
-                        onChange={onToggleChange}
-                    >
-                        {!confirmSave && (
-                            <Button
-                                onClick={(e: any) => { setConfirmSave(true); }}
-                            >
-                                Save
-                                <FaSave />
-                            </Button>
-                        )}
-                        {confirmSave && (
-                            <Confirm
-                                onConfirm={onClickSave}
-                                onCancel={(e: any) => setConfirmSave(false)}
-                            />
-                        )}
-                    </Toggle>
+
                 </section>
             )}
         </Modal>
