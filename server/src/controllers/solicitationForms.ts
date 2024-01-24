@@ -555,6 +555,24 @@ export async function uploadData(req: Request, res: Response) {
             null,
             null
         ]);
+
+        await query(`
+            INSERT INTO yearbook_photos (
+                yearbook_photos_id,
+                yearbook_photos_date_released,
+                yearbook_status_id,
+                soli_form_id
+            ) VALUES (
+                UUID(),
+                ?,
+                ?,
+                ?
+            )
+        `, [
+            null,
+            typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
+            UUID
+        ])
     });
 
     res.status(200).end();

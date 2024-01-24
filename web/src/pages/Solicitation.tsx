@@ -253,7 +253,7 @@ export default function () {
         "CARE OF",
         "CARE OF RELATION",
         "RETURNED SOLIS",
-        "UNRETURNED SOLIS",
+        "UNRETURNED/LOST SOLIS",
         "LOST OR #",
         "DATE RETURNED",
         "YEARBOOK PAYMENT",

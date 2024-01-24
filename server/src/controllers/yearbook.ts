@@ -48,8 +48,19 @@ export async function index(req: Request, res: Response) {
         ON sfr.course = c.course_id
         LEFT JOIN yearbook_status ybs
         ON yb.yearbook_status_id = ybs.yearbook_status_id
-
     `);
+
+    const yearbookPhotos = await query(`
+        SELECT ybp.yearbook_photos_id AS id, 
+        CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName,
+        ybs.yearbook_status_name AS yearbookStatus,
+        COALESCE(DATE_FORMAT(ybp.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased
+        FROM yearbook_photos ybp
+        LEFT JOIN solicitation_form_raw sfr
+        ON ybp.soli_form_id = sfr.solicitation_form_raw_id
+        LEFT JOIN yearbook_status ybs
+        ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
+    `)
 
     const yearbookPaymentStatuses = await query(`
         SELECT solicitation_payment_status_id AS id, solicitation_payment_status.status_name AS name FROM solicitation_payment_status
@@ -57,7 +68,7 @@ export async function index(req: Request, res: Response) {
 
     res.status(200).json({
         yearbookStatuses: yearbookStatus.rows,
-        // yearbookPhotos: yearbookPhotos.rows,
+        yearbookPhotos: yearbookPhotos.rows,
         yearbook: yearbook.rows,
         yearbookPaymentStatuses: yearbookPaymentStatuses.rows
     });
