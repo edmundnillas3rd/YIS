@@ -22,7 +22,7 @@ router.get("/", index);
 router.get("/student-unreturned", getStudentUnreturned);
 router.get("/user-current", getCurrentLogUser);
 
-// POST
+// STUDENT POST
 router.post("/info-submit", submitInfo);
 router.post("/user-signup", signupUserStudent);
 router.post("/user-login", loginUserStudent);
@@ -31,6 +31,9 @@ router.post("/student-search", searchStudent);
 router.post("/student-search-recipient", searchStudentRecipient);
 router.post("/student-search-paid", searchStudentPaid);
 router.post("/student-search-unreturned", searchStudentUnreturned);
+
+// CO-ADMIN POST
+router.post("/coadmin-signup", () => ({}));
 
 // ADMIN POST
 router.post("/admin-signup", signupAdmin);

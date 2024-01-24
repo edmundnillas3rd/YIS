@@ -10,7 +10,7 @@ export default function ErrorPage() {
             <p>Sorry, an unexpected error has occurred.</p>
             <section className="flex flex-col gap-5 mt-2">
                 <p>Either the developer has yet to create this part of the page or you input an invalid address.</p>
-                <p>Consult Nicki Pecision for additional information</p>
+                {/* <p>Consult Nicki Pecision for additional information</p> */}
                 <p>
                     <i>Error Message: {error.statusText || error.message}</i>
                 </p>

@@ -6,13 +6,20 @@ import { query } from "../services/mysqldb";
 
 export async function index(req: Request, res: Response) {
     const sql = `
-        SELECT user.user_id AS id, course.course_abbreviation AS course, CONCAT(user.user_first_name, ' ', user.user_family_name, ' ', user.user_middle_name, ' ', user.user_suffix) AS fullName FROM user 
+        SELECT 
+        u.user_id AS id, 
+        u.user_first_name AS firstName,
+        u.user_middle_name AS middleName,
+        u.user_family_name AS familyName,
+        u.user_suffix AS suffix,
+        u.user_year_graduated AS yearGraduated,
+        c.course_abbreviation AS course
+        FROM user u
         INNER JOIN role
-        ON user.role_id = role.role_id
-        INNER JOIN course
-        ON user.course_id = course.course_id
+        ON u.role_id = role.role_id
+        INNER JOIN course c
+        ON u.course_id = c.course_id
         WHERE role.role_name = 'STUDENT'
-        LIMIT 10
     `;
     const { rows } = await query(sql);
 
@@ -127,7 +134,16 @@ export async function submitInfo(req: Request, res: Response) {
 // POST
 export async function signupUserStudent(req: Request, res: Response) {
 
-    const { email, password, ...attr } = req.body;
+    const {
+        firstName,
+        middleName,
+        familyName,
+        suffix,
+        schoolID,
+        password,
+        yearGraduated,
+        course
+     } = req.body;
 
     const queriedRole = await query("SELECT role_id FROM role WHERE role.role_name = 'STUDENT'");
 
@@ -135,12 +151,12 @@ export async function signupUserStudent(req: Request, res: Response) {
     // if no 'USER' roles exist
     if (queriedRole.rows.length === 0) {
         roleUUID = await query("SELECT UUID() AS id");
-        await query("INSERT INTO role VALUES (?, 'USER')", [roleUUID[0]['id']]);
+        await query("INSERT INTO role VALUES (?, 'STUDENT')", [roleUUID[0]['id']]);
     }
 
-    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_email FROM user");
+    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_year_graduated AS yearGraduated FROM user");
 
-    if (existingUser.rows[0]?.email !== undefined && existingUser.rows[0].email === email) {
+    if (existingUser.rows[0].yearGraduated !== undefined && existingUser.rows[0].yearGraduated === schoolID) {
         return res.status(400).json({ error: "User already exist!" });
     }
 
@@ -149,8 +165,42 @@ export async function signupUserStudent(req: Request, res: Response) {
 
     roleUUID = queriedRole.rows[0].role_id;
     const userUUID = await query("SELECT UUID()");
-    const userValues = Object.values(attr);
-    const { rows } = await query("INSERT INTO user (user_id, user_first_name, user_family_name, user_middle_name, user_suffix, course_id, user_email, user_password, role_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [userUUID.rows[0]['UUID()'], ...userValues, email, hashedPassword, roleUUID]);
+    const { rows } = await query(`
+        INSERT INTO user (
+            user_id, 
+            user_first_name, 
+            user_family_name, 
+            user_middle_name, 
+            user_suffix, 
+            course_id,
+            user_year_graduated,
+            user_school_id, 
+            user_password, 
+            role_id
+        ) VALUES (
+            ?,
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?, 
+            ?,
+            ?
+        )
+    `, [
+        userUUID.rows[0]['UUID()'], 
+        firstName,
+        familyName,
+        middleName,
+        suffix,
+        course,
+        yearGraduated,
+        schoolID,
+        hashedPassword, 
+        roleUUID
+    ]);
 
     res.status(200).json({ message: "User successfully registerd!" });
 }

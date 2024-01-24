@@ -12,6 +12,7 @@ import YearbookReleased from "../pages/YearbookReleased";
 import YearbookPreview from "../pages/YearbookPreview";
 import Settings from "../layouts/Settings";
 import { UploadFile } from "../components/Admin/";
+import Student from "../components/Admin/Student";
 
 const router = createBrowserRouter([
     {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <UploadFile/>
+                    },
+                    {
+                        path: "manage-students",
+                        element: <Student/>
                     }
                 ]
             }
