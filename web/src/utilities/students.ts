@@ -83,7 +83,7 @@ export async function searchStudentYearbookPhotoStatus(fullName: string): Promis
     }
 }
 
-export async function searchStudentSolicitationStatus(fullName: string) {
+export async function searchStudentSolicitationStatus(fullName: string, course: string) {
     try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/search-solicitation-form`, {
             method: "POST",
@@ -91,7 +91,8 @@ export async function searchStudentSolicitationStatus(fullName: string) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                search: fullName
+                search: fullName,
+                course: course
             })
         });
 

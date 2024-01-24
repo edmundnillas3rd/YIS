@@ -58,9 +58,9 @@ export default function () {
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
 
-                const formattedData = soli.solis.map((soli: any) => ({
+                const formattedData = soli.solis.map(({ firstName, middleName, lastName, ...attr}: any) => ({
                     uuid: uuid(),
-                    ...soli
+                    ...attr
                 }));
 
                 setSolis(formattedData);
@@ -80,11 +80,6 @@ export default function () {
         })();
 
     }, []);
-
-    useEffect(() => {
-        console.log(search);
-
-    }, [search]);
 
     const onChange = (event: SyntheticEvent) => {
         event.preventDefault();
@@ -160,36 +155,53 @@ export default function () {
 
         }
 
-        const data = {
-            careOf,
-            firstName,
-            familyName,
-            middleName,
-            suffix,
-            course,
-            soliNum
-        };
+        // const data = {
+        //     careOf,
+        //     firstName,
+        //     familyName,
+        //     middleName,
+        //     suffix,
+        //     course,
+        //     soliNum
+        // };
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/solicitation-claim`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+        // const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/solicitation-claim`, {
+        //     method: "POST",
+        //     credentials: "include",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify(data)
+        // });
+
+        // if (response.ok) {
+        //     navigate(0);
+        //     setLoading(false);
+        //     const data = await searchStudentSolicitationStatus(`
+        //         ${familyName}, ${firstName} ${middleName}
+        //     `);
+        //     const filteredData = data.map((solicitationForm: any) => ({ uuid: uuid(), ...solicitationForm }));
+        //     setDatas({
+        //         filteredData
+        //     });
+        // }
+
+        const data = await searchStudentSolicitationStatus(`${familyName}, ${firstName} ${middleName}`, course);
+
+        const filteredData = data.map(({ firstName, middleName, lastName, ...attr}: any) => ({ uuid: uuid(), ...attr }));
+        setDatas({
+            filteredData
         });
 
-        if (response.ok) {
-            navigate(0);
-            setLoading(false);
-        }
+        setLoading(false);
+
     };
 
     const onSearchSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        const data = await searchStudentSolicitationStatus(search);
-        const filteredData = data.map((solicitationForm: any) => ({ uuid: uuid(), ...solicitationForm }));
+        const data = await searchStudentSolicitationStatus(search, course);
+        const filteredData = data.map(({ firstName, middleName, lastName, ...attr}: any) => ({ uuid: uuid(), ...attr }));
         setDatas({
             filteredData
         });
@@ -240,13 +252,15 @@ export default function () {
         "SOLI #'s",
         "CARE OF",
         "CARE OF RELATION",
-        "SOLI STATUS",
+        "RETURNED SOLIS",
+        "UNRETURNED SOLIS",
         "LOST OR #",
         "DATE RETURNED",
         "YEARBOOK PAYMENT",
         "OR #",
         "FULL PAYMENT",
-        "PAYMENT STATUS"
+        "CURRENT PAYMENT STATUS",
+        "CURRENT SOLI STATUS"
     ];
 
     return (

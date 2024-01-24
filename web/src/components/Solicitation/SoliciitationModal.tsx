@@ -25,10 +25,13 @@ export default function ({
     const [id, setID] = useState<string>();
     const [status, setStatus] = useState<string>();
     const [statusData, setStatusData] = useState<string>();
+    const [returnedSolis, setReturnedSolis] = useState<string>();
+    const [unreturnedSolis, setUnreturnedSolis] = useState<string>();
     const [dateReturned, setDateReturned] = useState<string>();
     const [paymentStatus, setPaymentStatus] = useState<string>();
     const [paymentAmount, setPaymentAmount] = useState<string>();
     const [ornumber, setORNumber] = useState<string>();
+    const [lostOrNumber, setLostORNumber] = useState<string>();
     const [soliNumber, setSoliNumber] = useState<string>();
 
     const [disable, setDisable] = useState<boolean>(false);
@@ -39,7 +42,7 @@ export default function ({
 
     useEffect(() => {
         if (data && data2) {
-            
+
             setSoli(data);
             setStatuses(data2.statuses);
             setPaymentStatuses(data2.yearbookPaymentStatuses);
@@ -48,8 +51,6 @@ export default function ({
                 (data['returnedStatus'] === s['name'])
             );
 
-            console.log(filteredStatus);
-            
             setStatus(filteredStatus[0]['id']);
 
             const filteredPaymentStatus = data2.yearbookPaymentStatuses.filter((p: any) => (data['paymentStatus'] === p['name']));
@@ -65,7 +66,8 @@ export default function ({
             setORNumber(data['ORnumber']);
             setDateReturned(data['dateReturned']);
             setSoliNumber(data['soliNumber']);
-            setStatusData(data['returnedStatusData']);
+            setReturnedSolis(data['returnedSolis']);
+            setUnreturnedSolis(data['unreturnedSolis']);
         }
     }, [data, data2]);
 
@@ -81,14 +83,26 @@ export default function ({
             case "dateReturned":
                 setDateReturned(target.value);
                 break;
+            case "soliNums":
+                setSoliNumber(target.value);
+                break;
             case "payment":
                 setPaymentAmount(target.value);
                 break;
             case "ornumber":
                 setORNumber(target.value);
                 break;
+            case "lostORNumber":
+                setLostORNumber(target.value);
+                break;
             case "paymentStatus":
                 setPaymentStatus(target.value);
+                break;
+            case "returnedSolis":
+                setReturnedSolis(target.value);
+                break;
+            case "unreturnedSolis":
+                setUnreturnedSolis(target.value);
                 break;
         }
     };
@@ -101,6 +115,8 @@ export default function ({
             soliNumber,
             status,
             dateReturned,
+            returnedSolis,
+            unreturnedSolis,
             paymentAmount,
             paymentStatus,
             ornumber,
@@ -153,9 +169,37 @@ export default function ({
                         onChange={onChange}
                     />
                     <Input
-                        title="PAYMENT"
+                        title="SOLI #'s"
+                        id="soliNums"
+                        value={soliNumber}
+                        disabled={disable}
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="RETURNED SOLIS"
+                        id="returnedSolis"
+                        value={returnedSolis}
+                        disabled={disable}
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="UNRETURNED SOLIS"
+                        id="unreturnedSolis"
+                        value={unreturnedSolis}
+                        disabled={disable}
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="FULL PAYMENT"
                         id="payment"
                         value={paymentAmount}
+                        disabled={disable}
+                        onChange={onChange}
+                    />
+                    <Input
+                        title="LOST OR NUMBER"
+                        id="lostORnumber"
+                        value={lostOrNumber}
                         disabled={disable}
                         onChange={onChange}
                     />

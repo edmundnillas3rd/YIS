@@ -40,12 +40,16 @@ export async function index(req: Request, res: Response) {
 
     const sql = `
         SELECT solicitation_form_raw_id AS id,
-            course AS course, 
-            student_name AS fullName,
+            c.course_abbreviation AS course, 
+            CONCAT(sfr.first_name, ' ', sfr.middle_name, ' ', sfr.family_name) AS fullName,
+            COALESCE(sfr.first_name, '') AS firstName,
+            COALESCE(sfr.middle_name, '') AS middleName,
+            COALESCE(sfr.family_name, '') AS lastName,
             soli_numbers AS soliNumber,
             COALESCE(care_of, 'N/A') AS careOfFullName,
             COALESCE(care_of_relation, 'N/A') AS careOfRelation,
-            COALESCE(solicitation_returned_status, 'UNRETURNED') AS returnedStatusData, 
+            COALESCE(returned_solis, 'N/A') AS returnedSolis,
+            COALESCE(unreturned_solis, 'N/A') as unreturnedSolis,
             COALESCE(lost_or_number, 'N/A') as lostORNumber,
             COALESCE(date_returned, 'N/A') AS dateReturned,
             COALESCE(yearbook_payment, 'N/A') AS paymentAmount,
@@ -58,6 +62,8 @@ export async function index(req: Request, res: Response) {
             ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
             LEFT JOIN solicitation_returned_status srs
             ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
+            LEFT JOIN course c
+            ON sfr.course = c.course_id
     `;
 
 
@@ -118,34 +124,70 @@ export async function returnSolicitation(req: Request, res: Response) {
 // POST
 
 export async function searchSolicitationForm(req: Request, res: Response) {
-    const { search } = req.body;
+    const { search, course } = req.body;
+
+    // const { rows } = await query(`
+    //     SELECT
+    //     sf.user_id AS id,
+    //     c.course_abbreviation AS course, 
+    //     CONCAT(u.user_first_name, " ", COALESCE(u.user_middle_name, ''), " ", u.user_family_name, " ", COALESCE(u.user_suffix, '')) AS fullName,
+    //     sf.solicitation_number as soliNumber,
+    //     COALESCE(CONCAT(cof.first_name, " ", cof.middle_name, " ", cof.family_name, " ", cof.suffix), 'N/A') AS careOfFullName,
+    //     COALESCE(cof.relation_status, 'N/A') AS relationStatus,
+    //     srs.status_name AS returnedStatus,
+    //     COALESCE(sf.solicitation_date_returned, 'N/A') AS dateReturned,
+    //     sps.status_name AS paymentStatus,
+    //     sf.solicitation_yearbook_payment AS paymentAmount,
+    //     sf.solicitation_or_number AS ORnumber
+    //     FROM solicitation_form sf
+    //     INNER JOIN user u
+    //     ON sf.user_id = u.user_id
+    //     INNER JOIN course c
+    //     ON u.course_id = c.course_id
+    //     LEFT JOIN care_of cof
+    //     ON sf.solicitation_care_of = cof.care_of_id
+    //     INNER JOIN solicitation_returned_status srs
+    //     ON sf.solicitation_returned_status_id = srs.solicitation_returned_status_id
+    //     INNER JOIN solicitation_payment_status sps
+    //     ON sf.solicitation_payment_status_id = sps.solicitation_payment_status_id
+    //     WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')), ?)
+    // `, [`^${search}`]);
 
     const { rows } = await query(`
-        SELECT
-        sf.user_id AS id,
+        SELECT solicitation_form_raw_id AS id,
         c.course_abbreviation AS course, 
-        CONCAT(u.user_first_name, " ", COALESCE(u.user_middle_name, ''), " ", u.user_family_name, " ", COALESCE(u.user_suffix, '')) AS fullName,
-        sf.solicitation_number as soliNumber,
-        COALESCE(CONCAT(cof.first_name, " ", cof.middle_name, " ", cof.family_name, " ", cof.suffix), 'N/A') AS careOfFullName,
-        COALESCE(cof.relation_status, 'N/A') AS relationStatus,
-        srs.status_name AS returnedStatus,
-        COALESCE(sf.solicitation_date_returned, 'N/A') AS dateReturned,
-        sps.status_name AS paymentStatus,
-        sf.solicitation_yearbook_payment AS paymentAmount,
-        sf.solicitation_or_number AS ORnumber
-        FROM solicitation_form sf
-        INNER JOIN user u
-        ON sf.user_id = u.user_id
-        INNER JOIN course c
-        ON u.course_id = c.course_id
-        LEFT JOIN care_of cof
-        ON sf.solicitation_care_of = cof.care_of_id
-        INNER JOIN solicitation_returned_status srs
-        ON sf.solicitation_returned_status_id = srs.solicitation_returned_status_id
-        INNER JOIN solicitation_payment_status sps
-        ON sf.solicitation_payment_status_id = sps.solicitation_payment_status_id
-        WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')), ?)
-    `, [`^${search}`]);
+        CONCAT(sfr.first_name, ' ', sfr.middle_name, ' ', sfr.family_name) AS fullName,
+        COALESCE(sfr.first_name, '') AS firstName,
+        COALESCE(sfr.middle_name, '') AS middleName,
+        COALESCE(sfr.family_name, '') AS lastName,
+        soli_numbers AS soliNumber,
+        COALESCE(care_of, 'N/A') AS careOfFullName,
+        COALESCE(care_of_relation, 'N/A') AS careOfRelation,
+        COALESCE(returned_solis, 'N/A') AS returnedSolis,
+        COALESCE(unreturned_solis, 'N/A') as unreturnedSolis,
+        COALESCE(lost_or_number, 'N/A') as lostORNumber,
+        COALESCE(date_returned, 'N/A') AS dateReturned,
+        COALESCE(yearbook_payment, 'N/A') AS paymentAmount,
+        COALESCE(or_number, 'N/A') AS ORnumber,
+        COALESCE(full_payment, 0) as fullPayment,
+        COALESCE(sps.status_name, 'N/A') as paymentStatus,
+        srs.status_name AS returnedStatus
+        FROM solicitation_form_raw sfr
+        LEFT JOIN solicitation_payment_status sps
+        ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
+        LEFT JOIN solicitation_returned_status srs
+        ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
+        LEFT JOIN course c
+        ON sfr.course = c.course_id
+        WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR (REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) AND c.course_id = ?)
+    `, [
+        `^${search}`, 
+        `^${search}`, 
+        `^${search}`, 
+        `^${search}`,
+        `^${search}`, 
+        `^${search}`,
+        course]);
 
     if (rows.length === 0) {
         return res.status(404).json({
@@ -355,26 +397,6 @@ export async function uploadData(req: Request, res: Response) {
     XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false }).forEach(async (row: any) => {
         const keys = Object.keys(row);
 
-        // keys.forEach(async (key: any) => {
-        //     if (key === "NAME OF STUDENT") {
-        //         const parsedName: Student = await parseStudentName(row[key]);
-        //         rowData[key] = `${parsedName.firstName} ${parsedName.middleName} ${parsedName.familyName}`
-        //         return;
-        //     }
-        //     
-        //     if (key === "YEARBOOK PAYMENT") {
-        //         if (typeof row[key] === "string") {
-        //             rowData[key] = 0;
-        //             return;
-        //         } else {
-        //             rowData[key] = row[key];
-        //         }
-        //         return;
-        //     }
-        // 
-        //     rowData[key] = row[key];
-        // });
-
         const genUUID = await query(`SELECT UUID()`);
         const UUID = genUUID.rows[0]['UUID()'];
 
@@ -394,8 +416,6 @@ export async function uploadData(req: Request, res: Response) {
             rs = soliStatus.rows.find((ps: any) => (ps.name === "UNRETURNED"));
         }
 
-        console.log(rs);
-
         const paymentStatus = await query(`
             SELECT solicitation_payment_status_id AS id, status_name AS name FROM solicitation_payment_status 
         `);
@@ -412,10 +432,20 @@ export async function uploadData(req: Request, res: Response) {
             ps = paymentStatus.rows.find((ps: any) => (ps.name === "UNPAID"));
         }
 
+        const course = typeof row["COURSE"] === "undefined" ? '' : row["COURSE"];
+
+        const courses = await query(`
+            SELECT course_id AS id, course_name AS name FROM course WHERE course_abbreviation = ?
+        `, [course]);
+
+        const parseName = await parseStudentName(row["NAME OF STUDENT"]);
+
         await query(`
             INSERT INTO solicitation_form_raw (
                 solicitation_form_raw_id,
-                student_name, 
+                first_name,
+                middle_name,
+                family_name,
                 course, 
                 soli_numbers, 
                 care_of, 
@@ -429,8 +459,10 @@ export async function uploadData(req: Request, res: Response) {
                 solicitation_returned_status_id
             ) VALUES (
                 ?,
-                ?, 
-                ?, 
+                NULLIF(?, ''),
+                NULLIF(?, ''),
+                NULLIF(?, ''),
+                NULLIF(?, ''), 
                 NULLIF(?, ''), 
                 NULLIF(?, ''), 
                 NULLIF(?, ''), 
@@ -443,8 +475,10 @@ export async function uploadData(req: Request, res: Response) {
                 ?
             )`, [
             UUID,
-            typeof row["NAME OF STUDENT"] === "undefined" ? null : row["NAME OF STUDENT"],
-            typeof row["COURSE"] === "undefined" ? null : row["COURSE"],
+            parseName.firstName,
+            parseName.middleName,
+            parseName.familyName,
+            typeof courses.rows[0] === "undefined" ? null : courses.rows[0]["id"],
             typeof row["SOLI #'s"] === "undefined" ? null : row["SOLI #'s"],
             typeof row["CARE OF"] === "undefined" ? null : row["CARE OF"],
             typeof row["RETURNED ALL / UNRETURNED SOLI"] === "undefined" ? null : row["RETURNED ALL / UNRETURNED SOLI"],
@@ -456,48 +490,24 @@ export async function uploadData(req: Request, res: Response) {
             ps?.id ?? null,
             rs?.id ?? null
         ]);
-
-
-        // const paymentStatusID = '';
-        // 
-        // await query(`
-        // INSERT INTO solicitation_form_status (
-        // solicitation_form_status_id,
-        // solicitation_payment_status_id
-        // ) VALUES (
-        // LAST_INSERT_ID(),
-        // ?
-        // )
-        // `, [paymentStatusID])
     });
 
     res.status(200).end();
 }
 
 // PATCH
-
 export async function solicitationUpdate(req: Request, res: Response) {
     const {
         id,
         soliNumber,
         status,
         dateReturned,
+        returnedSolis,
+        unreturnedSolis,
         paymentAmount,
         paymentStatus,
         ornumber,
     } = req.body;
-
-
-    // Payment Status
-    // const solicitationPaymentData = await query(`
-    //     SELECT status_name AS name FROM solicitation_payment_status
-    //     WHERE solicitation_payment_status_id = ?
-    // `, [paymentStatus]);
-
-    // const solicitationPaymentStatusName = solicitationPaymentData.rows[0]['name'];
-    // if (solicitationPaymentStatusName === "") {
-
-    // }
 
     let formattedDate = dateReturned;
 
@@ -505,61 +515,19 @@ export async function solicitationUpdate(req: Request, res: Response) {
         formattedDate = null;
     }
 
-    // Returned Status
-    const solicitationStatusData = await query(`
-        SELECT status_name AS name FROM solicitation_returned_status
-        WHERE solicitation_returned_status_id = ?
-    `, [status]);
-
-    const solicitationStatusName = solicitationStatusData.rows[0]['name'];
-
     let solicitationStatusResults: any;
-    if (solicitationStatusName === "UNRETURNED") {
-        const unpdaidStatusData = await query(`
-            SELECT solicitation_payment_status_id AS id FROM solicitation_payment_status
-            WHERE status_name = 'UNPAID'
-        `);
-
-        const paymentStatusID = unpdaidStatusData.rows[0]['id'];
-
-        solicitationStatusResults = await query(`
-            UPDATE solicitation_form
+    solicitationStatusResults = await query(`
+            UPDATE solicitation_form_raw
             SET solicitation_returned_status_id = ?,
-            solicitation_date_returned = NULL,
-            solicitation_yearbook_payment = 0,
+            date_returned = ?,
+            yearbook_payment = ?,
             solicitation_payment_status_id = ?,
-            solicitation_or_number = ?
-            WHERE solicitation_form.user_id = ? AND solicitation_form.solicitation_number = ?
-        `, [status, paymentStatusID, ornumber, id, soliNumber]);
-    } else if (solicitationStatusName === "RETURNED") {
-        solicitationStatusResults = await query(`
-            UPDATE solicitation_form
-            SET solicitation_returned_status_id = ?,
-            solicitation_date_returned = ?,
-            solicitation_yearbook_payment = ?,
-            solicitation_payment_status_id = ?,
-            solicitation_or_number = ?
-            WHERE solicitation_form.user_id = ? AND solicitation_form.solicitation_number = ?
-        `, [status, formattedDate, paymentAmount, paymentStatus, ornumber, id, soliNumber]);
-    } else if (solicitationStatusName === "LOST") {
-
-        const penaltyData = await query(`
-            SELECT solicitation_payment_status_id AS id FROM solicitation_payment_status
-            WHERE status_name = 'PENALTY'
-        `);
-
-        const penaltyID = penaltyData.rows[0]['id'];
-
-        solicitationStatusResults = await query(`
-            UPDATE solicitation_form
-            SET solicitation_returned_status_id = ?,
-            solicitation_date_returned = NULL,
-            solicitation_yearbook_payment = 200,
-            solicitation_payment_status_id = ?,
-            solicitation_or_number = ?
-            WHERE solicitation_form.user_id = ? AND solicitation_number = ?
-    `, [status, penaltyID, ornumber, id, soliNumber]);
-    }
+            or_number = ?,
+            soli_numbers = ?,
+            returned_solis = ?,
+            unreturned_solis = ?
+            WHERE solicitation_form_raw_id = ?
+        `, [status, formattedDate, paymentAmount, paymentStatus, ornumber, soliNumber, returnedSolis, unreturnedSolis, id]);
 
     res.status(200).end();
 }
