@@ -37,10 +37,10 @@ export async function index(req: Request, res: Response) {
         SELECT yb.yearbook_id AS id, 
         CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, '')) AS fullName,
         c.course_abbreviation AS course,
-        COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
-        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
         ybs.yearbook_status_name AS yearbookStatus,
-        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased
+        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
+        COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation
         FROM yearbook yb
         LEFT JOIN solicitation_form_raw sfr
         ON yb.soli_form_id = sfr.solicitation_form_raw_id
@@ -60,7 +60,7 @@ export async function index(req: Request, res: Response) {
         ON ybp.soli_form_id = sfr.solicitation_form_raw_id
         LEFT JOIN yearbook_status ybs
         ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
-    `)
+    `);
 
     const yearbookPaymentStatuses = await query(`
         SELECT solicitation_payment_status_id AS id, solicitation_payment_status.status_name AS name FROM solicitation_payment_status
@@ -253,7 +253,13 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
 }
 
 export async function statusYearbookUpdate(req: Request, res: Response) {
-    const { status, yearbookID } = req.params;
+    const {
+        yearbookID,
+        status,
+        date,
+        careOf,
+        relation
+    } = req.body;
 
     let results: any;
 
@@ -263,45 +269,125 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
 
     const statusName = statusData.rows[0]['name'];
 
-    if (statusName === "RELEASED") {
-        results = await query(`
-            UPDATE yearbook
-            INNER JOIN user
-            ON yearbook.user_id = user.user_id
-            SET yearbook.yearbook_status_id = ?,
-            user.user_year_graduated = YEAR(CURRENT_TIMESTAMP),
-            yearbook.yearbook_date_released = CURRENT_TIMESTAMP
-            WHERE yearbook.yearbook_id = ?
-        `, [status, yearbookID]);
-    } else if (statusName === "PENDING") {
-        results = await query(`
-            UPDATE yearbook
-            INNER JOIN user
-            ON yearbook.user_id = user.user_id
-            SET yearbook.yearbook_status_id = ?,
-            user.user_year_graduated = NULL,
-            yearbook.yearbook_date_released = NULL
-            WHERE yearbook.yearbook_id = ?
-    `, [status, yearbookID]);
+    let formattedDate = date;
+    if (date === "N/A") {
+        formattedDate = null;
     }
+
+    results = await query(`
+        UPDATE yearbook
+        SET yearbook_status_id = ?,
+        yearbook_care_of = ?,
+        yearbook_care_of_relation = ?,
+        yearbook_date_released = ?
+        WHERE yearbook_id = ?
+    `, [
+        status,
+        careOf,
+        relation,
+        formattedDate,
+        yearbookID
+    ]);
+
+    // if (statusName === "RELEASED") {
+    // results = await query(`
+    // UPDATE yearbook
+    // INNER JOIN user
+    // ON yearbook.user_id = user.user_id
+    // SET yearbook.yearbook_status_id = ?,
+    // user.user_year_graduated = YEAR(CURRENT_TIMESTAMP),
+    // yearbook.yearbook_date_released = CURRENT_TIMESTAMP
+    // WHERE yearbook.yearbook_id = ?
+    // `, [status, yearbookID]);
+    // } else if (statusName === "PENDING") {
+    // results = await query(`
+    // UPDATE yearbook
+    // INNER JOIN user
+    // ON yearbook.user_id = user.user_id
+    // SET yearbook.yearbook_status_id = ?,
+    // user.user_year_graduated = NULL,
+    // yearbook.yearbook_date_released = NULL
+    // WHERE yearbook.yearbook_id = ?
+    // `, [status, yearbookID]);
+    // }
 
     res.status(200).end();
 }
 
 export async function searchStudentYearbookPhoto(req: Request, res: Response) {
     const { search } = req.body;
+    // const { rows } = await query(`
+    // SELECT 
+    // yp.yearbook_photos_id AS id, 
+    // CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')) AS fullName, 
+    // ys.yearbook_status_name AS yearbookStatus , COALESCE(yp.yearbook_photos_date_released, 'N/A') AS dateReleased 
+    // FROM yearbook_photos yp
+    // INNER JOIN yearbook_status ys
+    // ON yp.yearbook_status_id = ys.yearbook_status_id
+    // WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')), ?)
+    // `, [`^${search}`]);
+
     const { rows } = await query(`
         SELECT 
         yp.yearbook_photos_id AS id, 
-        CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')) AS fullName, 
+        CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName, 
         ys.yearbook_status_name AS yearbookStatus , COALESCE(yp.yearbook_photos_date_released, 'N/A') AS dateReleased 
         FROM yearbook_photos yp
+        LEFT JOIN solicitation_form_raw sfr
+        ON yp.soli_form_id = sfr.solicitation_form_raw_id
+        LEFT JOIN course c
+        ON sfr.course = c.course_id
         INNER JOIN yearbook_status ys
-        ON yp.yearbook_status_id = ys.yearbook_status_id
-        INNER JOIN user u
-        ON yp.user_id = u.user_id
-        WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')), ?)
-    `, [`^${search}`]);
+        ON yp.yearbook_photos_status_id = ys.yearbook_status_id
+        WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR REGEXP_LIKE(sfr.suffix, ?)`,
+        [
+            `^${search}`,
+            `^${search}`,
+            `^${search}`,
+            `^${search}`
+        ]
+    );
+
+
+
+    if (rows.length === 0) {
+        return res.status(404).json({
+            error: "Student Not Found"
+        });
+    }
+
+    res.status(200).json({
+        searchResults: rows
+    });
+}
+
+export async function searchStudentYearbook(req: Request, res: Response) {
+    const { search } = req.body;
+    const { rows } = await query(`
+        SELECT yb.yearbook_id AS id, 
+        CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName, 
+        c.course_abbreviation AS course,
+        ys.yearbook_status_name AS yearbookStatus, 
+        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
+        COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') as careOfRelation
+        FROM yearbook yb
+        LEFT JOIN solicitation_form_raw sfr
+        ON yb.soli_form_id = sfr.solicitation_form_raw_id
+        LEFT JOIN course c
+        ON sfr.course = c.course_id
+        INNER JOIN yearbook_status ys
+        ON yb.yearbook_status_id = ys.yearbook_status_id
+        WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR REGEXP_LIKE(sfr.suffix, ?)`,
+        [
+            `^${search}`,
+            `^${search}`,
+            `^${search}`,
+            `^${search}`
+        ]
+    );
+
+
 
     if (rows.length === 0) {
         return res.status(404).json({

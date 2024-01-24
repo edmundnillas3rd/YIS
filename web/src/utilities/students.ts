@@ -58,6 +58,32 @@ export async function searchStudentRecipient(fullName: string): Promise<any> {
     });
 }
 
+
+export async function searchStudentYearbookStatus(fullName: string): Promise<any> {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/search-yearbook`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                search: fullName
+            })
+        });
+
+        const { searchResults, error } = await response.json();
+
+        if (error) {
+            console.log(error);
+            return;
+        }
+
+        return searchResults;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 export async function searchStudentYearbookPhotoStatus(fullName: string): Promise<any> {
     try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/search-yearbook-photo`, {
@@ -105,6 +131,6 @@ export async function searchStudentSolicitationStatus(fullName: string, course: 
         return searchResults;
     } catch (error) {
         console.log(error);
-        
+
     }
 }

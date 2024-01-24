@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { index, statusYearbookUpdate, yearbookReleased, statusYearbookPhotosUpdate, searchStudentYearbookPhoto } from "../controllers/yearbook";
+import { index, statusYearbookUpdate, yearbookReleased, statusYearbookPhotosUpdate, searchStudentYearbookPhoto, searchStudentYearbook } from "../controllers/yearbook";
 const router = Router();
 
 // GET
@@ -7,10 +7,11 @@ router.get("/", index);
 
 // POST
 router.post("/search-yearbook-photo", searchStudentYearbookPhoto);
+router.post("/search-yearbook", searchStudentYearbook);
 router.post("/yearbook-released", yearbookReleased);
 
 // PUT
 router.put("/:status/:userID/status-update", statusYearbookPhotosUpdate);
-router.put("/:status/:yearbookID/status-update-yearbook", statusYearbookUpdate);
+router.put("/status-update-yearbook", statusYearbookUpdate);
 
 export default router;

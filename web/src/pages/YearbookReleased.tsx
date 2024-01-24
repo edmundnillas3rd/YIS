@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import { generateYearRange } from "../utilities/generateYearRange";
 import YearbookReleasedModal from "../components/YearbookRelease/YearbookReleasedModal";
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
-import { searchStudentSolicitationStatus } from "../utilities/students";
+import { searchStudentSolicitationStatus, searchStudentYearbookStatus } from "../utilities/students";
 
 export default function () {
 
@@ -46,9 +46,15 @@ export default function () {
                 setYearGraduated(years[0].toString());
             }
 
+            console.log(yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item })));
+            
+
             setCourses(coursesData.courses);
             setStatuses(yearbookData.yearbookStatuses);
             setYearbooks(yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item })));
+            setDatas({ 
+                filteredData: yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }))
+            });
         })();
     }, []);
 
@@ -151,7 +157,7 @@ export default function () {
     const onSearchSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        const data = await searchStudentSolicitationStatus(search, course);
+        const data = await searchStudentYearbookStatus(search);
         const filteredData = data.map(({ firstName, middleName, lastName, ...attr }: any) => ({ uuid: uuid(), ...attr }));
         setDatas({
             filteredData
@@ -167,12 +173,20 @@ export default function () {
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
+        setDatas({ 
+            filteredData: yearbooks.filter((item: any) => {
+                const formattedDate = new Date(item['dateReleased']);
+                return formattedDate.getFullYear() === Number.parseInt(target.value) as any;
+            })
+        });
 
     };
 
     const onClick = async (data: any) => {
-        setDisplayYearbookModal(true);
+        console.log(data);
+        
         setCurrentNode(data);
+        setDisplayYearbookModal(true);
     };
 
     const onClose = async () => {
@@ -189,7 +203,7 @@ export default function () {
                 data={currentNode}
                 data2={statuses}
             />
-            <Container>
+            {/* <Container>
                 <form
                     onSubmit={onSubmit}
                     method="POST"
@@ -302,7 +316,7 @@ export default function () {
                         <Button onClick={onSubmit}>Submit</Button>
                     </section>
                 </form>
-            </Container>
+            </Container> */}
             <Container>
                 <form
                     onSubmit={onSearchSubmit}
@@ -328,8 +342,8 @@ export default function () {
             </Container>
 
             <Container>
-                {yearbooks && (
-                    <Table columns={yearbookReleasedHeaders} datas={yearbooks} onClickCallback={onClick}
+                {datas?.filteredData && (
+                    <Table columns={yearbookReleasedHeaders} datas={datas.filteredData} onClickCallback={onClick}
                     />
                 )
                 }
