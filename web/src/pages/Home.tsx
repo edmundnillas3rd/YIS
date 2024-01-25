@@ -95,11 +95,11 @@ export default function Main() {
                 <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
                     COLLEGES
                 </Selection>
-                <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-preview" callbackFn={callbackFn}>
+                {/* <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-preview" callbackFn={callbackFn}>
                     YEARBOOK PREVIEW
-                </Selection>
+                </Selection> */}
 
-                {currentUser && currentUser['role'] === "ADMIN" && (
+                {currentUser && (currentUser['role'] === "CO-ADMIN" || currentUser['role'] === "ADMIN") && (
                     <>
                         <section className="flex flex-col justify-start gap-2 w-full p-5 font-bold">
                             <p>ADMIN & STAFF</p>
@@ -119,12 +119,16 @@ export default function Main() {
                             YEARBOOK RELEASED
                             <p className="font-bold text-slate-500">(Please get the claim stub)</p>
                         </Selection>
-                        <Selection index={5} src="/assets/yearbook-2.png" url="/admin/settings" callbackFn={callbackFn} disabled={false}>
-                            SETTINGS
-                        </Selection>
+
 
                     </>
                 )}
+                {currentUser && currentUser['role'] === "ADMIN" && (
+                    <Selection index={5} src="/assets/yearbook-2.png" url="/admin/settings" callbackFn={callbackFn} disabled={false}>
+                        SETTINGS
+                    </Selection>
+                )
+                }
             </section>
         </article>
     );

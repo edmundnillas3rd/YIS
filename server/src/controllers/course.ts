@@ -4,10 +4,13 @@ import { query } from "../services/mysqldb";
 export async function index(req: Request, res: Response) {
     const courses = await query(`
         SELECT 
-        course_id AS id, 
-        course_name AS name,
-        course_abbreviation AS abbreviation
-        FROM course
+        c.course_id AS id, 
+        c.course_name AS name,
+        c.course_abbreviation AS abbreviation,
+        coll.college_acronym AS acronym
+        FROM course c
+        INNER JOIN college coll
+        ON c.college_id = coll.college_id
     `);
 
     const departments = await query(`
@@ -22,6 +25,62 @@ export async function index(req: Request, res: Response) {
         courses: courses.rows,
         departments: departments.rows
     });
+}
+
+export async function addCourse(req: Request, res: Response) {
+
+    const {
+        name,
+        abbreviation,
+        deparment
+    } = req.body;
+
+    await query(`
+        INSERT INTO course (
+            course_id,
+            college_id,
+            course_name,
+            course_abbreviation
+        ) VALUES (
+            UUID(),
+            ?,
+            ?,
+            ?
+        )
+    `, [
+        deparment,
+        name,
+        abbreviation
+    ])
+
+    res.status(200).end();
+}
+
+export async function updateCourse(req: Request, res: Response) {
+    const {
+        id,
+        name,
+        abbreviation,
+        department
+
+    } = req.body;
+    await query(`
+        UPDATE course
+        SET college_id = ?,
+        course_name = ?,
+        course_abbreviation = ?
+        WHERE course_id = ?
+    `, [department, name, abbreviation, id])
+    res.status(200).end();
+}
+
+export async function deleteCourse(req: Request, res: Response) {
+    const { id } = req.params;
+    await query(`
+        DELETE FROM course
+        WHERE course_id = ?
+    `, [id])
+    res.status(200).end();
 }
 
 export async function addDepartment(req: Request, res: Response) {
@@ -44,7 +103,9 @@ export async function addDepartment(req: Request, res: Response) {
     `, [
         name, 
         acronym
-    ])
+    ]);
+
+    res.status(200).end();
 }
 
 export async function updateDepartment(req: Request, res: Response) {

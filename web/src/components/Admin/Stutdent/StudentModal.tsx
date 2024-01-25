@@ -36,8 +36,10 @@ export default function ({
             setYearGraduated(data['yearGraduated']);
             setSchoolID(data['schoolID']);
 
-            const foundCourse = data2.find((c: any) => c.name === data['course']);
+            const foundCourse = data2.find((c: any) => c['abbreviation'] === data['course']);
 
+            console.log(foundCourse, data2, data);
+            
             setCourse(foundCourse['id']);
             setCourses(data2);
         }
@@ -180,7 +182,7 @@ export default function ({
                 />
                 <section className="flex flex-row justify-end gap-1">
                     <Button onClick={onDelete}>Delete</Button>
-                    <Button onClickc={onSubmit}>Submit</Button>
+                    <Button onClick={onSubmit}>Submit</Button>
                 </section>
             </section>
 

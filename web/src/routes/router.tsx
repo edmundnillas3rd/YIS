@@ -15,6 +15,7 @@ import { UploadFile } from "../components/Admin/";
 import Student from "../components/Admin/Student";
 import Staff from "../components/Admin/Staff";
 import Department from "../components/Admin/Department";
+import Course from "../components/Admin/Course";
 
 const router = createBrowserRouter([
     {
@@ -91,11 +92,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "manage-departments",
-                        element: <Department/>
+                        element: <Department />
                     },
                     {
                         path: "manage-courses",
-                        element: <></>
+                        element: <Course />
                     }
                 ]
             }
