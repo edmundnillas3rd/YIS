@@ -10,8 +10,13 @@ export default function ({
     data2
 }: ModalProps) {
 
-    const [statuses, setStatuses] = useState([]);
+    const [statuses, setStatuses] = useState({
+        yearbookStatuses: [],
+        yearbookPaymentStatuses: []
+    });
     const [status, setStatus] = useState<string>("");
+    const [amount, setAmount] = useState<string>("");
+    const [paymentStatus, setPaymentStatus] = useState<string>("");
     const [currentStatus, setCurrentStatus] = useState<string>("");
     const [yearbookID, setYearbookID] = useState<string>("");
     const [date, setDate] = useState<string>("");
@@ -24,14 +29,25 @@ export default function ({
         if (data && data2) {
             setYearbookID(data['id']);
             setStatuses(data2);
+            setStatuses({
+                yearbookStatuses: data2['yearbookStatuses'],
+                yearbookPaymentStatuses: data2['yearbookPaymentStatuses']
+            });
 
-            const foundStatus = data2.find((status: any) => status.name === data['yearbookStatus']);
+            console.log(data);
+            
+
+            const foundStatus = data2['yearbookStatuses'].find((status: any) => status['name'] === data['yearbookStatus']);
+            const foundPaymentStatus = data2['yearbookPaymentStatuses'].find((status: any) => status['name'] === data['paymentStatus']);
+            
+            setPaymentStatus(foundPaymentStatus['id']);
             setStatus(foundStatus['id']);
             setDate(data['dateReleased']);
             setCareOf(data['careOf']);
-            setRelation(data['careOfRelation'])
+            setRelation(data['careOfRelation']);
+            setAmount(data['fullPayment']);
 
-            if (data?.yearbookStatus) {
+            if (data?.yearbookStatus && data?.paymentStatus) {
                 setCurrentStatus(data.yearbookStatus);
             }
 
@@ -43,7 +59,9 @@ export default function ({
 
         const data = {
             yearbookID,
+            amount,
             status,
+            paymentStatus,
             date,
             careOf,
             relation
@@ -71,8 +89,17 @@ export default function ({
     const onChange = async (event: SyntheticEvent) => {
         const target = event.target as HTMLInputElement;
         switch (target.name) {
+            case "amount":
+                setAmount(target.value);
+                break;
             case "status":
+                console.log(`Statuses ${target.value}`);
                 setStatus(target.value);
+                break;
+            case "paymentStatus":
+                console.log(`Payment Statuses ${target.value}`);
+
+                setPaymentStatus(target.value);
                 break;
             case "dateReleased":
                 setDate(target.value);
@@ -100,11 +127,25 @@ export default function ({
                     </section>
                     <form method="PUT" onSubmit={onSubmitHandler}>
                         <Dropdown
-                            label="Status"
+                            label="STATUS"
                             name="status"
-                            datas={statuses}
+                            datas={statuses.yearbookStatuses}
                             value={status}
                             onChange={onChange}
+                        />
+                         <Dropdown
+                            label="PAYMENT STATUS"
+                            name="paymentStatus"
+                            datas={statuses.yearbookPaymentStatuses}
+                            value={paymentStatus}
+                            onChange={onChange}
+                        />
+                         <Input
+                            title="FULL PAYMENT"
+                            id="amount"
+                            pattern={"\\d+"}
+                            onChange={onChange}
+                            value={amount}
                         />
                         <Input
                             title="DATE RELEASED"

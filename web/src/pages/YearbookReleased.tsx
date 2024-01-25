@@ -16,7 +16,7 @@ export default function () {
     const [displayYearbookModal, setDisplayYearbookModal] = useState<boolean>(false);
     const [courses, setCourses] = useState<string>("");
     const [yearbooks, setYearbooks] = useState([]);
-    const [statuses, setStatuses] = useState([]);
+    const [statuses, setStatuses] = useState({});
     const [errMessage, setErrMessage] = useState<string>("");
 
     const [firstName, setFirstName] = useState<string>("");
@@ -46,11 +46,12 @@ export default function () {
                 setYearGraduated(years[0].toString());
             }
 
-            console.log(yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item })));
-            
-
             setCourses(coursesData.courses);
-            setStatuses(yearbookData.yearbookStatuses);
+            setStatuses({
+                yearbookStatuses: yearbookData.yearbookStatuses,
+                yearbookPaymentStatuses: yearbookData.yearbookPaymentStatuses
+
+            });
             setYearbooks(yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item })));
             setDatas({ 
                 filteredData: yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }))
@@ -148,6 +149,8 @@ export default function () {
     const yearbookReleasedHeaders = [
         "NAME",
         "COURSE",
+        "FULL PAYMENT",
+        "YEARBOOK PAYMENT STATUS",
         "YEARBOOK STATUS",
         "DATE RELEASED",
         "CARE OF",
@@ -183,7 +186,6 @@ export default function () {
     };
 
     const onClick = async (data: any) => {
-        console.log(data);
         
         setCurrentNode(data);
         setDisplayYearbookModal(true);
