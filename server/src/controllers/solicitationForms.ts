@@ -73,9 +73,20 @@ export async function index(req: Request, res: Response) {
         SELECT solicitation_returned_status_id AS id, status_name AS name FROM solicitation_returned_status
     `);
 
+    const unpaidStudents = await query(`
+        SELECT COUNT(*) as remainingStudents
+        FROM solicitation_form_raw sfr
+        LEFT JOIN solicitation_returned_status srs
+        ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
+        LEFT JOIN solicitation_payment_status sps
+        ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
+        WHERE srs.status_name = 'UNRETURNED' AND sps.status_name = 'UNPAID'
+    `);
+
     res.status(200).json({
         solis: rows,
-        statuses: statusResults.rows
+        statuses: statusResults.rows,
+        remainingUnpaid: unpaidStudents.rows.length > 0 ? unpaidStudents.rows[0]['remainingStudents'] : 0
     });
 }
 
@@ -121,8 +132,55 @@ export async function returnSolicitation(req: Request, res: Response) {
     });
 }
 
-// POST
+export async function downloadExcelSheet(req: Request, res: Response) {
+    const collegeDepartments = await query(`
+        SELECT 
+        c.college_id AS id, 
+        c.college_acronym AS college 
+        FROM college c
+    `);
 
+    const students = await query(`
+        SELECT
+        CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, ''), ' ', COALESCE(sfr.suffix, '')) AS 'FULL NAME',
+        soli_numbers AS "SOLI #'S",
+        coll.college_acronym AS COLLEGE,
+        c.course_abbreviation AS COURSE
+        FROM solicitation_form_raw sfr
+        INNER JOIN course c
+        ON sfr.course = c.course_id
+        INNER JOIN college coll
+        ON c.college_id = coll.college_id
+        LEFT JOIN solicitation_returned_status srs
+        ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
+        LEFT JOIN solicitation_payment_status sps
+        ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
+        WHERE srs.status_name = 'UNRETURNED' AND sps.status_name = 'UNPAID'
+    `);
+
+    const solicitationWorkbook = XLSX.utils.book_new();
+
+    collegeDepartments.rows.forEach((department: any) => {
+        const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
+        
+        const sheet = XLSX.utils.json_to_sheet(s);
+        XLSX.utils.book_append_sheet(
+            solicitationWorkbook,
+            sheet,
+            department.college
+        )
+    });
+
+    const buf = XLSX.write(solicitationWorkbook, {
+        type: "buffer",
+        bookType: "xlsx"
+    });
+
+    res.attachment("unpaid-unreturned-solis.xlsx");
+    res.status(200).end(buf);
+}
+
+// POST
 export async function searchSolicitationForm(req: Request, res: Response) {
     const { search, course } = req.body;
 
@@ -573,7 +631,7 @@ export async function uploadData(req: Request, res: Response) {
             null,
             typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
             UUID
-        ])
+        ]);
     });
 
     res.status(200).end();
@@ -626,23 +684,23 @@ export async function solicitationUpdate(req: Request, res: Response) {
             unreturned_solis = NULLIF(?, '')
             WHERE solicitation_form_raw_id = ?
         `, [
-            status, 
-            firstName,
-            middleName,
-            familyName,
-            suffix,
-            careOf,
-            relation,
-            formattedDate, 
-            paymentAmount, 
-            paymentStatus, 
-            ornumber,
-            lostOrNumber,
-            soliNumber, 
-            returnedSolis, 
-            unreturnedSolis, 
-            id
-        ]);
+        status,
+        firstName,
+        middleName,
+        familyName,
+        suffix,
+        careOf,
+        relation,
+        formattedDate,
+        paymentAmount,
+        paymentStatus,
+        ornumber,
+        lostOrNumber,
+        soliNumber,
+        returnedSolis,
+        unreturnedSolis,
+        id
+    ]);
 
     res.status(200).end();
 }

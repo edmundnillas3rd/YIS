@@ -187,7 +187,11 @@ export default function ({
                     className="flex flex-col gap-2 mt-5"
                 >
                     <div className="flex flex-row justify-between items-center gap-1">
-
+                        <section className="flex flex-col gap-1">
+                            <p className="text-gray-600">
+                                <span className="font-bold text-black-600">NOTE:</span> IN CASE OF LOSS, THEY MUST PAY PHP 200 FEE
+                            </p>
+                        </section>
                         <h3 className="font-bold">
                             Soli #'s {soli['soliNumber']}
                         </h3>

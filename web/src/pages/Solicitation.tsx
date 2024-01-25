@@ -1,5 +1,6 @@
 import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
+import { read, writeFileXLSX } from "xlsx";
 import {
     Button,
     Dropdown,
@@ -24,6 +25,7 @@ export default function () {
     });
     const [statuses, setStatuses] = useState({});
     const [currentNode, setCurrentNode] = useState(null);
+    const [remainingStudents, setRemainingStudents] = useState<string>();
 
     // Student
     const [firstName, setFirstName] = useState<string>("");
@@ -64,6 +66,7 @@ export default function () {
                     ...attr
                 }));
 
+                setRemainingStudents(soli['remainingUnpaid']);
                 setSolis(formattedData);
                 setDatas({
                     rawData: soli.solis,
@@ -252,6 +255,25 @@ export default function () {
         }
     };
 
+    const onDownloadHandler = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/download-sheet`, {
+                method: "GET",
+                credentials: "include"
+            })
+            const buffer = await response.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+
+            const workbook = read(bytes);
+            writeFileXLSX(workbook, "unpaid-unreturned-solis.xlsx");
+            
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const attr = [
         "COURSE",
         "NAME",
@@ -278,7 +300,7 @@ export default function () {
                 data={currentNode}
                 data2={statuses}
             />
-            <Container>
+            {/* <Container>
                 <form
                     className="flex flex-col gap-2"
                     method="POST"
@@ -373,12 +395,9 @@ export default function () {
                         </Button>
                     </section>
                 </form>
-            </Container>
+            </Container> */}
             <Container>
-                <form
-                    onSubmit={onSearchSubmit}
-                    method="POST"
-                    className="flex flex-row gap-5"
+                <section
                 >
                     <Input
                         placeholder="Search the name of student"
@@ -386,8 +405,13 @@ export default function () {
                         onChange={onChangeSearch}
                         width="flex-auto"
                     />
-                    <section className="flex flex-row justify-end">
-                        <Button>Search</Button>
+                    <section className="flex flex-row justify-end items-center gap-2">
+                        <h1>
+                            Remaining unpaid and unreturned solis:
+                        <span  className="font-bold"> {remainingStudents}</span>
+                        </h1>
+                        <Button onClick={onDownloadHandler}>Download</Button>
+                        <Button onClick={onSearchSubmit}>Search</Button>
                     </section>
                     <Dropdown
                         label=""
@@ -395,8 +419,7 @@ export default function () {
                         datas={soliFilters}
                         onChange={onChangeFilter}
                     />
-                </form>
-
+                </section>
                 {datas?.filteredData ? (
                     <Table
                         columns={attr}
