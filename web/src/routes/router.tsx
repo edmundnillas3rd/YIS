@@ -14,6 +14,7 @@ import Settings from "../layouts/Settings";
 import { UploadFile } from "../components/Admin/";
 import Student from "../components/Admin/Student";
 import Staff from "../components/Admin/Staff";
+import Department from "../components/Admin/Department";
 
 const router = createBrowserRouter([
     {
@@ -87,6 +88,14 @@ const router = createBrowserRouter([
                     {
                         path: "manage-staff",
                         element: <Staff />
+                    },
+                    {
+                        path: "manage-departments",
+                        element: <Department/>
+                    },
+                    {
+                        path: "manage-courses",
+                        element: <></>
                     }
                 ]
             }

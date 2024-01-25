@@ -28,16 +28,20 @@ export default function () {
             >
                 MANAGE STAFF
             </Link>
-            {/* <section className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 3 ? 'bg-red-600 text-zinc-100' : ''}`}
+            <Link 
+                to="/admin/settings/manage-departments"
+                className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 3 ? 'bg-red-600 text-zinc-100' : ''}`}
                 onClick={e => setCurrentIndex(3)}
             >
-                <Link to="">Add College Department</Link>
-            </section>
-            <section className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 4 ? 'bg-red-600 text-zinc-100' : ''}`}
+                MANAGE COLLEGE DEPARTMENTS
+            </Link>
+            <Link 
+                to="/admin/settings/manage-courses"
+                className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 4 ? 'bg-red-600 text-zinc-100' : ''}`}
                 onClick={e => setCurrentIndex(4)}
             >
-                <Link to="">Add Course</Link>
-            </section> */}
+                MANAGE COLLEGE COURSES
+            </Link>
         </section>
     );
 }
