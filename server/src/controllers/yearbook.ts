@@ -37,6 +37,8 @@ export async function index(req: Request, res: Response) {
         SELECT yb.yearbook_id AS id, 
         CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, '')) AS fullName,
         c.course_abbreviation AS course,
+        yb.yearbook_full_payment AS fullPayment,
+        yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
@@ -48,6 +50,8 @@ export async function index(req: Request, res: Response) {
         ON sfr.course = c.course_id
         LEFT JOIN yearbook_status ybs
         ON yb.yearbook_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
     `);
 
     const yearbookPhotos = await query(`
@@ -63,7 +67,7 @@ export async function index(req: Request, res: Response) {
     `);
 
     const yearbookPaymentStatuses = await query(`
-        SELECT solicitation_payment_status_id AS id, solicitation_payment_status.status_name AS name FROM solicitation_payment_status
+        SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status
     `);
 
     res.status(200).json({
@@ -274,7 +278,9 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
 export async function statusYearbookUpdate(req: Request, res: Response) {
     const {
         yearbookID,
+        amount,
         status,
+        paymentStatus,
         date,
         careOf,
         relation
@@ -296,12 +302,16 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
     results = await query(`
         UPDATE yearbook
         SET yearbook_status_id = ?,
+        yearbook_full_payment = ?,
+        yearbook_payment_status_id = ?,
         yearbook_care_of = ?,
         yearbook_care_of_relation = ?,
         yearbook_date_released = ?
         WHERE yearbook_id = ?
     `, [
         status,
+        amount,
+        paymentStatus,
         careOf,
         relation,
         formattedDate,

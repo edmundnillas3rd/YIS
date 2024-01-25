@@ -594,10 +594,15 @@ export async function uploadData(req: Request, res: Response) {
             SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
         `);
 
+        const yearbookPaymenStatus = await query(`
+            SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'UNPAID'
+        `)
+
         await query(`
             INSERT INTO yearbook (
                 yearbook_id,
                 soli_form_id,
+                yearbook_payment_status_id,
                 yearbook_status_id,
                 yearbook_care_of,
                 yearbook_date_released
@@ -606,10 +611,12 @@ export async function uploadData(req: Request, res: Response) {
                 ?,
                 ?,
                 ?,
+                ?,
                 ?
             )
         `, [
             UUID,
+            typeof yearbookPaymenStatus.rows[0] === "undefined" ? null : yearbookPaymenStatus.rows[0]["id"],
             typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
             null,
             null
@@ -619,7 +626,7 @@ export async function uploadData(req: Request, res: Response) {
             INSERT INTO yearbook_photos (
                 yearbook_photos_id,
                 yearbook_photos_date_released,
-                yearbook_status_id,
+                yearbook_photos_status_id,
                 soli_form_id
             ) VALUES (
                 UUID(),
