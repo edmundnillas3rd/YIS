@@ -5,12 +5,12 @@ import StaffModel from "./Staff/StaffModal";
 
 export default function () {
 
-    const [firstName, setFirstName] = useState<string>();
-    const [middleName, setMiddleName] = useState<string>();
-    const [familyName, setFamilyName] = useState<string>();
-    const [suffix, setSuffix] = useState<string>();
-    const [email, setEmail] = useState<string>();
-    const [password, setPassword] = useState<string>();
+    const [firstName, setFirstName] = useState<string>("");
+    const [middleName, setMiddleName] = useState<string>("");
+    const [familyName, setFamilyName] = useState<string>("");
+    const [suffix, setSuffix] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
     const [staffs, setStaffs] = useState([]);
     const [rawData, setRawData] = useState([]);
 

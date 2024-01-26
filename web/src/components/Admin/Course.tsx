@@ -6,8 +6,8 @@ import CourseModal from "./Course/CourseModal";
 export default function () {
 
     const [courses, setCourses] = useState([]);
-    const [name, setName] = useState<string>();
-    const [abbreviation, setAbbreviation] = useState<string>();
+    const [name, setName] = useState<string>("");
+    const [abbreviation, setAbbreviation] = useState<string>("");
     const [currentNode, setCurrentNode] = useState<any>();
 
     const [departments, setDepartments] = useState();
@@ -38,7 +38,7 @@ export default function () {
     }, []);
 
     const attr = [
-        "NAME",
+        "FULL COURSE NAME",
         "ACRONYM",
         "DEPARTMENT"
     ];
@@ -108,7 +108,7 @@ export default function () {
                 <form method="POST" onSubmit={onSubmitHandler}>
                     <section className="flex flex-row gap-1">
                         <Input
-                            title="COURSE NAME"
+                            title="FULL COURSE NAME"
                             id="name"
                             onChange={onChange}
                         />

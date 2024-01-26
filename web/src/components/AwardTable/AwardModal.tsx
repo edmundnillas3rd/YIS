@@ -96,7 +96,7 @@ export default function ({
                     onChange={onChange}
                 />
                 <Input
-                    title="Award/ETC"
+                    title="Awards/(Place, Role, etc.)"
                     id="award-name"
                     onChange={onChange}
                 />

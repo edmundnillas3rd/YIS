@@ -126,14 +126,14 @@ export default function ({
         >
             <section className="flex flex-col gap-2">
                 <Input
-                    title="Award & Seminar"
+                    title="Award"
                     id="award-attended"
                     value={awardAttendedName}
                     onChange={onChangeHandler}
                     disabled={disable}
                 />
                 <Input
-                    title="Award/ETC"
+                    title="Awards/(Place, Role, etc.)"
                     id="award-name"
                     value={awardName}
                     onChange={onChangeHandler}

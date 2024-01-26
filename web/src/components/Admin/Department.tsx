@@ -6,8 +6,8 @@ import DepartmentModal from "./Department/DepartmentModal";
 export default function () {
 
     const [departments, setDepartments] = useState([]);
-    const [name, setName] = useState<string>();
-    const [acronym, setAcronym] = useState<string>();
+    const [name, setName] = useState<string>("");
+    const [acronym, setAcronym] = useState<string>("");
     const [currentNode, setCurrentNode] = useState<any>();
 
     const navigate = useNavigate();
@@ -76,7 +76,7 @@ export default function () {
             if (response.ok) {
                 navigate(0);
             } else {
-                console.log("error");
+                console.log("error");""
                 
             }
         } catch (error) {

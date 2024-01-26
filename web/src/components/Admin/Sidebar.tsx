@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 
 export default function () {
 
-    const [currentIndex, setCurrentIndex] = useState<Number>();
+    const [currentIndex, setCurrentIndex] = useState<Number>(0);
 
     return (
         <section className="flex flex-col gap-1 p-1">

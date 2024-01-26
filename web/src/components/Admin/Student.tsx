@@ -5,14 +5,14 @@ import StudentModal from "./Stutdent/StudentModal";
 
 export default function () {
 
-    const [firstName, setFirstName] = useState<string>();
-    const [middleName, setMiddleName] = useState<string>();
-    const [familyName, setFamilyName] = useState<string>();
-    const [suffix, setSuffix] = useState<string>();
-    const [schoolID, setSchoolID] = useState<string>();
-    const [yearGraduated, setYearGraduated] = useState<string>();
-    const [password, setPassword] = useState<string>();
-    const [course, setCourse] = useState<string>();
+    const [firstName, setFirstName] = useState<string>("");
+    const [middleName, setMiddleName] = useState<string>("");
+    const [familyName, setFamilyName] = useState<string>("");
+    const [suffix, setSuffix] = useState<string>("");
+    const [schoolID, setSchoolID] = useState<string>("");
+    const [yearGraduated, setYearGraduated] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [course, setCourse] = useState<string>("");
 
     const [courses, setCourses] = useState();
     const [students, setStudents] = useState([]);

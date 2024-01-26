@@ -93,17 +93,17 @@ export default function () {
                 familyName: currentUser.familyName,
                 middleName: currentUser.middleName,
                 suffix: currentUser.suffix
-            })
+            });
         }
-    }, [currentUser])
+    }, [currentUser]);
 
     const organizationHeaders = [
         "Organization"
     ];
 
     const awardHeaders = [
-        "Award",
-        "Award/ETC",
+        "Award Name",
+        "Awards/(Place, Role, etc.)",
         "Date Attended"
     ];
 
@@ -117,7 +117,7 @@ export default function () {
         const target = event.target as HTMLInputElement;
 
         console.log(target.value);
-        
+
         switch (target.name) {
             case "first-name":
                 setStudent((state: any) => ({
@@ -127,7 +127,7 @@ export default function () {
                 break;
             case "middleName":
                 console.log(target.value);
-                
+
                 setStudent((state: any) => ({
                     ...state,
                     middleName: target.value
@@ -230,7 +230,7 @@ export default function () {
         setLoading(true);
         setDisable(true);
         console.log(student);
-        
+
         if (student?.familyName && student?.firstName && student?.middleName) {
 
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/update-name`, {
@@ -300,8 +300,24 @@ export default function () {
             />
 
             <Container>
-                <section>
+                <section className="flex flex-row items-center justify-between">
                     <h3 className="font-bold mb-5">Student Information</h3>
+                    <section>
+                        <Toggle name="Edit" icon={<MdEdit />} onChange={onEditChange}>
+                            {(!confirmSave) && (
+                                <Button onClick={(e: any) => { setConfirmSave(true); }}>
+                                    Save
+                                    <FaSave />
+                                </Button>
+                            )}
+                            {confirmSave && (
+                                <Confirm
+                                    onConfirm={onClickSave}
+                                    onCancel={(e: any) => setConfirmSave(false)}
+                                />
+                            )}
+                        </Toggle>
+                    </section>
                 </section>
                 {student && (
                     <form
@@ -345,9 +361,9 @@ export default function () {
                                 min={3}
                                 max={45}
                                 required
-
+                                width="w-full"
                             />
-                            <p className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</p>
+                            <span className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</span>
                         </section>
                         <section className="flex flex-col gap-1 items-center">
                             <Input
@@ -359,52 +375,40 @@ export default function () {
                                 pattern={suffixRegex}
                                 min={3}
                                 max={45}
+                                width="w-full"
 
                             />
                             <p className="text-zinc-500 font-bold">EX. SR, JR, I, II, III</p>
                         </section>
                     </form>
                 )}
-                <section>
-                    <Toggle name="Edit" icon={<MdEdit />} onChange={onEditChange}>
-                        {(!confirmSave) && (
-                            <Button onClick={(e: any) => { setConfirmSave(true); }}>
-                                Save
-                                <FaSave />
-                            </Button>
-                        )}
-                        {confirmSave && (
-                            <Confirm
-                                onConfirm={onClickSave}
-                                onCancel={(e: any) => setConfirmSave(false)}
-                            />
-                        )}
-                    </Toggle>
-                </section>
-                <section className="flex flex-row gap-1 justify-end items-center mb-5">
-                    <Button
-                        onClick={onClickPreview}
-                    >
-                        Preview
-                        <FaEye />
-                    </Button>
-                </section>
+
                 {/* Organization */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-                    <Button onClick={onClickAddOrg}>Add Organization</Button>
+                    <section className="flex flex-row gap-1">
+                        <Button onClick={onClickAddOrg}>Add Organization</Button>
+                        <Button onClick={onClickAddAward}>Add Award</Button>
+                        <Button onClick={onClickAddSeminar}>Add Seminar</Button>
+                        <Button
+                            onClick={onClickPreview}
+                        >
+                            Preview
+                            <FaEye />
+                        </Button>
+                    </section>
                 </section>
                 {clubsData && <Table columns={organizationHeaders} datas={clubsData} onClickCallback={onClickOrganization} />}
                 {/* Awards */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-                    <Button onClick={onClickAddAward}>Add Award</Button>
+
                 </section>
                 {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
                 {/* Seminars */}
                 <section className="flex flex-row gap-1 justify-between items-center">
                     <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-                    <Button onClick={onClickAddSeminar}>Add Seminar</Button>
+
 
                 </section>
                 {seminarsData && <Table columns={seminarsHeaders} datas={seminarsData} onClickCallback={onClickSeminar} />}
