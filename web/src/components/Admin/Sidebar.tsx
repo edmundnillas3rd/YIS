@@ -43,9 +43,16 @@ export default function () {
                 MANAGE COLLEGE COURSES
             </Link>
             <Link 
-                to="/admin/settings/download-files"
+                to="/admin/settings/manage-clubs"
                 className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 5 ? 'bg-red-600 text-zinc-100' : ''}`}
                 onClick={e => setCurrentIndex(5)}
+            >
+                MANAGE CLUBS
+            </Link>
+            <Link 
+                to="/admin/settings/download-files"
+                className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer ${currentIndex === 6 ? 'bg-red-600 text-zinc-100' : ''}`}
+                onClick={e => setCurrentIndex(6)}
             >
                 DOWNLOAD FILES
             </Link>

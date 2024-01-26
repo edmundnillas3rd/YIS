@@ -112,7 +112,7 @@ export async function userPreview(req: Request, res: Response) {
 
     const seminarsRecognitions = seminars.rows.map((seminar: any) => (
         `${seminar.seminarName}, ${seminar.role}, ${seminar.seminarDateAttended}`
-    ))
+    ));
 
     const formatData = [...clubRecognitions, awardRecognitions, seminarsRecognitions];
 
@@ -241,6 +241,20 @@ export async function seminarUserAdd(req: Request, res: Response) {
     res.status(200).end();
 }
 
+export async function newClubAdd(req: Request, res: Response) {
+    const { name } = req.body;
+    await query(`
+        INSERT INTO club_organization (
+            club_organization_id,
+            club_organization_name
+        ) VALUES (
+            UUID(),
+            ?
+        )
+    `, [name]);
+    res.status(200).end();
+}
+
 // PUT
 export async function clubUserPositionUpdate(req: Request, res: Response) {
     const {
@@ -295,6 +309,22 @@ export async function clubUserSeminarUpdate(req: Request, res: Response) {
     res.status(200).end();
 }
 
+export async function clubUpdateInfo(req: Request, res: Response) {
+    const {
+        id,
+        name
+    } = req.body;
+
+
+    await query(`
+        UPDATE club_organization
+        SET club_organization_name = ?
+        WHERE club_organization_id = ?
+    `, [name, id]);
+
+    res.status(200).end();
+}
+
 // DELETE
 export async function clubUserRemove(req: Request, res: Response) {
     const { userID } = req.session;
@@ -317,5 +347,16 @@ export async function seminarUserRemove(req: Request, res: Response) {
     const { id } = req.params;
 
     const { rows } = await query("DELETE FROM seminar WHERE user_id = ? AND seminar_id = ?", [userID, id]);
+    res.status(200).end();
+}
+
+export async function clubDeleteInfo(req: Request, res: Response) {
+    const { id } = req.params;
+
+
+    await query(`
+        DELETE FROM club_organization
+        WHERE club_organization_id = ?
+    `, [id]);
     res.status(200).end();
 }
