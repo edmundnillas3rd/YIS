@@ -255,6 +255,21 @@ export async function newClubAdd(req: Request, res: Response) {
     res.status(200).end();
 }
 
+export async function newClubPosition(req: Request, res: Response) {
+    const { positionName } = req.body;
+
+    await query(`
+        INSERT INTO club_position (
+            club_position_id,
+            club_position_name
+        ) VALUES (
+            UUID(),
+            ?
+        )
+    `, [positionName]);
+    res.status(200).end();
+}
+
 // PUT
 export async function clubUserPositionUpdate(req: Request, res: Response) {
     const {
@@ -325,6 +340,20 @@ export async function clubUpdateInfo(req: Request, res: Response) {
     res.status(200).end();
 }
 
+export async function positionUpdateInfo(req: Request, res: Response) {
+    const {
+        id,
+        name
+    } = req.body;
+
+    await query(`
+        UPDATE club_position
+        SET club_position_name = ?
+        WHERE club_position_id = ?
+    `, [name, id]);
+    res.status(200).end();
+}
+
 // DELETE
 export async function clubUserRemove(req: Request, res: Response) {
     const { userID } = req.session;
@@ -358,5 +387,16 @@ export async function clubDeleteInfo(req: Request, res: Response) {
         DELETE FROM club_organization
         WHERE club_organization_id = ?
     `, [id]);
+    res.status(200).end();
+}
+
+export async function positionDeleteInfo(req: Request, res: Response) {
+    const { id } = req.params;
+
+    await query(`
+        DELETE FROM club_position
+        WHERE club_position_id = ?
+    `, [id]);
+
     res.status(200).end();
 }

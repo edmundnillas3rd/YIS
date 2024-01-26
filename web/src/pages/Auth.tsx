@@ -114,7 +114,7 @@ export default function Auth() {
                     </figure>
                 </section>
             </section>
-            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III .</p></section>
+            <section className="text-center text-stone-500 w-full p-4"><p>Website built by Edmund Nillas III. <br/> In collaboration with ACSS</p></section>
         </section>
     );
 }
