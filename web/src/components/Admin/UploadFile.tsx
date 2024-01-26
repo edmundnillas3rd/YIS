@@ -1,14 +1,16 @@
 import { SyntheticEvent, useState } from "react";
-import { Button, Input } from "../Globals";
-import { useNavigate } from "react-router-dom";
+import { Button, Input, Spinner } from "../Globals";
 
 export default function () {
 
     const [file, setFile] = useState<string | Blob>("");
-    const navigate = useNavigate();
+    const [userFile, setUserFile] = useState<string | Blob>("");
+    const [loading1, setLoading1] = useState<boolean>(false);
+    const [loading2, setLoading2] = useState<boolean>(false);
 
-    const onSubmitHandler = (event: SyntheticEvent) => {
+    const onSubmitSoliHandler = (event: SyntheticEvent) => {
         event.preventDefault();
+        setLoading1(true);
         const formData = new FormData();
 
         formData.append("solicitation-sheet", file);
@@ -23,36 +25,120 @@ export default function () {
 
                 if (response.ok) {
                     console.log("Sucessfully uploaded file");
-                    navigate(0);
                 }
 
             } catch (error) {
                 console.error(error);
             }
         })();
+        setLoading1(false);
+    };
 
+    const onSubmitUserHandler = (event: SyntheticEvent) => {
+        event.preventDefault();
+        setLoading2(true);
+        const formData = new FormData();
+
+        formData.append("graduating-students-sheet", userFile);
+
+        (async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/upload-users`, {
+                    method: "POST",
+                    credentials: "include",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    console.log("Sucessfully uploaded file");
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+        setLoading2(false);
     };
 
     return (
-        <form
-            method="POST"
-            encType="multipart/form-data"
-            onSubmit={onSubmitHandler}
-        >
-            <h3 className="font-bold">
-                Upload the spreadsheet/excel file containing all solicitations form that were released.
-            </h3>
-            <Input
-                type="file"
-                name="solicitation-sheet"
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                onChange={(event: any) => {
-                    event.preventDefault();
-                    console.log(event.target.files);
-                    setFile(event.target.files[0]);
-                }}
-            />
-            <Button>Upload</Button>
-        </form>
+        <section className="flex flex-col gap-3 p-2">
+
+            <form
+                method="POST"
+                encType="multipart/form-data"
+                onSubmit={onSubmitSoliHandler}
+            >
+                <h3 className="font-bold">
+                    Upload the spreadsheet/excel file containing all solicitations form that were released.
+                </h3>
+                <Input
+                    type="file"
+                    name="solicitation-sheet"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    onChange={(event: any) => {
+                        event.preventDefault();
+                        console.log(event.target.files);
+                        setFile(event.target.files[0]);
+                    }}
+                    width="w-1/2"
+                />
+                <Button>{!loading1 ?
+                    "Upload" : (
+                        <Spinner />
+                    )
+                }</Button>
+            </form>
+            <form
+                method="POST"
+                encType="multipart/form-data"
+                onSubmit={onSubmitUserHandler}
+            >
+                <h3 className="font-bold">
+                    Upload the spreadsheet/excel file containing all graduating students from the registrar.
+                </h3>
+                <Input
+                    type="file"
+                    name="graduating-students-sheet"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    onChange={(event: any) => {
+                        event.preventDefault();
+                        console.log(event.target.files);
+                        setUserFile(event.target.files[0]);
+                    }}
+                    width="w-1/2"
+                />
+                <Button>{!loading2 ?
+                    "Upload" : (
+                        <Spinner />
+                    )
+                }</Button>
+            </form>
+            <form
+                method="POST"
+                encType="multipart/form-data"
+                onSubmit={onSubmitUserHandler}
+            >
+                <h3 className="font-bold">
+                    Upload the spreadsheet/excel file containing all data for the yearbook-pictures.
+                </h3>
+                <Input
+                    type="file"
+                    name="yearbook-picture-sheet"
+                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    onChange={(event: any) => {
+                        event.preventDefault();
+                        console.log(event.target.files);
+                        setFile(event.target.files[0]);
+                    }}
+                    width="w-1/2"
+                />
+                <Button>{!loading2 ?
+                    "Upload" : (
+                        <Spinner />
+                    )
+                }</Button>
+            </form>
+        </section>
+
     );
 }

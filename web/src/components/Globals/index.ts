@@ -9,3 +9,4 @@ export { default as Modal } from "./Modal";
 export { default as Table } from "./Table";
 export { default as Toggle } from "./Toggle";
 export { default as Confirm } from "./Confirm";
+export { default as Pagination } from "./Pagination";
