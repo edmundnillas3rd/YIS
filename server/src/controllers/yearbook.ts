@@ -57,12 +57,17 @@ export async function index(req: Request, res: Response) {
 
     const yearbookPhotos = await query(`
         SELECT ybp.yearbook_photos_id AS id, 
-        CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName,
+        ybp.yearbook_photos_full_name AS fullName,
+        ybp.yearbook_photos_full_payment as fullPayment,
+        yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
+        yps.status_name AS paymentStatus,
         COALESCE(DATE_FORMAT(ybp.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased
         FROM yearbook_photos ybp
         LEFT JOIN yearbook_status ybs
         ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON ybp.yearbook_photos_payment_status_id = yps.yearbook_payment_status_id
     `);
 
     const yearbookPaymentStatuses = await query(`
@@ -299,13 +304,13 @@ export async function downloadData(req: Request, res: Response) {
     const yearbookWorkbook = XLSX.utils.book_new();
     collegeDepartments.rows.forEach((department: any) => {
         const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
-        
+
         const sheet = XLSX.utils.json_to_sheet(s);
         XLSX.utils.book_append_sheet(
             yearbookWorkbook,
             sheet,
             department.college
-        )
+        );
     });
 
     const buf = XLSX.write(yearbookWorkbook, {
@@ -461,6 +466,56 @@ export async function yearbookReleased(req: Request, res: Response) {
     const yearbookResults = await query(`
         INSERT INTO yearbook VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)
     `, [YearbookUUID, yearbookStatusID, CareOfUUID, userID]);
+    res.status(200).end();
+}
+
+export async function yearbookPhotosUpload(req: Request, res: Response) {
+
+    if (!req.file)
+        return res.status(404).json({ error: "No file found" });
+
+    let workbook = XLSX.readFile(req.file.path);
+    let worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false }).forEach(async (yearbookPhotos: any) => {
+        console.log(yearbookPhotos);
+
+        const genUUID = await query(`SELECT UUID()`);
+        const UUID = genUUID.rows[0]['UUID()'];
+
+        const paymentStatus = await query(`
+            SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'FULLY-PAID'
+        `)
+
+        const yearbookStatus = await query(`
+            SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
+        `)
+
+        /// NOTE (EDMUND): ambot ngano in ani ang pagka format sa AMOUNT nga header nga naay spacing around sa beginning and end
+        // palihog lang kung kinsa man makabalo og sanitize og excel paki remove ko ato tapos revise ning code nga mobasa
+        // nga di na kailangan mag spacing para ma uniform ang format );
+        await query(`
+            INSERT INTO yearbook_photos (
+                yearbook_photos_id,
+                yearbook_photos_full_name,
+                yearbook_photos_full_payment,
+                yearbook_photos_payment_status_id,
+                yearbook_photos_status_id
+            ) VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+        `, [
+            UUID,
+            typeof yearbookPhotos["SL NAME"] === "undefined" ? null : yearbookPhotos["SL NAME"],
+            // Kani pasabot nako tong sa itaas nga comment
+            typeof yearbookPhotos[" AMOUNT "] === "undefined" ? null : yearbookPhotos[" AMOUNT "],
+            paymentStatus.rows[0]['id'],
+            yearbookStatus.rows[0]['id']
+        ])
+    });
     res.status(200).end();
 }
 

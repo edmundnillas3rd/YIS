@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { index, statusYearbookUpdate, yearbookReleased, statusYearbookPhotosUpdate, searchStudentYearbookPhoto, searchStudentYearbook, downloadYearbook, downloadData } from "../controllers/yearbook";
+
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
+
+import { index, statusYearbookUpdate, yearbookReleased, statusYearbookPhotosUpdate, searchStudentYearbookPhoto, searchStudentYearbook, downloadYearbook, downloadData, yearbookPhotosUpload } from "../controllers/yearbook";
 const router = Router();
 
 // GET
@@ -11,6 +15,7 @@ router.get("/download-unpaid-unclaimed-sheet", downloadData);
 router.post("/search-yearbook-photo", searchStudentYearbookPhoto);
 router.post("/search-yearbook", searchStudentYearbook);
 router.post("/yearbook-released", yearbookReleased);
+router.post("/upload-yearbook-photos", upload.single("yearbook-photos-sheet"), yearbookPhotosUpload);
 
 // PUT
 router.put("/status-update-photos", statusYearbookPhotosUpdate);

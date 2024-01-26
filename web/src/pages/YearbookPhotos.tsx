@@ -6,7 +6,7 @@ import { searchStudentYearbookPhotoStatus } from "../utilities/students";
 
 export default function () {
 
-    const [students, setStudents] = useState([]);
+    const [students, setStudents] = useState(null);
     const [statuses, setStatuses] = useState([]);
     const [currentNode, setCurrentNode] = useState(null);
     const [displayStatus, setDisplayStatus] = useState<boolean>(false);
@@ -19,24 +19,25 @@ export default function () {
             const yearbookRes = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks`);
             const [userData, yearbookData] = await Promise.all([userRes.json(), yearbookRes.json()]);
 
-            if (userData && yearbookData) {
-                const { yearbookPhotos, yearbookStatuses } = yearbookData;
+            const { yearbookPhotos, yearbookStatuses } = yearbookData;
 
-                const formattedData = yearbookPhotos.map((yearbook: any) => ({ uuid: uuid(), ...yearbook }));
+            const formattedData = yearbookPhotos.map((yearbook: any) => ({ uuid: uuid(), ...yearbook }));
+            console.log(yearbookPhotos);
+            
+
+            setStudents(formattedData);
 
 
-                setStudents(formattedData);
+            const formattedStatusData = yearbookStatuses.map((statuses: any) => ({ uuid: uuid(), ...statuses }));
 
-
-                const formattedStatusData = yearbookStatuses.map((statuses: any) => ({ uuid: uuid(), ...statuses }));
-
-                setStatuses(formattedStatusData);
-            }
+            setStatuses(formattedStatusData);
         })();
     }, []);
 
     const attr = [
         "FULL NAME",
+        "FULL PAYMENT",
+        "PAYMENT STATUS",
         "YEARBOOK PHOTOS STATUS",
         "DATE RELEASED"
     ];
@@ -55,8 +56,8 @@ export default function () {
         event.preventDefault();
 
         const data = await searchStudentYearbookPhotoStatus(search);
-        setStudents(data.map((student: any) => ({ uuid: uuid(), ...student})));
-    }
+        setStudents(data.map((student: any) => ({ uuid: uuid(), ...student })));
+    };
 
     const onChange = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -68,7 +69,7 @@ export default function () {
                 setSearch(target.value);
                 break;
         }
-    }
+    };
 
     return (
         <>
@@ -89,12 +90,15 @@ export default function () {
                     />
                     <Button type="submit">Search</Button>
                 </form>
-                <Table
-                    columns={attr}
-                    datas={students}
-                    buttonRowName="View"
-                    onClickCallback={onClick}
-                />
+                {students && (
+                    <Table
+                        columns={attr}
+                        datas={students}
+                        buttonRowName="View"
+                        onClickCallback={onClick}
+                    />
+                )
+                }
             </Container>
         </>
     );
