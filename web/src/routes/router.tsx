@@ -16,6 +16,7 @@ import Student from "../components/Admin/Student";
 import Staff from "../components/Admin/Staff";
 import Department from "../components/Admin/Department";
 import Course from "../components/Admin/Course";
+import Download from "../components/Admin/Download";
 
 const router = createBrowserRouter([
     {
@@ -97,6 +98,10 @@ const router = createBrowserRouter([
                     {
                         path: "manage-courses",
                         element: <Course />
+                    },
+                    {
+                        path: "download-files",
+                        element: <Download />
                     }
                 ]
             }

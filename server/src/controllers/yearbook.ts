@@ -254,11 +254,11 @@ export async function downloadYearbook(req: Request, res: Response) {
     console.log(department['acronym']);
     
 
-    const buffer = Packer.toBuffer(doc);
+    const blob = await Packer.toBlob(doc);
 
     res.attachment(`${department['acronym']}.docx`);
 
-    res.status(200).end(buffer);
+    res.status(200).end(blob);
 }
 
 export async function yearbookReleased(req: Request, res: Response) {
