@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import * as XLSX from 'xlsx';
 
 import { Request, Response } from "express";
 import { query } from "../services/mysqldb";
@@ -73,11 +73,26 @@ export async function index(req: Request, res: Response) {
         SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status
     `);
 
+    const unpaidStudents = await query(`
+        SELECT COUNT(*) as remainingStudents
+            FROM yearbook yb
+            LEFT JOIN solicitation_form_raw sfr
+            ON yb.soli_form_id = sfr.solicitation_form_raw_id
+            LEFT JOIN course c
+            ON sfr.course = c.course_id
+            LEFT JOIN yearbook_status ybs
+            ON yb.yearbook_status_id = ybs.yearbook_status_id
+            LEFT JOIN yearbook_payment_status yps
+            ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
+            WHERE yps.status_name = 'UNPAID'
+    `);
+
     res.status(200).json({
         yearbookStatuses: yearbookStatus.rows,
         yearbookPhotos: yearbookPhotos.rows,
         yearbook: yearbook.rows,
-        yearbookPaymentStatuses: yearbookPaymentStatuses.rows
+        yearbookPaymentStatuses: yearbookPaymentStatuses.rows,
+        remaminingUnpaidOrUnClaimed: unpaidStudents.rows.length > 0 ? unpaidStudents.rows[0]['remainingStudents'] : 0
     });
 }
 
@@ -252,13 +267,60 @@ export async function downloadYearbook(req: Request, res: Response) {
     });
 
     console.log(department['acronym']);
-    
+
 
     const buffer = await Packer.toBuffer(doc);
 
     res.attachment(`${department['acronym']}.docx`);
 
     res.status(200).end(buffer);
+}
+
+export async function downloadData(req: Request, res: Response) {
+    const collegeDepartments = await query(`
+        SELECT 
+        c.college_id AS id, 
+        c.college_acronym AS college 
+        FROM college c
+    `);
+
+    const students = await query(`
+        SELECT
+        CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, ''), ' ', COALESCE(sfr.suffix, '')) AS 'FULL NAME',
+        yps.status_name AS 'PAYMENT STATUS',
+        coll.college_acronym AS COLLEGE,
+        c.course_abbreviation AS COURSE
+        FROM yearbook yb
+        INNER JOIN solicitation_form_raw sfr
+        ON yb.soli_form_id = sfr.solicitation_form_raw_id
+        INNER JOIN yearbook_payment_status yps
+        ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
+        INNER JOIN course c
+        ON sfr.course = c.course_id
+        INNER JOIN college coll
+        ON c.college_id = coll.college_id
+        WHERE yps.status_name = 'UNPAID'
+    `);
+
+    const yearbookWorkbook = XLSX.utils.book_new();
+    collegeDepartments.rows.forEach((department: any) => {
+        const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
+        
+        const sheet = XLSX.utils.json_to_sheet(s);
+        XLSX.utils.book_append_sheet(
+            yearbookWorkbook,
+            sheet,
+            department.college
+        )
+    });
+
+    const buf = XLSX.write(yearbookWorkbook, {
+        type: "buffer",
+        bookType: "xlsx"
+    });
+
+    res.attachment("unpaid-unclaimed-yearbooks.xlsx");
+    res.status(200).end(buf);
 }
 
 export async function yearbookReleased(req: Request, res: Response) {

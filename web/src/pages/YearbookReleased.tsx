@@ -5,6 +5,7 @@ import { generateYearRange } from "../utilities/generateYearRange";
 import YearbookReleasedModal from "../components/YearbookRelease/YearbookReleasedModal";
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
 import { searchStudentSolicitationStatus, searchStudentYearbookStatus } from "../utilities/students";
+import { read, writeFileXLSX } from "xlsx";
 
 export default function () {
 
@@ -18,6 +19,7 @@ export default function () {
     const [yearbooks, setYearbooks] = useState([]);
     const [statuses, setStatuses] = useState({});
     const [errMessage, setErrMessage] = useState<string>("");
+    const [remainingStudents, setRemaining] = useState<string>("");
 
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
@@ -47,13 +49,14 @@ export default function () {
             }
 
             setCourses(coursesData.courses);
+            setRemaining(yearbookData['remaminingUnpaidOrUnClaimed']);
             setStatuses({
                 yearbookStatuses: yearbookData.yearbookStatuses,
                 yearbookPaymentStatuses: yearbookData.yearbookPaymentStatuses
 
             });
             setYearbooks(yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item })));
-            setDatas({ 
+            setDatas({
                 filteredData: yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }))
             });
         })();
@@ -176,7 +179,7 @@ export default function () {
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
-        setDatas({ 
+        setDatas({
             filteredData: yearbooks.filter((item: any) => {
                 const formattedDate = new Date(item['dateReleased']);
                 return formattedDate.getFullYear() === Number.parseInt(target.value) as any;
@@ -186,7 +189,7 @@ export default function () {
     };
 
     const onClick = async (data: any) => {
-        
+
         setCurrentNode(data);
         setDisplayYearbookModal(true);
     };
@@ -194,6 +197,25 @@ export default function () {
     const onClose = async () => {
         setCurrentNode(null);
         setDisplayYearbookModal(false);
+    };
+
+    const onDownloadHandler = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/download-unpaid-unclaimed-sheet`, {
+                method: "GET",
+                credentials: "include"
+            });
+            const buffer = await response.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+
+            const workbook = read(bytes);
+            writeFileXLSX(workbook, "unpaid-unclaimed-yearbooks.xlsx");
+
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return courses && (
@@ -331,7 +353,12 @@ export default function () {
                         onChange={onChangeSearch}
                         width="flex-auto"
                     />
-                    <section className="flex flex-row justify-end">
+                    <section className="flex flex-row justify-end items-center gap-2">
+                        <h1>
+                            Remaining unpaid and unclaimed yearbooks:
+                            <span className="font-bold"> {remainingStudents}</span>
+                        </h1>
+                        <Button onClick={onDownloadHandler}>Download</Button>
                         <Button>Search</Button>
                     </section>
                     <Dropdown

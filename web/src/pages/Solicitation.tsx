@@ -257,22 +257,22 @@ export default function () {
 
     const onDownloadHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
-        
+
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/download-sheet`, {
                 method: "GET",
                 credentials: "include"
-            })
+            });
             const buffer = await response.arrayBuffer();
             const bytes = new Uint8Array(buffer);
 
             const workbook = read(bytes);
             writeFileXLSX(workbook, "unpaid-unreturned-solis.xlsx");
-            
+
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const attr = [
         "COURSE",
@@ -408,7 +408,7 @@ export default function () {
                     <section className="flex flex-row justify-end items-center gap-2">
                         <h1>
                             Remaining unpaid and unreturned solis:
-                        <span  className="font-bold"> {remainingStudents}</span>
+                            <span className="font-bold"> {remainingStudents}</span>
                         </h1>
                         <Button onClick={onDownloadHandler}>Download</Button>
                         <Button onClick={onSearchSubmit}>Search</Button>
