@@ -71,14 +71,16 @@ export async function index(req: Request, res: Response) {
 
     const unpaidStudents = await query(`
         SELECT COUNT(*) as remainingStudents
-            FROM yearbook yb
-            LEFT JOIN course c
-            ON sfr.course = c.course_id
-            LEFT JOIN yearbook_status ybs
-            ON yb.yearbook_status_id = ybs.yearbook_status_id
-            LEFT JOIN yearbook_payment_status yps
-            ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
-            WHERE yps.status_name = 'UNPAID'
+        FROM yearbook yb
+        LEFT JOIN user u
+        ON yb.yearbooK_id = u.user_id
+        LEFT JOIN course c
+        ON u.course_id = c.course_id
+        LEFT JOIN yearbook_status ybs
+        ON yb.yearbook_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
+        WHERE ybS.yearbook_status_name = 'PENDING'
     `);
 
     res.status(200).json({

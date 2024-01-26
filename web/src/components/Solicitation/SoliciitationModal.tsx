@@ -23,10 +23,7 @@ export default function ({
     const [paymentStatuses, setPaymentStatuses] = useState();
 
     const [id, setID] = useState<string>();
-    const [firstName, setFirstName] = useState<string>();
-    const [familyName, setFamilyName] = useState<string>();
-    const [middleName, setMiddleName] = useState<string>();
-    const [suffix, setSuffix] = useState<string>();
+    const [fullName, setFullName] = useState<string>();
     const [status, setStatus] = useState<string>();
     const [careOf, setCareOf] = useState<string>();
     const [relation, setRelation] = useState<string>();
@@ -68,10 +65,7 @@ export default function ({
 
 
             setID(data['id']);
-            setFirstName(data['firstName']);
-            setFamilyName(data['lastName']);
-            setMiddleName(data['middleName']);
-            setSuffix(data['suffix']);
+            setFullName(data['fullName']);
             setCareOf(data['careOfFullName']);
             setRelation(data['careOfRelation']);
             setPaymentAmount(data['paymentAmount']);
@@ -93,14 +87,8 @@ export default function ({
             case "status":
                 setStatus(target.value);
                 break;
-            case "firstName":
-                setFirstName(target.value);
-                break;
-            case "familyName":
-                setFamilyName(target.value);
-                break;
-            case "middleName":
-                setMiddleName(target.value);
+            case "fullName":
+                setFullName(target.value);
                 break;
             case "dateReturned":
                 setDateReturned(target.value);
@@ -140,10 +128,7 @@ export default function ({
 
         const data = {
             id,
-            firstName,
-            middleName,
-            familyName,
-            suffix,
+            fullName,
             careOf,
             relation,
             soliNumber,
@@ -217,30 +202,9 @@ export default function ({
                     </div>
                     <section className="flex flex-row gap-1">
                         <Input
-                            title="FIRST NAME"
-                            id="firstName"
-                            value={firstName}
-                            disabled={disable}
-                            onChange={onChange}
-                        />
-                        <Input
-                            title="FAMILY NAME"
-                            id="familyName"
-                            value={familyName}
-                            disabled={disable}
-                            onChange={onChange}
-                        />
-                        <Input
-                            title="MIDDLE NAME"
-                            id="middleName"
-                            value={middleName}
-                            disabled={disable}
-                            onChange={onChange}
-                        />
-                        <Input
-                            title="SUFFIX"
-                            id="suffix"
-                            value={suffix}
+                            title="FULL NAME"
+                            id="fullName"
+                            value={fullName}
                             disabled={disable}
                             onChange={onChange}
                         />

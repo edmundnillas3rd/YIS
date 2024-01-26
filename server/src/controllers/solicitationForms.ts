@@ -40,11 +40,7 @@ export async function index(req: Request, res: Response) {
     const sql = `
         SELECT solicitation_form_raw_id AS id,
             c.course_abbreviation AS course, 
-            CONCAT(sfr.first_name, ' ', sfr.middle_name, ' ', sfr.family_name) AS fullName,
-            COALESCE(sfr.first_name, '') AS firstName,
-            COALESCE(sfr.middle_name, '') AS middleName,
-            COALESCE(sfr.family_name, '') AS lastName,
-            COALESCE(sfr.suffix, '') as suffix,
+            sfr.full_name AS fullName,
             soli_numbers AS soliNumber,
             COALESCE(care_of, 'N/A') AS careOfFullName,
             COALESCE(care_of_relation, 'N/A') AS careOfRelation,
@@ -142,7 +138,7 @@ export async function downloadExcelSheet(req: Request, res: Response) {
 
     const students = await query(`
         SELECT
-        CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, ''), ' ', COALESCE(sfr.suffix, '')) AS 'FULL NAME',
+        sfr.full_name AS 'FULL NAME',
         soli_numbers AS "SOLI #'S",
         coll.college_acronym AS COLLEGE,
         c.course_abbreviation AS COURSE
@@ -463,8 +459,6 @@ export async function uploadData(req: Request, res: Response) {
             SELECT course_id AS id, course_name AS name FROM course WHERE course_abbreviation = ?
         `, [course]);
 
-        const parseName = await parseStudentName(row["NAME OF STUDENT"]);
-
         // await query(`
         //     INSERT INTO user (
         //         user_id,
@@ -541,9 +535,7 @@ export async function uploadData(req: Request, res: Response) {
         await query(`
             INSERT INTO solicitation_form_raw (
                 solicitation_form_raw_id,
-                first_name,
-                middle_name,
-                family_name,
+                full_name,
                 course, 
                 soli_numbers, 
                 care_of, 
@@ -557,14 +549,12 @@ export async function uploadData(req: Request, res: Response) {
                 solicitation_returned_status_id
             ) VALUES (
                 ?,
-                NULLIF(?, ''),
-                NULLIF(?, ''),
+                ?,
                 NULLIF(?, ''),
                 NULLIF(?, ''), 
                 NULLIF(?, ''), 
                 NULLIF(?, ''), 
                 NULLIF(?, ''), 
-                NULLIF(?, ''),
                 STR_TO_DATE(NULLIF(?, ''), '%m/%d/%Y'), 
                 NULLIF(?, ''),
                 NULLIF(?, ''),
@@ -573,9 +563,7 @@ export async function uploadData(req: Request, res: Response) {
                 ?
             )`, [
             UUID,
-            parseName.firstName,
-            parseName.middleName,
-            parseName.familyName,
+            typeof row["NAME OF STUDENT"] === "undefined" ? null : row["NAME OF STUDENT"],
             typeof courses.rows[0] === "undefined" ? null : courses.rows[0]["id"],
             typeof row["SOLI #'s"] === "undefined" ? null : row["SOLI #'s"],
             typeof row["CARE OF"] === "undefined" ? null : row["CARE OF"],
@@ -589,38 +577,6 @@ export async function uploadData(req: Request, res: Response) {
             rs?.id ?? null
         ]);
 
-        // const yearbookStatuses = await query(`
-            // SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
-        // `);
-// 
-        // const yearbookPaymenStatus = await query(`
-            // SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'UNPAID'
-        // `)
-// 
-        // await query(`
-            // INSERT INTO yearbook (
-                // yearbook_id,
-                // soli_form_id,
-                // yearbook_payment_status_id,
-                // yearbook_status_id,
-                // yearbook_care_of,
-                // yearbook_date_released
-            // ) VALUES (
-                // UUID(),
-                // ?,
-                // ?,
-                // ?,
-                // ?,
-                // ?
-            // )
-        // `, [
-            // UUID,
-            // typeof yearbookPaymenStatus.rows[0] === "undefined" ? null : yearbookPaymenStatus.rows[0]["id"],
-            // typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
-            // null,
-            // null
-        // ]);
-// 
         // await query(`
             // INSERT INTO yearbook_photos (
                 // yearbook_photos_id,
@@ -647,10 +603,7 @@ export async function uploadData(req: Request, res: Response) {
 export async function solicitationUpdate(req: Request, res: Response) {
     const {
         id,
-        firstName,
-        middleName,
-        familyName,
-        suffix,
+        fullName,
         careOf,
         relation,
         soliNumber,
@@ -674,10 +627,7 @@ export async function solicitationUpdate(req: Request, res: Response) {
     solicitationStatusResults = await query(`
             UPDATE solicitation_form_raw
             SET solicitation_returned_status_id = ?,
-            first_name = ?,
-            middle_name = ?,
-            family_name = ?,
-            suffix = ?,
+            full_name = ?,
             care_of = NULLIF(?, ''),
             care_of_relation = NULLIF(?, ''),
             date_returned = ?,
@@ -691,10 +641,7 @@ export async function solicitationUpdate(req: Request, res: Response) {
             WHERE solicitation_form_raw_id = ?
         `, [
         status,
-        firstName,
-        middleName,
-        familyName,
-        suffix,
+        fullName,
         careOf,
         relation,
         formattedDate,

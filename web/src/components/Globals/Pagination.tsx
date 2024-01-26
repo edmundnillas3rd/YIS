@@ -51,7 +51,7 @@ const Pagination = (props: any) => {
 
                 return (
                     <li
-                        className={classnames('pagination-item', {
+                        className={classnames(`pagination-item p-2 rounded-xl ${pageNumber === currentPage ? "bg-black text-white" : ""}`, {
                             selected: pageNumber === currentPage
                         })}
                         onClick={() => onPageChange(pageNumber)}

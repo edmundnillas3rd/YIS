@@ -420,20 +420,14 @@ export default function () {
                         onChange={onChangeFilter}
                     />
                 </section>
-                {datas?.filteredData ? (
+                {datas?.filteredData && (
                     <Table
                         columns={attr}
                         datas={datas.filteredData}
                         onClickCallback={onClick}
                         buttonRowName="View"
                     />
-                ) : (
-
-                    <section className="flex flex-row justify-center">
-                        <Spinner />
-                    </section>
-                )
-                }
+                )}
             </Container>
         </article>
     );
