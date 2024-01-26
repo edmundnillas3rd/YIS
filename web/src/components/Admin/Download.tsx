@@ -31,12 +31,18 @@ export default function () {
                     <section>
                         <Button onClick={async (event: SyntheticEvent) => {
                             event.preventDefault();
+                            try {
+                                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${department['id']}/download-yearbook-info`);
+                                const blob = await response.blob();
+                                // const data = new Uint8Array(buffer);
+                                // fs.writeFileSync(`${department['name']}.docx`, data);
+                                FileSaver.saveAs(blob, `${department['acronym']}.docx`);
+                                
+                            } catch (error) {
+                                console.error(error);
+                                
+                            }
 
-                            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${department['id']}/download-yearbook-info`);
-                            const blob = await response.blob();
-                            // const data = new Uint8Array(buffer);
-                            // fs.writeFileSync(`${department['name']}.docx`, data);
-                            FileSaver.saveAs(blob, `${department['acronym']}.docx`);
 
                         }}>Download</Button>
                     </section>
