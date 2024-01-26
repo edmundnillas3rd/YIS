@@ -1,4 +1,7 @@
 import { Router } from "express";
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
+
 const router = Router();
 
 import {
@@ -19,7 +22,8 @@ import {
     deleteStudent,
     signupCoAdmin,
     deleteCoAdmin,
-    updateCoAdminInfo
+    updateCoAdminInfo,
+    uploadUserData
 } from "../controllers/users";
 
 // GET
@@ -36,6 +40,7 @@ router.post("/student-search", searchStudent);
 router.post("/student-search-recipient", searchStudentRecipient);
 router.post("/student-search-paid", searchStudentPaid);
 router.post("/student-search-unreturned", searchStudentUnreturned);
+router.post("/upload-users", upload.single("graduating-students-sheet"), uploadUserData);
 
 // CO-ADMIN POST
 router.post("/coadmin-signup", signupCoAdmin);

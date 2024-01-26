@@ -453,7 +453,6 @@ export async function uploadData(req: Request, res: Response) {
     let workbook = XLSX.readFile(req.file.path);
     let worksheet = workbook.Sheets[workbook.SheetNames[0]];
     XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false }).forEach(async (row: any) => {
-        const keys = Object.keys(row);
 
         const genUUID = await query(`SELECT UUID()`);
         const UUID = genUUID.rows[0]['UUID()'];
@@ -590,55 +589,55 @@ export async function uploadData(req: Request, res: Response) {
             rs?.id ?? null
         ]);
 
-        const yearbookStatuses = await query(`
-            SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
-        `);
-
-        const yearbookPaymenStatus = await query(`
-            SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'UNPAID'
-        `)
-
-        await query(`
-            INSERT INTO yearbook (
-                yearbook_id,
-                soli_form_id,
-                yearbook_payment_status_id,
-                yearbook_status_id,
-                yearbook_care_of,
-                yearbook_date_released
-            ) VALUES (
-                UUID(),
-                ?,
-                ?,
-                ?,
-                ?,
-                ?
-            )
-        `, [
-            UUID,
-            typeof yearbookPaymenStatus.rows[0] === "undefined" ? null : yearbookPaymenStatus.rows[0]["id"],
-            typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
-            null,
-            null
-        ]);
-
-        await query(`
-            INSERT INTO yearbook_photos (
-                yearbook_photos_id,
-                yearbook_photos_date_released,
-                yearbook_photos_status_id,
-                soli_form_id
-            ) VALUES (
-                UUID(),
-                ?,
-                ?,
-                ?
-            )
-        `, [
-            null,
-            typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
-            UUID
-        ]);
+        // const yearbookStatuses = await query(`
+            // SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
+        // `);
+// 
+        // const yearbookPaymenStatus = await query(`
+            // SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'UNPAID'
+        // `)
+// 
+        // await query(`
+            // INSERT INTO yearbook (
+                // yearbook_id,
+                // soli_form_id,
+                // yearbook_payment_status_id,
+                // yearbook_status_id,
+                // yearbook_care_of,
+                // yearbook_date_released
+            // ) VALUES (
+                // UUID(),
+                // ?,
+                // ?,
+                // ?,
+                // ?,
+                // ?
+            // )
+        // `, [
+            // UUID,
+            // typeof yearbookPaymenStatus.rows[0] === "undefined" ? null : yearbookPaymenStatus.rows[0]["id"],
+            // typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
+            // null,
+            // null
+        // ]);
+// 
+        // await query(`
+            // INSERT INTO yearbook_photos (
+                // yearbook_photos_id,
+                // yearbook_photos_date_released,
+                // yearbook_photos_status_id,
+                // soli_form_id
+            // ) VALUES (
+                // UUID(),
+                // ?,
+                // ?,
+                // ?
+            // )
+        // `, [
+            // null,
+            // typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
+            // UUID
+        // ]);
     });
 
     res.status(200).end();

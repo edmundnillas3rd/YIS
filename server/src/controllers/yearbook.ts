@@ -38,8 +38,8 @@ export async function index(req: Request, res: Response) {
 
     const yearbook = await query(`
         SELECT yb.yearbook_id AS id, 
-        CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, '')) AS fullName,
-        c.course_abbreviation AS course,
+        CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, '')) AS fullName,
+        COALESCE(course_id, 'N/A') AS course,
         yb.yearbook_full_payment AS fullPayment,
         yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
@@ -47,10 +47,8 @@ export async function index(req: Request, res: Response) {
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation
         FROM yearbook yb
-        LEFT JOIN solicitation_form_raw sfr
-        ON yb.soli_form_id = sfr.solicitation_form_raw_id
-        LEFT JOIN course c
-        ON sfr.course = c.course_id
+        LEFT JOIN user u
+        ON yb.yearbook_id = u.user_id
         LEFT JOIN yearbook_status ybs
         ON yb.yearbook_status_id = ybs.yearbook_status_id
         LEFT JOIN yearbook_payment_status yps
@@ -63,8 +61,6 @@ export async function index(req: Request, res: Response) {
         ybs.yearbook_status_name AS yearbookStatus,
         COALESCE(DATE_FORMAT(ybp.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased
         FROM yearbook_photos ybp
-        LEFT JOIN solicitation_form_raw sfr
-        ON ybp.soli_form_id = sfr.solicitation_form_raw_id
         LEFT JOIN yearbook_status ybs
         ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
     `);
@@ -76,8 +72,6 @@ export async function index(req: Request, res: Response) {
     const unpaidStudents = await query(`
         SELECT COUNT(*) as remainingStudents
             FROM yearbook yb
-            LEFT JOIN solicitation_form_raw sfr
-            ON yb.soli_form_id = sfr.solicitation_form_raw_id
             LEFT JOIN course c
             ON sfr.course = c.course_id
             LEFT JOIN yearbook_status ybs
@@ -291,8 +285,6 @@ export async function downloadData(req: Request, res: Response) {
         coll.college_acronym AS COLLEGE,
         c.course_abbreviation AS COURSE
         FROM yearbook yb
-        INNER JOIN solicitation_form_raw sfr
-        ON yb.soli_form_id = sfr.solicitation_form_raw_id
         INNER JOIN yearbook_payment_status yps
         ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
         INNER JOIN course c
@@ -607,8 +599,6 @@ export async function searchStudentYearbookPhoto(req: Request, res: Response) {
         CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName, 
         ys.yearbook_status_name AS yearbookStatus , COALESCE(yp.yearbook_photos_date_released, 'N/A') AS dateReleased 
         FROM yearbook_photos yp
-        LEFT JOIN solicitation_form_raw sfr
-        ON yp.soli_form_id = sfr.solicitation_form_raw_id
         LEFT JOIN course c
         ON sfr.course = c.course_id
         INNER JOIN yearbook_status ys
@@ -646,8 +636,6 @@ export async function searchStudentYearbook(req: Request, res: Response) {
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') as careOfRelation
         FROM yearbook yb
-        LEFT JOIN solicitation_form_raw sfr
-        ON yb.soli_form_id = sfr.solicitation_form_raw_id
         LEFT JOIN course c
         ON sfr.course = c.course_id
         INNER JOIN yearbook_status ys

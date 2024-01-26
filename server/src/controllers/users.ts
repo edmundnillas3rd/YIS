@@ -1,3 +1,11 @@
+import * as XLSX from 'xlsx';
+
+import * as fs from 'fs';
+XLSX.set_fs(fs);
+
+import { Readable } from 'stream';
+XLSX.stream.set_readable(Readable);
+
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
@@ -437,6 +445,85 @@ export async function searchStudentUnreturned(req: Request, res: Response) {
     res.status(200).json({
         results: rows
     });
+}
+
+export async function uploadUserData(req: Request, res: Response) {
+    if (!req.file)
+        return res.status(404).json({ error: "No file found" });
+
+    const queriedRole = await query("SELECT role_id AS id FROM role WHERE role.role_name = 'STUDENT'");
+
+    let workbook = XLSX.readFile(req.file.path);
+    let worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    XLSX.utils.sheet_to_json(worksheet, { defval: "", raw: false }).forEach(async (student: any) => {
+
+        console.log(student);
+
+        const genUUID = await query(`SELECT UUID()`);
+        const UUID = genUUID.rows[0]['UUID()'];
+
+        const fullName: string = `${student['FIRST NAME']}${student['LAST NAME']}`;
+        const email = `${fullName.toLowerCase()}@cjc.com`;
+        const password = process.env.DEFAULT_PASS as string;
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        await query(`
+            INSERT INTO user (
+                user_id,
+                user_first_name,
+                user_middle_name,
+                user_family_name,
+                user_email,
+                user_password,
+                role_id
+            ) VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+        `, [
+            UUID,
+            typeof student["FIRST NAME"] === "undefined" ? null : student["FIRST NAME"],
+            typeof student["MIDDLE NAME"] === "undefined" ? null : student["MIDDLE NAME"],
+            typeof student["LAST NAME"] === "undefined" ? null : student["LAST NAME"],
+            email,
+            hashedPassword,
+            queriedRole.rows[0]['id']
+        ]);
+
+        const paymentStatus = await query(`
+            SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'UNPAID' 
+        `)
+
+        const yearbookStatus = await query(`
+            SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
+        `);
+
+        await query(`
+            INSERT INTO yearbook (
+                yearbook_id,
+                yearbook_payment_status_id,
+                yearbook_status_id
+            ) VALUES (
+                ?,
+                ?,
+                ?
+            )
+        `, [
+            UUID,
+            paymentStatus.rows[0]['id'],
+            yearbookStatus.rows[0]['id']
+        ]);
+    });
+
+    res.status(200).end();
 }
 
 export async function signupCoAdmin(req: Request, res: Response) {
