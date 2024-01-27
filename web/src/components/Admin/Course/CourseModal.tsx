@@ -47,7 +47,7 @@ export default function ({
             case "abbreviation":
                 setAbbreviation(target.value);
                 break;
-            case "deparment":
+            case "department":
                 setDepartment(target.value);
                 break;
         }

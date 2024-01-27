@@ -447,9 +447,34 @@ export async function uploadData(req: Request, res: Response) {
 
         const course = typeof row["COURSE"] === "undefined" ? '' : row["COURSE"];
 
-        const courses = await query(`
+        let courses = await query(`
             SELECT course_id AS id, course_name AS name FROM course WHERE course_abbreviation = ?
         `, [course]);
+
+        if (courses.rows.length === 0) {
+            const genUUID = await query(`SELECT UUID()`);
+
+            const UUID = genUUID.rows[0]['UUID()'];
+            await query(`
+                INSERT INTO course (
+                    course_id,
+                    course_name,
+                    course_abbreviation
+                ) VALUES (
+                    ?,
+                    ?,
+                    ?
+                )
+            `, [
+                UUID,
+                course,
+                course
+            ]);
+
+            courses = await query(`
+                SELECT course_id AS id, course_name AS name FROM course WHERE course_abbreviation = ?
+            `, [course]);
+        }
 
         // await query(`
         //     INSERT INTO user (

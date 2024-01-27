@@ -8,6 +8,7 @@ export default function () {
     const [courses, setCourses] = useState([]);
     const [name, setName] = useState<string>("");
     const [abbreviation, setAbbreviation] = useState<string>("");
+    const [department, setDepartment] = useState<string>("");
     const [currentNode, setCurrentNode] = useState<any>();
 
     const [departments, setDepartments] = useState();
@@ -27,7 +28,7 @@ export default function () {
 
                 if (courses && departments) {
                     setDepartments(departments);
-                    setCourses(courses)
+                    setCourses(courses);
                 }
 
             } catch (error) {
@@ -48,10 +49,13 @@ export default function () {
 
         switch (target.name) {
             case "name":
-                setName(target.value)
+                setName(target.value);
                 break;
             case "abbreviation":
                 setAbbreviation(target.value);
+                break;
+            case "department":
+                setDepartment(target.value);
                 break;
         }
     };
@@ -61,11 +65,12 @@ export default function () {
 
         const data = {
             name,
-            abbreviation
+            abbreviation,
+            department
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/courses/add-department`, {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/courses/add-course`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -78,7 +83,7 @@ export default function () {
                 navigate(0);
             } else {
                 console.log("error");
-                
+
             }
         } catch (error) {
             console.error(error);
@@ -119,6 +124,7 @@ export default function () {
                         />
                         <Dropdown
                             label="DEPARTMENTS"
+                            id="department"
                             datas={departments}
                             onChange={onChange}
                         />
@@ -128,11 +134,12 @@ export default function () {
                         <Button>Add</Button>
                     </section>
                 </form>
-                <Table
+                {courses && (<Table
+                    key={courses.length}
                     onClickCallback={onClickHandler}
                     columns={attr}
                     datas={courses}
-                />
+                />)}
             </Container>
         </>
 

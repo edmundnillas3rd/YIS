@@ -1,6 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Dropdown, Input, Table } from "../Globals";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 import StaffModel from "./Staff/StaffModal";
 
 export default function () {
@@ -34,7 +35,7 @@ export default function () {
 
 
                 if (coadminUsers) {
-                    setStaffs(coadminUsers.map(({ ...attr }: any) => ({ ...attr })));
+                    setStaffs(coadminUsers.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr })));
                     setRawData(coadminUsers);
                 }
 
@@ -169,11 +170,17 @@ export default function () {
                         <Button>Add</Button>
                     </section>
                 </form>
-                <Table
-                    onClickCallback={onClickHandler}
-                    columns={attr}
-                    datas={staffs}
-                />
+                {
+                    staffs && (
+                        <Table
+                            key={staffs.length}
+                            onClickCallback={onClickHandler}
+                            columns={attr}
+                            datas={staffs}
+                        />
+                    )
+                }
+
             </Container>
         </>
 

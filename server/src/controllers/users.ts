@@ -19,14 +19,14 @@ export async function index(req: Request, res: Response) {
         u.user_first_name AS firstName,
         u.user_middle_name AS middleName,
         u.user_family_name AS familyName,
-        u.user_suffix AS suffix,
-        u.user_year_graduated AS yearGraduated,
-        c.course_abbreviation AS course,
-        u.user_school_id AS schoolID
+        COALESCE(u.user_suffix, 'N/A') AS suffix,
+        COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
+        COALESCE(c.course_abbreviation, 'N/A') AS course,
+        COALESCE(u.user_school_id, 'N/A') AS schoolID
         FROM user u
         INNER JOIN role
         ON u.role_id = role.role_id
-        INNER JOIN course c
+        LEFT JOIN course c
         ON u.course_id = c.course_id
         WHERE role.role_name = 'STUDENT'
     `;

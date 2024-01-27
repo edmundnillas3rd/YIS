@@ -28,6 +28,7 @@ export default function ({
         if (data) {
             console.log(data);
 
+
             setID(data['id']);
             setFirstName(data['firstName']);
             setFamilyName(data['familyName']);
@@ -36,11 +37,12 @@ export default function ({
             setYearGraduated(data['yearGraduated']);
             setSchoolID(data['schoolID']);
 
+
             const foundCourse = data2.find((c: any) => c['abbreviation'] === data['course']);
 
             console.log(foundCourse, data2, data);
-            
-            setCourse(foundCourse['id']);
+
+            setCourse(foundCourse?.id ? foundCourse.id : '');
             setCourses(data2);
         }
 

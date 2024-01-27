@@ -47,7 +47,7 @@ export default function () {
 
         switch (target.name) {
             case "name":
-                setName(target.value)
+                setName(target.value);
                 break;
             case "acronym":
                 setAcronym(target.value);
@@ -76,8 +76,8 @@ export default function () {
             if (response.ok) {
                 navigate(0);
             } else {
-                console.log("error");""
-                
+                console.log("error"); "";
+
             }
         } catch (error) {
             console.error(error);
@@ -122,11 +122,17 @@ export default function () {
                         <Button>Add</Button>
                     </section>
                 </form>
-                <Table
-                    onClickCallback={onClickHandler}
-                    columns={attr}
-                    datas={departments}
-                />
+                {departments && (
+                    <Table
+                        key={departments.length}
+                        onClickCallback={onClickHandler}
+                        columns={attr}
+                        datas={departments}
+                    />
+                )
+
+                }
+
             </Container>
         </>
 

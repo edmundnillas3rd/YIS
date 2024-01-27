@@ -155,6 +155,7 @@ export default function () {
                 </section>
             </form>
             <Table
+                key={clubs.length}
                 onClickCallback={onClickHandler}
                 columns={attr}
                 datas={clubs}
@@ -174,6 +175,7 @@ export default function () {
                 </section>
             </form>
             <Table
+                key={positions.length}
                 onClickCallback={onClickPosHandler}
                 columns={posAttr}
                 datas={positions}

@@ -1,6 +1,7 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Button, Container, Dropdown, Input, Table } from "../Globals";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 import StudentModal from "./Stutdent/StudentModal";
 
 export default function () {
@@ -15,10 +16,10 @@ export default function () {
     const [course, setCourse] = useState<string>("");
 
     const [courses, setCourses] = useState();
-    const [students, setStudents] = useState([]);
+    const [students, setStudents] = useState<any>(null);
     const [rawData, setRawData] = useState<any>();
 
-    const [currentNode, setCurrentNode] = useState<any>();
+    const [currentNode, setCurrentNode] = useState<any>(null);
 
     const navigate = useNavigate();
 
@@ -36,18 +37,16 @@ export default function () {
                 const { courses } = courseData;
                 const { studentUsers } = userStudentsData;
 
-
                 if (courses) {
                     setCourse(courses[0]['id']);
                     setCourses(courses);
                 }
 
-                if (studentUsers) {
-                    setStudents(studentUsers.map(({ ...attr }: any) => ({ ...attr })));
-                    setRawData(studentUsers);
-                    
-                }
+                console.log(studentUsers);
+                
 
+                setStudents(studentUsers.map(({ ...attr }: any) => ({  uuid: uuid(), ...attr })));
+                setRawData(studentUsers);
 
             } catch (error) {
                 console.error(error);
@@ -131,7 +130,7 @@ export default function () {
     };
 
     const onClickHandler = async (data: any) => {
-        setCurrentNode(rawData.find((d: any) => d.id === data.id));
+        setCurrentNode(data);
     };
 
     const onCloseModal = async () => {
@@ -200,11 +199,16 @@ export default function () {
                         <Button>Add</Button>
                     </section>
                 </form>
-                <Table
-                    onClickCallback={onClickHandler}
-                    columns={attr}
-                    datas={students}
-                />
+                {students && (
+                    <Table
+                        key={students.length}
+                        onClickCallback={onClickHandler}
+                        columns={attr}
+                        datas={students}
+                    />
+                )
+                }
+
             </Container>
         </>
 
