@@ -8,7 +8,8 @@ import {
     Table,
     Container,
     Toggle,
-    Confirm
+    Confirm,
+    Dropdown
 } from "../components/Globals/index";
 
 import OrganizationModal from "../components/OrganizationTable/OrganizationModal";
@@ -27,6 +28,7 @@ export default function () {
     const [disable, setDisable] = useState(true);
     const [loading, setLoading] = useState<boolean>(false);
     const [clubProps, setClubProps] = useState(null);
+    const [courses, setCourses] = useState(null);
 
     const [displayPreview, setDisplayPreview] = useState(false);
     const [confirmSave, setConfirmSave] = useState<boolean>(false);
@@ -68,18 +70,24 @@ export default function () {
                 credentials: "include"
             });
 
-            const [indexData, clubsData, awardsData, seminarsData] = await Promise.all([
+            const coursesResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`, {
+                credentials: "include"
+            })
+
+            const [indexData, clubsData, awardsData, seminarsData, coursesData] = await Promise.all([
                 clubsRouteResponse.json(),
                 userClubResponse.json(),
                 userAwardResponse.json(),
-                userSeminarResponse.json()
+                userSeminarResponse.json(),
+                coursesResponse.json()
             ]);
 
-            if (indexData && clubsData && awardsData && seminarsData) {
+            if (indexData && clubsData && awardsData && seminarsData && coursesData) {
                 setClubProps(indexData);
                 setClubsData(clubsData['clubs'].map((club: any) => ({ uuid: uuid(), ...club })));
                 setAwardsData(awardsData['awards'].map((award: any) => ({ uuid: uuid(), ...award })));
                 setSeminarsData(seminarsData['seminars'].map((seminar: any) => ({ uuid: uuid(), ...seminar })));
+                setCourses(coursesData['courses'])
             }
 
         })();
@@ -144,6 +152,12 @@ export default function () {
                     ...state,
                     suffix: target.value
                 }));
+                break;
+            case "course":
+                setStudent((state: any) => ({
+                    ...state,
+                    course: target.value
+                }))
                 break;
         }
     };
@@ -380,6 +394,11 @@ export default function () {
                             />
                             <p className="text-zinc-500 font-bold">EX. SR, JR, I, II, III</p>
                         </section>
+                        <Dropdown
+                            label="COURSES"
+                            name="course"
+                            datas={courses}
+                        />
                     </form>
                 )}
 

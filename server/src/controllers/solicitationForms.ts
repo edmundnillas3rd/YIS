@@ -158,13 +158,13 @@ export async function downloadExcelSheet(req: Request, res: Response) {
 
     collegeDepartments.rows.forEach((department: any) => {
         const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
-        
+
         const sheet = XLSX.utils.json_to_sheet(s);
         XLSX.utils.book_append_sheet(
             solicitationWorkbook,
             sheet,
             department.college
-        )
+        );
     });
 
     const buf = XLSX.write(solicitationWorkbook, {
@@ -210,10 +210,7 @@ export async function searchSolicitationForm(req: Request, res: Response) {
     const { rows } = await query(`
         SELECT solicitation_form_raw_id AS id,
         c.course_abbreviation AS course, 
-        CONCAT(sfr.first_name, ' ', sfr.middle_name, ' ', sfr.family_name) AS fullName,
-        COALESCE(sfr.first_name, '') AS firstName,
-        COALESCE(sfr.middle_name, '') AS middleName,
-        COALESCE(sfr.family_name, '') AS lastName,
+        sfr.full_name AS fullName,
         soli_numbers AS soliNumber,
         COALESCE(care_of, 'N/A') AS careOfFullName,
         COALESCE(care_of_relation, 'N/A') AS careOfRelation,
@@ -233,16 +230,11 @@ export async function searchSolicitationForm(req: Request, res: Response) {
         ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
         LEFT JOIN course c
         ON sfr.course = c.course_id
-        WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR (REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) AND c.course_id = ?)
+        WHERE REGEXP_LIKE(sfr.full_name, ?)
     `, [
-        `^${search}`,
-        `^${search}`,
-        `^${search}`,
-        `^${search}`,
-        `^${search}`,
-        `^${search}`,
-        course]);
-
+        `${search}`
+    ]);
+    // WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR (REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) AND c.course_id = ?)
     if (rows.length === 0) {
         return res.status(404).json({
             error: "Student Not Found"
@@ -578,21 +570,21 @@ export async function uploadData(req: Request, res: Response) {
         ]);
 
         // await query(`
-            // INSERT INTO yearbook_photos (
-                // yearbook_photos_id,
-                // yearbook_photos_date_released,
-                // yearbook_photos_status_id,
-                // soli_form_id
-            // ) VALUES (
-                // UUID(),
-                // ?,
-                // ?,
-                // ?
-            // )
+        // INSERT INTO yearbook_photos (
+        // yearbook_photos_id,
+        // yearbook_photos_date_released,
+        // yearbook_photos_status_id,
+        // soli_form_id
+        // ) VALUES (
+        // UUID(),
+        // ?,
+        // ?,
+        // ?
+        // )
         // `, [
-            // null,
-            // typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
-            // UUID
+        // null,
+        // typeof yearbookStatuses.rows[0] === "undefined" ? null : yearbookStatuses.rows[0]["id"],
+        // UUID
         // ]);
     });
 

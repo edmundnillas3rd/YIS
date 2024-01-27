@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { Button, Dropdown, Input, Container, Table } from "../components/Globals";
 import { v4 as uuid } from "uuid";
 import { generateYearRange } from "../utilities/generateYearRange";
@@ -35,6 +35,32 @@ export default function () {
     const [cfRelation, setCfRelation] = useState<string>("");
 
     const years = generateYearRange();
+    const [filter, setFilter] = useState("");
+    const [searchedData, setSearchData] = useState([]);
+
+    const filteredTableData = useMemo(() => {
+        if (searchedData.length > 0) {
+            return searchedData;
+        }
+
+
+        // setDatas((soli: any) => ({
+        //     ...soli,
+        //     filteredData: filterData
+        // }));
+
+        // setDatas({
+        //     filteredData: yearbooks.filter((item: any) => {
+        //         const formattedDate = new Date(item['dateReleased']);
+        //         return formattedDate.getFullYear() === Number.parseInt(target.value) as any;
+        //     })
+        // })
+
+        return yearbooks.filter((item: any) => {
+            const formattedDate = new Date(item['dateReleased']);
+            return formattedDate.getFullYear() === Number.parseInt(filter) as any;
+        });
+    }, [datas, filter, searchedData]);
 
     useEffect(() => {
         (async () => {
@@ -55,7 +81,10 @@ export default function () {
                 yearbookPaymentStatuses: yearbookData.yearbookPaymentStatuses
 
             });
-            setYearbooks(yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item })));
+            const ybs = yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }));
+            setYearbooks(ybs);
+            setSearchData(ybs);
+
             setDatas({
                 filteredData: yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }))
             });
@@ -164,14 +193,16 @@ export default function () {
         event.preventDefault();
 
         const data = await searchStudentYearbookStatus(search);
-        const filteredData = data.map(({ firstName, middleName, lastName, ...attr }: any) => ({ uuid: uuid(), ...attr }));
-        setDatas({
-            filteredData
-        });
+        const filteredData = data.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
+        console.log(filteredData);
+
+        setSearchData(filteredData);
     };
 
     const onChangeSearch = async (event: SyntheticEvent) => {
         event.preventDefault();
+        setSearchData(yearbooks);
+
         const target = event.target as HTMLInputElement;
         setSearch(target.value);
     };
@@ -179,6 +210,7 @@ export default function () {
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
+        setFilter(target.value);
         setDatas({
             filteredData: yearbooks.filter((item: any) => {
                 const formattedDate = new Date(item['dateReleased']);
@@ -342,24 +374,27 @@ export default function () {
                 </form>
             </Container> */}
             <Container>
-                <form
-                    onSubmit={onSearchSubmit}
-                    method="POST"
+                <section
                     className="flex flex-row gap-5"
                 >
-                    <Input
-                        placeholder="Search the name of student"
-                        pattern={capitalizeRegex}
-                        onChange={onChangeSearch}
-                        width="flex-auto"
-                    />
+                    <form
+                        className="flex flex-auto flex-row justify-end items-center gap-2"
+                        onSubmit={onSearchSubmit}
+                        method="POST"
+                    >
+                        <Input
+                            placeholder="Search the name of student"
+                            onChange={onChangeSearch}
+                            width="flex-auto"
+                        />
+                        <Button >Search</Button>
+                    </form>
                     <section className="flex flex-row justify-end items-center gap-2">
                         <h1>
                             Remaining unpaid and unclaimed yearbooks:
                             <span className="font-bold"> {remainingStudents}</span>
                         </h1>
                         <Button onClick={onDownloadHandler}>Download</Button>
-                        <Button>Search</Button>
                     </section>
                     <Dropdown
                         label=""
@@ -367,12 +402,16 @@ export default function () {
                         datas={years}
                         onChange={onChangeFilter}
                     />
-                </form>
+                </section>
             </Container>
 
             <Container>
-                {datas?.filteredData && (
-                    <Table columns={yearbookReleasedHeaders} datas={datas.filteredData} onClickCallback={onClick}
+                {filteredTableData && (
+                    <Table
+                        key={filteredTableData.length}
+                        columns={yearbookReleasedHeaders}
+                        datas={filteredTableData}
+                        onClickCallback={onClick}
                     />
                 )
                 }

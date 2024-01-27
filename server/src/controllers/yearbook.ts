@@ -484,11 +484,11 @@ export async function yearbookPhotosUpload(req: Request, res: Response) {
 
         const paymentStatus = await query(`
             SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'FULLY-PAID'
-        `)
+        `);
 
         const yearbookStatus = await query(`
             SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
-        `)
+        `);
 
         /// NOTE (EDMUND): ambot ngano in ani ang pagka format sa AMOUNT nga header nga naay spacing around sa beginning and end
         // palihog lang kung kinsa man makabalo og sanitize og excel paki remove ko ato tapos revise ning code nga mobasa
@@ -514,7 +514,7 @@ export async function yearbookPhotosUpload(req: Request, res: Response) {
             typeof yearbookPhotos[" AMOUNT "] === "undefined" ? null : yearbookPhotos[" AMOUNT "],
             paymentStatus.rows[0]['id'],
             yearbookStatus.rows[0]['id']
-        ])
+        ]);
     });
     res.status(200).end();
 }
@@ -650,22 +650,37 @@ export async function searchStudentYearbookPhoto(req: Request, res: Response) {
     // WHERE REGEXP_LIKE(CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_suffix, '')), ?)
     // `, [`^${search}`]);
 
+    `
+    SELECT ybp.yearbook_photos_id AS id, 
+        ybp.yearbook_photos_full_name AS fullName,
+        ybp.yearbook_photos_full_payment as fullPayment,
+        yps.status_name AS paymentStatus,
+        ybs.yearbook_status_name AS yearbookStatus,
+        yps.status_name AS paymentStatus,
+        COALESCE(DATE_FORMAT(ybp.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased
+        FROM yearbook_photos ybp
+        LEFT JOIN yearbook_status ybs
+        ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON ybp.yearbook_photos_payment_status_id = yps.yearbook_payment_status_id
+    `;
+
     const { rows } = await query(`
         SELECT 
-        yp.yearbook_photos_id AS id, 
-        CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName, 
-        ys.yearbook_status_name AS yearbookStatus , COALESCE(yp.yearbook_photos_date_released, 'N/A') AS dateReleased 
-        FROM yearbook_photos yp
-        LEFT JOIN course c
-        ON sfr.course = c.course_id
-        INNER JOIN yearbook_status ys
-        ON yp.yearbook_photos_status_id = ys.yearbook_status_id
-        WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR REGEXP_LIKE(sfr.suffix, ?)`,
+        ybp.yearbook_photos_id AS id, 
+        ybp.yearbook_photos_full_name AS fullName, 
+        ybp.yearbook_photos_full_payment as fullPayment,
+        yps.status_name AS paymentStatus,
+        ybs.yearbook_status_name AS yearbookStatus, 
+        COALESCE(ybp.yearbook_photos_date_released, 'N/A') AS dateReleased 
+        FROM yearbook_photos ybp
+        LEFT JOIN yearbook_status ybs
+        ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON ybp.yearbook_photos_payment_status_id = yps.yearbook_payment_status_id
+        WHERE REGEXP_LIKE(ybp.yearbook_photos_full_name, ?)`,
         [
-            `^${search}`,
-            `^${search}`,
-            `^${search}`,
-            `^${search}`
+            `${search}`,
         ]
     );
 
@@ -684,27 +699,72 @@ export async function searchStudentYearbookPhoto(req: Request, res: Response) {
 
 export async function searchStudentYearbook(req: Request, res: Response) {
     const { search } = req.body;
-    const { rows } = await query(`
-        SELECT yb.yearbook_id AS id, 
-        CONCAT(sfr.first_name, ' ', sfr.family_name, ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.suffix, '')) AS fullName, 
-        c.course_abbreviation AS course,
-        ys.yearbook_status_name AS yearbookStatus, 
+    // const { rows } = await query(`
+    // SELECT yb.yearbook_id AS id, 
+    // yb. AS fullName, 
+    // c.course_abbreviation AS course,
+    // ys.yearbook_status_name AS yearbookStatus, 
+    // COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
+    // COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
+    // COALESCE(yb.yearbook_care_of_relation, 'N/A') as careOfRelation
+    // FROM yearbook yb
+    // LEFT JOIN course c
+    // ON sfr.course = c.course_id
+    // INNER JOIN yearbook_status ys
+    // ON yb.yearbook_status_id = ys.yearbook_status_id
+    // WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR REGEXP_LIKE(sfr.suffix, ?)`,
+    // [
+    // `^${search}`,
+    // `^${search}`,
+    // `^${search}`,
+    // `^${search}`
+    // ]
+    // );
+
+    `
+    SELECT yb.yearbook_id AS id, 
+        CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, '')) AS fullName,
+        COALESCE(course_id, 'N/A') AS course,
+        yb.yearbook_full_payment AS fullPayment,
+        yps.status_name AS paymentStatus,
+        ybs.yearbook_status_name AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
-        COALESCE(yb.yearbook_care_of_relation, 'N/A') as careOfRelation
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation
         FROM yearbook yb
-        LEFT JOIN course c
-        ON sfr.course = c.course_id
-        INNER JOIN yearbook_status ys
-        ON yb.yearbook_status_id = ys.yearbook_status_id
-        WHERE REGEXP_LIKE(sfr.first_name, ?) OR REGEXP_LIKE(sfr.middle_name, ?) OR REGEXP_LIKE(sfr.family_name, ?) OR REGEXP_LIKE(sfr.suffix, ?)`,
-        [
-            `^${search}`,
-            `^${search}`,
-            `^${search}`,
-            `^${search}`
-        ]
-    );
+        LEFT JOIN user u
+        ON yb.yearbook_id = u.user_id
+        LEFT JOIN yearbook_status ybs
+        ON yb.yearbook_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
+        WHERE REGEXP_LIKE(u.first_name, ?) OR REGEXP_LIKE(u.middle_name, ?) OR REGEXP_LIKE(u.family_name, ?) OR REGEXP_LIKE(u.suffix, ?)
+    `;
+
+    const { rows } = await query(`
+        SELECT yb.yearbook_id AS id, 
+        CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, ''), ' ', COALESCE(u.user_suffix, '')) AS fullName,
+        COALESCE(course_id, 'N/A') AS course,
+        yb.yearbook_full_payment AS fullPayment,
+        yps.status_name AS paymentStatus,
+        ybs.yearbook_status_name AS yearbookStatus,
+        COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
+        COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation
+        FROM yearbook yb
+        LEFT JOIN user u
+        ON yb.yearbook_id = u.user_id
+        LEFT JOIN yearbook_status ybs
+        ON yb.yearbook_status_id = ybs.yearbook_status_id
+        LEFT JOIN yearbook_payment_status yps
+        ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
+        WHERE REGEXP_LIKE(u.user_first_name, ?) OR REGEXP_LIKE(u.user_middle_name, ?) OR REGEXP_LIKE(u.user_family_name, ?) OR REGEXP_LIKE(u.user_suffix, ?)
+    `, [
+        search,
+        search,
+        search,
+        search
+    ]);
 
 
 

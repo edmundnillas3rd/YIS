@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { read, writeFileXLSX } from "xlsx";
 import {
@@ -18,14 +18,16 @@ export default function () {
     const [search, setSearch] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [courses, setCourses] = useState();
-    const [solis, setSolis] = useState([]);
-    const [datas, setDatas] = useState({
-        rawData: [],
-        filteredData: []
+    const [solis, setSolis] = useState<any>(null);
+    const [datas, setDatas] = useState<any>({
+        rawData: null,
+        filteredData: null
     });
     const [statuses, setStatuses] = useState({});
     const [currentNode, setCurrentNode] = useState(null);
     const [remainingStudents, setRemainingStudents] = useState<string>();
+    const [filter, setFilter] = useState("");
+    const [searchedData, setSearchData] = useState([]);
 
     // Student
     const [firstName, setFirstName] = useState<string>("");
@@ -43,6 +45,35 @@ export default function () {
     const [cfRelation, setCfRelation] = useState<string>("");
 
     const navigate = useNavigate();
+
+    const filteredTableData = useMemo(() => {
+
+        if (searchedData.length > 0) {
+            return searchedData;
+        }
+
+        if (filter === "RETURNED ALL" || filter === "UNRETURNED" || filter === "LOST") {
+            console.log(filter);
+
+            let filterData = solis.filter((soli: any) => (soli['returnedStatus'] === `${filter}`));
+
+            console.log(filterData);
+
+
+            // setDatas((soli: any) => ({
+            //     ...soli,
+            //     filteredData: filterData
+            // }));
+
+            return filterData;
+        } else {
+            // setDatas((soli: any) => ({
+            //     ...soli,
+            //     filteredData: solis
+            // }));
+            return solis;
+        }
+    }, [datas, solis, filter, searchedData]);
 
     useEffect(() => {
         (async () => {
@@ -129,6 +160,8 @@ export default function () {
 
     const onChangeSearch = async (event: SyntheticEvent) => {
         event.preventDefault();
+        setFilter(null as any);
+        setSearchData([]);
         const target = event.target as HTMLInputElement;
         setSearch(target.value);
     };
@@ -194,7 +227,7 @@ export default function () {
         const data = await searchStudentSolicitationStatus(`${familyName}, ${firstName} ${middleName}`, course);
 
         const filteredData = data.map(({ firstName, middleName, lastName, suffix, ...attr }: any) => ({ uuid: uuid(), ...attr }));
-        setDatas(state => ({
+        setDatas((state: any) => ({
             ...state,
             filteredData
         }));
@@ -206,12 +239,15 @@ export default function () {
     const onSearchSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
+
         const data = await searchStudentSolicitationStatus(search, course);
-        const filteredData = data.map(({ firstName, middleName, lastName, suffix, ...attr }: any) => ({ uuid: uuid(), ...attr }));
-        setDatas(state => ({
+        const filteredData = data.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
+        setDatas((state: any) => ({
             ...state,
             filteredData
         }));
+
+        setSearchData(filteredData);
     };
 
     const onClick = async (data: any) => {
@@ -234,25 +270,26 @@ export default function () {
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
+        setFilter(target.value as any);
 
-        if (target.value === "RETURNED ALL" || target.value === "UNRETURNED" || target.value === "LOST") {
-            console.log(target.value);
-
-            let filterData = solis.filter(soli => (soli['returnedStatus'] === `${target.value}`));
-
-            console.log(filterData);
-
-
-            setDatas(soli => ({
-                ...soli,
-                filteredData: filterData
-            }));
-        } else {
-            setDatas(soli => ({
-                ...soli,
-                filteredData: solis
-            }));
-        }
+        // if (target.value === "RETURNED ALL" || target.value === "UNRETURNED" || target.value === "LOST") {
+        // console.log(target.value);
+        // 
+        // let filterData = solis.filter((soli: any) => (soli['returnedStatus'] === `${target.value}`));
+        // 
+        // console.log(filterData);
+        // 
+        // 
+        // setDatas((soli: any) => ({
+        // ...soli,
+        // filteredData: filterData
+        // }));
+        // } else {
+        // setDatas((soli: any) => ({
+        // ...soli,
+        // filteredData: solis
+        // }));
+        // }
     };
 
     const onDownloadHandler = async (event: SyntheticEvent) => {
@@ -397,21 +434,28 @@ export default function () {
                 </form>
             </Container> */}
             <Container>
-                <section
-                >
-                    <Input
-                        placeholder="Search the name of student"
-                        pattern={capitalizeRegex}
-                        onChange={onChangeSearch}
-                        width="flex-auto"
-                    />
-                    <section className="flex flex-row justify-end items-center gap-2">
+                <section className="flex flex-row">
+                    <form
+                        className="flex flex-auto flex-row justify-end items-center gap-2"
+                        onSubmit={onSearchSubmit}
+                        method="POST"
+                    >
+                        <Input
+                            placeholder="Search the name of student"
+                            pattern={capitalizeRegex}
+                            onChange={onChangeSearch}
+                            width="flex-auto"
+                        />
+                        <Button >Search</Button>
+                    </form>
+
+                    <section className="flex flex-row justify-end items-center gap-2 mx-2">
                         <h1>
                             Remaining unpaid and unreturned solis:
                             <span className="font-bold"> {remainingStudents}</span>
                         </h1>
                         <Button onClick={onDownloadHandler}>Download</Button>
-                        <Button onClick={onSearchSubmit}>Search</Button>
+
                     </section>
                     <Dropdown
                         label=""
@@ -420,10 +464,11 @@ export default function () {
                         onChange={onChangeFilter}
                     />
                 </section>
-                {datas?.filteredData && (
+                {filteredTableData && (
                     <Table
+                        key={filteredTableData.length}
                         columns={attr}
-                        datas={datas.filteredData}
+                        datas={filteredTableData}
                         onClickCallback={onClick}
                         buttonRowName="View"
                     />

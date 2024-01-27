@@ -6,7 +6,8 @@ import { searchStudentYearbookPhotoStatus } from "../utilities/students";
 
 export default function () {
 
-    const [students, setStudents] = useState(null);
+    const [students, setStudents] = useState<any>(null);
+    const [searchedData, setSearchedData] = useState<any>(null);
     const [statuses, setStatuses] = useState([]);
     const [currentNode, setCurrentNode] = useState(null);
     const [displayStatus, setDisplayStatus] = useState<boolean>(false);
@@ -23,9 +24,10 @@ export default function () {
 
             const formattedData = yearbookPhotos.map((yearbook: any) => ({ uuid: uuid(), ...yearbook }));
             console.log(yearbookPhotos);
-            
+
 
             setStudents(formattedData);
+            setSearchedData(formattedData);
 
 
             const formattedStatusData = yearbookStatuses.map((statuses: any) => ({ uuid: uuid(), ...statuses }));
@@ -56,12 +58,14 @@ export default function () {
         event.preventDefault();
 
         const data = await searchStudentYearbookPhotoStatus(search);
-        setStudents(data.map((student: any) => ({ uuid: uuid(), ...student })));
+        // setStudents(data.map((student: any) => ({ uuid: uuid(), ...student })));
+        setSearchedData(data.map((student: any) => ({ uuid: uuid(), ...student })));
+
     };
 
     const onChange = async (event: SyntheticEvent) => {
         event.preventDefault();
-
+        setSearchedData(students);
         const target = event.target as HTMLInputElement;
 
         switch (target.name) {
@@ -90,10 +94,11 @@ export default function () {
                     />
                     <Button type="submit">Search</Button>
                 </form>
-                {students && (
+                {searchedData && (
                     <Table
+                        key={searchedData.length}
                         columns={attr}
-                        datas={students}
+                        datas={searchedData}
                         buttonRowName="View"
                         onClickCallback={onClick}
                     />
