@@ -139,13 +139,13 @@ export async function downloadExcelSheet(req: Request, res: Response) {
     const students = await query(`
         SELECT
         sfr.full_name AS 'FULL NAME',
-        soli_numbers AS "SOLI #'S",
+        soli_numbers AS "SOLI #'s",
         coll.college_acronym AS COLLEGE,
         c.course_abbreviation AS COURSE
         FROM solicitation_form_raw sfr
-        INNER JOIN course c
+        LEFT JOIN course c
         ON sfr.course = c.course_id
-        INNER JOIN college coll
+        LEFT JOIN college coll
         ON c.college_id = coll.college_id
         LEFT JOIN solicitation_returned_status srs
         ON sfr.solicitation_returned_status_id = srs.solicitation_returned_status_id
@@ -156,16 +156,23 @@ export async function downloadExcelSheet(req: Request, res: Response) {
 
     const solicitationWorkbook = XLSX.utils.book_new();
 
-    collegeDepartments.rows.forEach((department: any) => {
-        const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
-
-        const sheet = XLSX.utils.json_to_sheet(s);
+    const sheet = XLSX.utils.json_to_sheet(students.rows);
         XLSX.utils.book_append_sheet(
             solicitationWorkbook,
             sheet,
-            department.college
+            "ALL"
         );
-    });
+
+    // collegeDepartments.rows.forEach((department: any) => {
+        // const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
+// 
+        // const sheet = XLSX.utils.json_to_sheet(s);
+        // XLSX.utils.book_append_sheet(
+            // solicitationWorkbook,
+            // sheet,
+            // department.college
+        // );
+    // });
 
     const buf = XLSX.write(solicitationWorkbook, {
         type: "buffer",

@@ -509,7 +509,7 @@ export async function uploadUserData(req: Request, res: Response) {
             typeof student["LAST NAME"] === "undefined" ? null : student["LAST NAME"],
             email,
             hashedPassword,
-            year,
+            Number.parseInt(year),
             queriedRole.rows[0]['id']
         ]);
 
@@ -696,6 +696,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         schoolID,
         password,
         yearGraduated,
+        isCsp,
         course
     } = req.body;
 
@@ -711,7 +712,8 @@ export async function updateStudentInfo(req: Request, res: Response) {
         user_school_id = ?,
         user_password = ?,
         user_year_graduated = ?,
-        course_id = ?
+        course_id = ?,
+        is_csp = ?
         WHERE user_id = ?
     `, [
         firstName,
@@ -722,9 +724,22 @@ export async function updateStudentInfo(req: Request, res: Response) {
         hashedPassword,
         yearGraduated,
         course,
+        isCsp,
         id
     ]);
 
+    res.status(200).end();
+}
+
+export async function updatePassword(req: Request, res: Response) {
+    const { password } = req.body;
+    const { userID } = req.session;
+
+    await query(`
+        UPDATE user
+        user_password = ?
+        WHERE user_id = ?
+    `, [password, userID])
     res.status(200).end();
 }
 

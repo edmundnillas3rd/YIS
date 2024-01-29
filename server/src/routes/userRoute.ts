@@ -24,7 +24,8 @@ import {
     deleteCoAdmin,
     updateCoAdminInfo,
     uploadUserData,
-    updateAdminInfo
+    updateAdminInfo,
+    updatePassword
 } from "../controllers/users";
 
 // GET
@@ -53,6 +54,7 @@ router.post("/update-admin-info", updateAdminInfo);
 // PUT
 router.put("/update-name", updateUsername);
 router.put("/update-student-info", updateStudentInfo);
+router.put("/update-password", updatePassword)
 router.put("/update-coadmin-info", updateCoAdminInfo);
 
 // DELETE

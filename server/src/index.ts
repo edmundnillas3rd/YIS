@@ -16,6 +16,7 @@ import courseRoute from "./routes/courseRoute";
 import clubRoute from "./routes/clubRoute";
 import yearbookRoute from "./routes/yearbookRoute";
 import { config } from "./services/mysqldb";
+import adminRoute from "./routes/adminRoute";
 
 declare module 'express-session' {
     export interface SessionData {
@@ -55,6 +56,7 @@ const main = async () => {
     app.use("/courses", courseRoute);
     app.use("/clubs", clubRoute);
     app.use("/yearbooks", yearbookRoute);
+    app.use("/admin", adminRoute);
 
     app.listen(process.env.PORT || 3000, () => {
         console.info(`[server]: Listening on port ${process.env.PORT}`);

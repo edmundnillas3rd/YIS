@@ -19,6 +19,7 @@ import Course from "../components/Admin/Course";
 import Download from "../components/Admin/Download";
 import Clubs from "../components/Admin/Clubs";
 import Admin from "../components/Admin/Admin";
+import Account from "../pages/Account";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
             {
                 path: "yearbook-preview",
                 element: <YearbookPreview />
+            },
+            {
+                path: "account",
+                element: <Account />
             },
             {
                 path: "solicitation",

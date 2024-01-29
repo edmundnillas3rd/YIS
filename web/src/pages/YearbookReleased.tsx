@@ -35,12 +35,23 @@ export default function () {
     const [cfRelation, setCfRelation] = useState<string>("");
 
     const years = generateYearRange();
-    const [filter, setFilter] = useState("");
-    const [searchedData, setSearchData] = useState([]);
+    const [filter, setFilter] = useState<number>();
+    const [searchedData, setSearchData] = useState<any>([]);
 
     const filteredTableData = useMemo(() => {
-        if (searchedData.length > 0) {
+
+        console.log(yearbooks.filter((item: any) => {
+            // console.log(item['yearGraduated'] === Number.parseInt(filter) as any);
+            return item['yearGraduated'] === Number.parseInt(filter as any) as any;
+        }));
+
+        
+        if (searchedData?.length && searchedData.length > 0) {
+
+            console.log("Executing", searchedData);
+            
             return searchedData;
+            
         }
 
 
@@ -57,8 +68,7 @@ export default function () {
         // })
 
         return yearbooks.filter((item: any) => {
-            const formattedDate = new Date(item['dateReleased']);
-            return formattedDate.getFullYear() === Number.parseInt(filter) as any;
+            return item['yearGraduated'] === Number.parseInt(filter as any) as any;
         });
     }, [datas, filter, searchedData]);
 
@@ -74,6 +84,8 @@ export default function () {
                 setYearGraduated(years[0].toString());
             }
 
+            setFilter(years[0]);
+
             setCourses(coursesData.courses);
             setRemaining(yearbookData['remaminingUnpaidOrUnClaimed']);
             setStatuses({
@@ -83,7 +95,6 @@ export default function () {
             });
             const ybs = yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }));
             setYearbooks(ybs);
-            setSearchData(ybs);
 
             setDatas({
                 filteredData: yearbookData.yearbook.map((item: any) => ({ uuid: uuid(), ...item }))
@@ -171,7 +182,7 @@ export default function () {
 
                 });
             } catch (err: any) {
-                
+
             }
         } else {
             setErrMessage("Complete all required fields marked with (*)");
@@ -186,7 +197,8 @@ export default function () {
         "YEARBOOK STATUS",
         "DATE RELEASED",
         "CARE OF",
-        "CARE OF RELATION"
+        "CARE OF RELATION",
+        "YEAR GRADUATED"
     ];
 
     const onSearchSubmit = async (event: SyntheticEvent) => {
@@ -194,7 +206,7 @@ export default function () {
 
         const data = await searchStudentYearbookStatus(search);
         const filteredData = data.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
-        
+
 
         setSearchData(filteredData);
     };
@@ -210,11 +222,11 @@ export default function () {
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
-        setFilter(target.value);
+        
+        setFilter(target.value as any);
         setDatas({
             filteredData: yearbooks.filter((item: any) => {
-                const formattedDate = new Date(item['dateReleased']);
-                return formattedDate.getFullYear() === Number.parseInt(target.value) as any;
+                return item['yearGraduated'] === Number.parseInt(target.value) as any;
             })
         });
 

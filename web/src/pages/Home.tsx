@@ -95,6 +95,9 @@ export default function Main() {
                 <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
                     COLLEGES
                 </Selection>
+                <Selection index={1} src="/assets/cog-wheel.png" url="/section/account" callbackFn={callbackFn}>
+                    ACCOUNT SETTINGS
+                </Selection>
                 {/* <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-preview" callbackFn={callbackFn}>
                     YEARBOOK PREVIEW
                 </Selection> */}
@@ -124,7 +127,7 @@ export default function Main() {
                     </>
                 )}
                 {currentUser && currentUser['role'] === "ADMIN" && (
-                    <Selection index={5} src="/assets/yearbook-2.png" url="/admin/settings" callbackFn={callbackFn} disabled={false}>
+                    <Selection index={5} src="/assets/cog-wheel.png" url="/admin/settings" callbackFn={callbackFn} disabled={false}>
                         SETTINGS
                     </Selection>
                 )

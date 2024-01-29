@@ -45,7 +45,8 @@ export async function index(req: Request, res: Response) {
         ybs.yearbook_status_name AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
-        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
+        u.user_year_graduated AS yearGraduated
         FROM yearbook yb
         LEFT JOIN user u
         ON yb.yearbook_id = u.user_id
@@ -287,31 +288,43 @@ export async function downloadData(req: Request, res: Response) {
 
     const students = await query(`
         SELECT
-        CONCAT(COALESCE(sfr.first_name, ''), ' ', COALESCE(sfr.middle_name, ''), ' ', COALESCE(sfr.family_name, ''), ' ', COALESCE(sfr.suffix, '')) AS 'FULL NAME',
+        CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, ''), ' ', COALESCE(u.user_suffix, '')) AS 'FULL NAME',
         yps.status_name AS 'PAYMENT STATUS',
         coll.college_acronym AS COLLEGE,
         c.course_abbreviation AS COURSE
         FROM yearbook yb
-        INNER JOIN yearbook_payment_status yps
+        LEFT JOIN yearbook_payment_status yps
         ON yb.yearbook_payment_status_id = yps.yearbook_payment_status_id
-        INNER JOIN course c
-        ON sfr.course = c.course_id
-        INNER JOIN college coll
+        LEFT JOIN user u
+        ON yb.yearbook_id = u.user_id
+        LEFT JOIN course c
+        ON u.course_id = c.course_id
+        LEFT JOIN college coll
         ON c.college_id = coll.college_id
         WHERE yps.status_name = 'UNPAID'
     `);
 
-    const yearbookWorkbook = XLSX.utils.book_new();
-    collegeDepartments.rows.forEach((department: any) => {
-        const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
 
-        const sheet = XLSX.utils.json_to_sheet(s);
+
+    const yearbookWorkbook = XLSX.utils.book_new();
+
+    const sheet = XLSX.utils.json_to_sheet(students.rows);
         XLSX.utils.book_append_sheet(
             yearbookWorkbook,
             sheet,
-            department.college
-        );
-    });
+            "ALL"
+    );
+
+    // collegeDepartments.rows.forEach((department: any) => {
+        // const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
+// 
+        // const sheet = XLSX.utils.json_to_sheet(s);
+        // XLSX.utils.book_append_sheet(
+            // yearbookWorkbook,
+            // sheet,
+            // department.college
+        // );
+    // });
 
     const buf = XLSX.write(yearbookWorkbook, {
         type: "buffer",

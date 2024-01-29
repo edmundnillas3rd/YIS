@@ -1,6 +1,8 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Dropdown, Input, Spinner } from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";
+import { read, writeFileXLSX } from "xlsx";
+import FileSaver from "file-saver";
 
 export default function () {
 
@@ -10,9 +12,16 @@ export default function () {
     const [loading1, setLoading1] = useState<boolean>(false);
     const [loading2, setLoading2] = useState<boolean>(false);
     const [loading3, setLoading3] = useState<boolean>(false);
-    const [year, setYear] = useState<string>("");
+    const [loading4, setLoading4] = useState<boolean>(false);
+    const [year, setYear] = useState<number>(0);
 
     const years = generateYearRange();
+
+    useEffect(() => {
+        if (years.length > 0) {
+            setYear(years[0]);
+        }
+    }, [years]);
 
     const onSubmitSoliHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -77,6 +86,88 @@ export default function () {
         setLoading3(false);
     };
 
+    const onDownloadSolicitation = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/download-solicitation`);
+            const buffer = await response.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+
+            const workbook = read(bytes);
+            writeFileXLSX(workbook, "solicitation-backup.xlsx");
+        } catch (error) {
+            console.error(error);
+
+        }
+    };
+
+    const onDownloadYearbookRelease = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/download-yearbook-released`);
+            const buffer = await response.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+
+            const workbook = read(bytes);
+            writeFileXLSX(workbook, "yearbook-released-backup.xlsx");
+        } catch (error) {
+            console.error(error);
+
+        }
+    };
+
+    const onDownloadInfoHandler = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/download-student-info`);
+            const blob = await response.blob();
+            FileSaver.saveAs(blob, `yearbook.docx`);
+
+        } catch (error) {
+            console.error(error);
+
+        }
+
+    };
+
+    const onDownloadYearbookPhotosRelease = async (event: SyntheticEvent) => {
+        event.preventDefault();
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/download-yearbook-photos`);
+            const blob = await response.blob();
+            FileSaver.saveAs(blob, `yearbook-photos-released.docx`);
+
+        } catch (error) {
+            console.error(error);
+
+        }
+    }
+
+    const onUpdateGraduatingYear = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        setLoading4(true);
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/admin/update-graduating-year`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    year
+                })
+            })
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading4(false);
+        }
+    }
+
     return (
         <Container >
             <h3 className="font-bold">MANAGE FILES</h3>
@@ -135,7 +226,7 @@ export default function () {
                     />
                     <Dropdown
                         label="YEAR GRADUATED"
-                        value={years[0]}
+                        value={year}
                         datas={years}
                         name="year"
                         onChange={(event: any) => {
@@ -144,10 +235,16 @@ export default function () {
                         }}
                         width="w-1/2"
                     />
+                    <Button onClick={onUpdateGraduatingYear}>{!loading4 ?
+                        "Update" : (
+                            <Spinner />
+                        )
+                    }</Button>
                     <h3 className="text-grey-400">
                         NOTE: Upload the spreadsheet/excel file containing all graduating students from the registrar.
                     </h3>
                 </section>
+
 
                 <Button>{!loading2 ?
                     "Upload" : (
@@ -185,6 +282,10 @@ export default function () {
                     )
                 }</Button>
             </form>
+            <Button onClick={onDownloadSolicitation}>Download Solicitation</Button>
+            <Button onClick={onDownloadYearbookRelease}>Download Yearbook Released</Button>
+            <Button onClick={onDownloadYearbookPhotosRelease}>Download Yearbook Photos</Button>
+            <Button onClick={onDownloadInfoHandler}>Download Student Yearbook Info</Button>
         </Container>
 
     );
