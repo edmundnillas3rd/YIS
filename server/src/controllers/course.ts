@@ -3,13 +3,13 @@ import { query } from "../services/mysqldb";
 
 export async function index(req: Request, res: Response) {
     const courses = await query(`
-        SELECT 
+        SELECT
         c.course_id AS id, 
         c.course_name AS name,
         c.course_abbreviation AS abbreviation,
         coll.college_acronym AS acronym
         FROM course c
-        INNER JOIN college coll
+        LEFT JOIN college coll
         ON c.college_id = coll.college_id
     `);
 

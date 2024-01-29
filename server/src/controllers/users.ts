@@ -78,7 +78,15 @@ export async function getCurrentLogUser(req: Request, res: Response) {
 
     const { userID } = req.session;
     const { rows } = await query(`
-        SELECT user.user_first_name AS firstName, user.user_family_name AS familyName, user.user_middle_name AS middleName, user.user_suffix AS suffix, role.role_name AS role, COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS claimStatus FROM user 
+        SELECT 
+        user.user_first_name AS firstName, 
+        user.user_family_name AS familyName, 
+        user.user_middle_name AS middleName, 
+        user.user_suffix AS suffix, 
+        role.role_name AS role, 
+        COALESCE(course_id, '') AS course,
+        COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS claimStatus
+        FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
         LEFT JOIN solicitation_form
@@ -448,6 +456,9 @@ export async function searchStudentUnreturned(req: Request, res: Response) {
 }
 
 export async function uploadUserData(req: Request, res: Response) {
+
+    const { year } = req.body;
+
     if (!req.file)
         return res.status(404).json({ error: "No file found" });
 
@@ -478,8 +489,10 @@ export async function uploadUserData(req: Request, res: Response) {
                 user_family_name,
                 user_email,
                 user_password,
+                user_year_graduated,
                 role_id
             ) VALUES (
+                ?,
                 ?,
                 ?,
                 ?,
@@ -495,6 +508,7 @@ export async function uploadUserData(req: Request, res: Response) {
             typeof student["LAST NAME"] === "undefined" ? null : student["LAST NAME"],
             email,
             hashedPassword,
+            year,
             queriedRole.rows[0]['id']
         ]);
 
@@ -625,7 +639,7 @@ export async function signupAdmin(req: Request, res: Response) {
 
 // PUT
 export async function updateUsername(req: Request, res: Response) {
-    const { familyName, middleName, firstName, suffix } = req.body;
+    const { familyName, middleName, firstName, suffix, course } = req.body;
     const { userID } = req.session;
 
     const results = await query(`
@@ -633,9 +647,10 @@ export async function updateUsername(req: Request, res: Response) {
         SET user_first_name = ?,
         user_family_name = ?,
         user_middle_name = ?,
-        user_suffix = ?
+        user_suffix = ?,
+        course_id = ?
         WHERE user_id = ?
-    `, [firstName, familyName, middleName, suffix, userID]);
+    `, [firstName, familyName, middleName, suffix, course, userID]);
 
     if (results.rows.affectedRows > 0) {
         return res.status(200).json({ message: "Successfully update student " });

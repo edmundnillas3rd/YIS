@@ -122,11 +122,11 @@ export async function downloadYearbook(req: Request, res: Response) {
         coll.college_id AS departmentID,
         u.user_school_id AS schoolID
         FROM user u
-        INNER JOIN role
+        LEFT JOIN role
         ON u.role_id = role.role_id
-        INNER JOIN course c
+        LEFT JOIN course c
         ON u.course_id = c.course_id
-        INNER JOIN college coll
+        LEFT JOIN college coll
         ON c.college_id = coll.college_id
         WHERE role.role_name = 'STUDENT'
     `);
