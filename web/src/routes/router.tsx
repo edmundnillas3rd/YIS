@@ -18,6 +18,7 @@ import Department from "../components/Admin/Department";
 import Course from "../components/Admin/Course";
 import Download from "../components/Admin/Download";
 import Clubs from "../components/Admin/Clubs";
+import Admin from "../components/Admin/Admin";
 
 const router = createBrowserRouter([
     {
@@ -107,7 +108,12 @@ const router = createBrowserRouter([
                     {
                         path: "download-files",
                         element: <Download />
+                    },
+                    {
+                        path: "manage-admin",
+                        element: <Admin />
                     }
+
                 ]
             }
         ]

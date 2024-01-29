@@ -148,6 +148,7 @@ export default function () {
                         title="CLUB/ORGANIZATION NAME"
                         id="name"
                         onChange={onChange}
+                        required
                     />
                 </section>
                 <section className="flex flex-auto flex-row justify-end p-5">
@@ -168,6 +169,7 @@ export default function () {
                         title="POSITION NAME"
                         id="positionName"
                         onChange={onChange}
+                        required
                     />
                 </section>
                 <section className="flex flex-auto flex-row justify-end p-5">

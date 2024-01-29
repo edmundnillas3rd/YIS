@@ -130,11 +130,13 @@ export default function () {
             <Container>
 
                 <form method="POST" onSubmit={onSubmitHandler}>
+                    <h3 className="font-bold">MANAGE CO-STAFF</h3>
                     <section className="flex flex-row gap-1">
                         <Input
                             title="FIRST NAME"
                             id="firstName"
                             onChange={onChange}
+                            required
                         />
                         <Input
                             title="MIDDLE NAME"
@@ -145,6 +147,7 @@ export default function () {
                             title="FAMILY NAME"
                             id="familyName"
                             onChange={onChange}
+                            required
                         />
                         <Input
                             title="SUFFIX"
@@ -152,17 +155,25 @@ export default function () {
                             onChange={onChange}
                         />
                     </section>
-                    <section className="flex flex-row gap-1">
-                        <Input
-                            title="EMAIL"
-                            id="email"
-                            onChange={onChange}
-                        />
+
+                    <section className="flex flex-row gap-1 items-center">
+                        <section className="flex flex-col gap-1 items-center mt-5 ">
+                            <Input
+                                title="EMAIL"
+                                id="email"
+                                onChange={onChange}
+                                pattern={"\\w{3,45}@coadmin.com"}
+                                required
+                            />
+                            <span className="text-xs text-zinc-500 font-bold">(FORMAT: user@coadmin.com)</span>
+                        </section>
+
                         <Input
                             title="PASSWORD"
                             id="password"
                             type="password"
                             onChange={onChange}
+                            required
                         />
                     </section>
 

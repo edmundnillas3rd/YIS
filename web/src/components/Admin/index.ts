@@ -6,3 +6,4 @@ export { default as Department } from "./Department";
 export { default as Download } from "./Download";
 export { default as Staff } from "./Staff";
 export { default as Student } from "./Student";
+export { default as Admind } from "./Admin";
