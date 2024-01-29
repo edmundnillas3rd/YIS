@@ -37,7 +37,7 @@ const Pagination = (props: any) => {
         <ul className="flex flex-row gap-1 text-2xl items-center"
         >
             <li
-                className={classnames('pagination-item bg-black rounded-xl', {
+                className={classnames('pagination-item bg-red-600 rounded-xl', {
                     disabled: currentPage === 1
                 })}
                 onClick={currentPage === 1 ?  null as any : onPrevious}
@@ -51,7 +51,7 @@ const Pagination = (props: any) => {
 
                 return (
                     <li
-                        className={classnames(`pagination-item p-2 rounded-xl ${pageNumber === currentPage ? "bg-black text-white" : ""}`, {
+                        className={classnames(`pagination-item p-2 rounded-xl ${pageNumber === currentPage ? "bg-red-600 text-white" : ""}`, {
                             selected: pageNumber === currentPage
                         })}
                         onClick={() => onPageChange(pageNumber)}
@@ -61,7 +61,7 @@ const Pagination = (props: any) => {
                 );
             })}
             <li
-                className={classnames('pagination-item bg-black rounded-xl', {
+                className={classnames('pagination-item bg-red-600 rounded-xl', {
                     disabled: currentPage === lastPage
                 })}
                 onClick={currentPage === lastPage ?  null as any : onNext}
