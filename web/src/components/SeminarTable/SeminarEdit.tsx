@@ -30,7 +30,7 @@ export default function ({
             setSeminarParticipationName(data['seminarAttendedName']);
             setSeminarName(data['seminarName']);
             setSeminarDate(data['seminarDateAttended']);
-            console.log(seminarName);
+            
 
         }
     }, [data]);

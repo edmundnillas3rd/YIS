@@ -74,7 +74,7 @@ export async function searchStudentYearbookStatus(fullName: string): Promise<any
         const { searchResults, error } = await response.json();
 
         if (error) {
-            console.log(error);
+            
             return;
         }
 
@@ -99,7 +99,7 @@ export async function searchStudentYearbookPhotoStatus(fullName: string): Promis
         const { searchResults, error } = await response.json();
 
         if (error) {
-            console.log(error);
+            
             return;
         }
 
@@ -124,13 +124,13 @@ export async function searchStudentSolicitationStatus(fullName: string, course: 
 
         const { searchResults, error } = await response.json();
         if (error) {
-            console.log(error);
+            
             return;
         }
 
         return searchResults;
     } catch (error) {
-        console.log(error);
+        
 
     }
 }

@@ -18,7 +18,7 @@ export default function ({
 
     useEffect(() => {
         if (data && data2) {
-            console.log(data);
+            
             
             setStudent(data);
             setStatuses(data2);
@@ -74,7 +74,7 @@ export default function ({
             }
 
         } else {
-            console.log(status);
+            
 
         }
     };

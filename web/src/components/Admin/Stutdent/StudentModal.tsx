@@ -26,7 +26,7 @@ export default function ({
 
     useEffect(() => {
         if (data) {
-            console.log(data);
+            
 
 
             setID(data['id']);
@@ -40,7 +40,7 @@ export default function ({
 
             const foundCourse = data2.find((c: any) => c['abbreviation'] === data['course']);
 
-            console.log(foundCourse, data2, data);
+            
 
             setCourse(foundCourse?.id ? foundCourse.id : '');
             setCourses(data2);

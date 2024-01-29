@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "../utilities/user";
+import { Modal } from "../components/Globals";
 
 type IAuthContext = [undefined, React.Dispatch<React.SetStateAction<undefined>>];
 export const AuthContext = createContext<IAuthContext>([[] as any, () => null]);
@@ -13,31 +14,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [currentUser, setCurrentUser] = useState(undefined);
     const navigate = useNavigate();
 
-    useEffect(() => {
+    // useEffect(() => {
 
+    //     (async () => {
+
+    //         const response = await getCurrentUser();
+
+    //         const [data] = await Promise.all([response]);
+
+    //         setCurrentUser(data as any);
+
+    //         if (!data)
+    //             navigate("/");
+    //     })();
+    // }, []);
+
+    useEffect(() => {
         (async () => {
 
-            // if (import.meta.env.DEV) {
-            //     return;
-            // }
-            
-            const response = await getCurrentUser();
 
-            const [data] = await Promise.all([response]);
+            try {
+                const response = await getCurrentUser();
 
-            console.log(data);
-            
-            setCurrentUser(data as any);
+                const [data] = await Promise.all([response]);
 
-            if (!data)
+                setCurrentUser(data as any);
+            } catch (error) {
                 navigate("/");
+            }
+
         })();
     }, []);
 
 
     return (
-        <AuthContext.Provider value={[currentUser, setCurrentUser]}>
-            {children}
-        </AuthContext.Provider>
+        <>
+            <AuthContext.Provider value={[currentUser, setCurrentUser]}>
+                {children}
+            </AuthContext.Provider>
+        </>
     );
 };

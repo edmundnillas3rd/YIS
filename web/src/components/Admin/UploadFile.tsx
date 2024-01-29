@@ -28,10 +28,6 @@ export default function () {
                 body: formData
             });
 
-            if (response.ok) {
-                console.log("Sucessfully uploaded file");
-            }
-
         } catch (error) {
             console.error(error);
         }
@@ -54,10 +50,6 @@ export default function () {
                 body: formData
             });
 
-            if (response.ok) {
-                console.log("Sucessfully uploaded file");
-            }
-
         } catch (error) {
             console.error(error);
         }
@@ -77,10 +69,6 @@ export default function () {
                 credentials: "include",
                 body: formData
             });
-
-            if (response.ok) {
-                console.log("Sucessfully uploaded file");
-            }
 
         } catch (error) {
             console.error(error);
@@ -107,7 +95,6 @@ export default function () {
                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         onChange={(event: any) => {
                             event.preventDefault();
-                            console.log(event.target.files);
                             setFile(event.target.files[0]);
                         }}
                         width="w-1/2"
@@ -141,7 +128,6 @@ export default function () {
                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         onChange={(event: any) => {
                             event.preventDefault();
-                            console.log(event.target.files);
                             setUserFile(event.target.files[0]);
                         }}
                         width="w-1/2"
@@ -153,7 +139,6 @@ export default function () {
                         name="year"
                         onChange={(event: any) => {
                             event.preventDefault();
-                            console.log(event.target.files);
                             setYear(event.target.value);
                         }}
                         width="w-1/2"
@@ -183,7 +168,6 @@ export default function () {
                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         onChange={(event: any) => {
                             event.preventDefault();
-                            console.log(event.target.files);
                             setPhotosFile(event.target.files[0]);
                         }}
                         width="w-1/2"

@@ -94,7 +94,7 @@ export default function () {
     }, []);
 
     useEffect(() => {
-        console.log(currentUser);
+        
         if (currentUser) {
             setStudent({
                 firstName: currentUser.firstName,
@@ -125,7 +125,7 @@ export default function () {
     const onInputChangeHandler = (event: SyntheticEvent) => {
         const target = event.target as HTMLInputElement;
 
-        console.log(target.value);
+        
 
         switch (target.name) {
             case "first-name":
@@ -135,7 +135,7 @@ export default function () {
                 }));
                 break;
             case "middleName":
-                console.log(target.value);
+                
 
                 setStudent((state: any) => ({
                     ...state,
@@ -177,7 +177,7 @@ export default function () {
     };
 
     const onClickOrganization = async (data: any) => {
-        console.log("Org row clicked", data);
+        
         setDisplayOrgEdit(true);
         setCurrentOrgNode(data);
     };
@@ -192,14 +192,14 @@ export default function () {
     };
 
     const onClickAward = async (data: any) => {
-        console.log("Award row clicked", data);
+        
         setDisplayAwardEdit(true);
         setCurrentAwardNode(data);
     };
 
     const onClickAddAward = async (event: SyntheticEvent) => {
         event.preventDefault();
-        console.log("Add new award");
+        
         setDisplayAwardForm(true);
     };
 
@@ -210,7 +210,7 @@ export default function () {
     const onCloseEditOrg = async () => {
         setDisplayOrgEdit(false);
         setCurrentOrgNode(null);
-        console.log("Current Org node", currentOrgNode);
+        
 
     };
 
@@ -220,14 +220,14 @@ export default function () {
     };
 
     const onClickSeminar = async (data: any) => {
-        console.log("Seminar row clicked", data);
+        
         setDisplayEditSeminar(true);
         setCurrentSeminarNode(data);
     };
 
     const onClickAddSeminar = async (event: SyntheticEvent) => {
         event.preventDefault();
-        console.log("Add new seminar");
+        
         setDisplaySeminarForm(true);
     };
 
@@ -244,7 +244,7 @@ export default function () {
         event.preventDefault();
         setLoading(true);
         setDisable(true);
-        console.log(student);
+        
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/update-name`, {
@@ -258,7 +258,7 @@ export default function () {
 
             if (response.ok) {
                 setLoading(false);
-                console.log("Successfully updated user entry");
+                
                 navigate(0);
             }
         } catch (error) {

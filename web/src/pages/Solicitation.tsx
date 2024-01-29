@@ -53,11 +53,11 @@ export default function () {
         }
 
         if (filter === "RETURNED ALL" || filter === "UNRETURNED" || filter === "LOST") {
-            console.log(filter);
+            
 
             let filterData = solis.filter((soli: any) => (soli['returnedStatus'] === `${filter}`));
 
-            console.log(filterData);
+            
 
 
             // setDatas((soli: any) => ({
@@ -87,7 +87,7 @@ export default function () {
 
 
             if (course && soli && yearbook) {
-                console.log(soli);
+                
 
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
@@ -252,7 +252,7 @@ export default function () {
 
     const onClick = async (data: any) => {
         setCurrentNode(datas.rawData.find((raw: any) => raw.id === data.id) as any);
-        console.log(data);
+        
 
     };
 
@@ -273,11 +273,11 @@ export default function () {
         setFilter(target.value as any);
 
         // if (target.value === "RETURNED ALL" || target.value === "UNRETURNED" || target.value === "LOST") {
-        // console.log(target.value);
+        // 
         // 
         // let filterData = solis.filter((soli: any) => (soli['returnedStatus'] === `${target.value}`));
         // 
-        // console.log(filterData);
+        // 
         // 
         // 
         // setDatas((soli: any) => ({

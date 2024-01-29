@@ -22,7 +22,7 @@ export default function ({
 
     useEffect(() => {
         if (data) {
-            console.log(data);
+            
 
             setID(data['id']);
             setFirstName(data['firstName']);
@@ -74,7 +74,7 @@ export default function ({
             password,
         };
 
-        console.log(data);
+        
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/update-coadmin-info`, {

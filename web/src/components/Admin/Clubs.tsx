@@ -25,7 +25,7 @@ export default function () {
                 const clubs = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
                 const clubsData = await clubs.json();
 
-                console.log(clubsData);
+                
 
                 if (clubsData) {
                     setClubs(clubsData.organizations);
@@ -104,12 +104,12 @@ export default function () {
     };
 
     const onClickHandler = async (data: any) => {
-        console.log(data);
+        
         setCurrentNode(data);
     };
 
     const onClickPosHandler = async (data: any) => {
-        console.log(data);
+        
         setCurrentPosNode(data);
     };
 
@@ -169,7 +169,7 @@ export default function () {
                         title="POSITION NAME"
                         id="positionName"
                         onChange={onChange}
-                        required
+                        
                     />
                 </section>
                 <section className="flex flex-auto flex-row justify-end p-5">

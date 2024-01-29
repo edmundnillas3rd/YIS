@@ -23,7 +23,7 @@ export default function () {
             const { yearbookPhotos, yearbookStatuses } = yearbookData;
 
             const formattedData = yearbookPhotos.map((yearbook: any) => ({ uuid: uuid(), ...yearbook }));
-            console.log(yearbookPhotos);
+            
 
 
             setStudents(formattedData);

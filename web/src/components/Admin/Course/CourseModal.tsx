@@ -20,7 +20,7 @@ export default function ({
 
     useEffect(() => {
         if (data) {
-            // console.log(data, data2);
+            // 
 
             setDepartments(data2);
             setID(data['id']);
@@ -28,7 +28,7 @@ export default function ({
             setAbbreviation(data['abbreviation']);
 
             const foundDepartment = data2.find((d: any) => d['acronym'] === data['acronym'])
-            console.log(foundDepartment);
+            
             
             setDepartment(foundDepartment['id']);
         }

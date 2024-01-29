@@ -12,7 +12,7 @@ export default function () {
                 const response = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`);
                 const data = await response.json();
 
-                console.log(data);
+                
                 setDepartments(data['departments']);
 
             } catch (error) {

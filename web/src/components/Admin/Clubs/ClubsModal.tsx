@@ -19,7 +19,7 @@ export default function ({
 
     useEffect(() => {
         if (data) {
-            console.log(data);
+            
 
             setID(data['id']);
             setName(data['name']);

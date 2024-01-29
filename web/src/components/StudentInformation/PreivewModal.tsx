@@ -24,7 +24,7 @@ export default function ({
                 setAffiliations(data.affiliations.map((affil: any) => ({ key: uuid(), value: affil })));
                 setAwards(data.awards.map((award: any) => ({ key: uuid(), value: award })));
                 setSeminars(data.seminars.map((seminar: any) => ({ key: uuid(), value: seminar })));
-                console.log(data);
+                
                 
             }
         })();
@@ -33,7 +33,7 @@ export default function ({
     useEffect(() => {
 
         if (affiliations && awards && seminars) {
-            console.log(affiliations, awards && seminars);
+            
 
         }
     }, [affiliations, awards, seminars]);

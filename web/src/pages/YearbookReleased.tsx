@@ -171,7 +171,7 @@ export default function () {
 
                 });
             } catch (err: any) {
-                console.log(err);
+                
             }
         } else {
             setErrMessage("Complete all required fields marked with (*)");
@@ -194,7 +194,7 @@ export default function () {
 
         const data = await searchStudentYearbookStatus(search);
         const filteredData = data.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
-        console.log(filteredData);
+        
 
         setSearchData(filteredData);
     };

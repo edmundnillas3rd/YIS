@@ -81,7 +81,7 @@ export default function ({ data, data2, hasSubmit }: any) {
         setLoading(true);
 
         if (club && position && yearStarted && yearEnded) {
-            console.log(club, position, yearStarted, yearEnded);
+            
             const newData = {
                 club,
                 position,
@@ -89,7 +89,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                 yearEnded
             };
 
-            console.log(newData);
+            
 
 
             if (typeof hasSubmit === "boolean" && !hasSubmit) {
@@ -104,7 +104,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                 });
 
                 if (response.ok) {
-                    console.log("Successfully updated a add club position entry");
+                    
                     setLoading(false);
                     navigate(0);
                 }
@@ -120,7 +120,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                 });
 
                 if (response.ok) {
-                    console.log("Successfully updated a club entry");
+                    
                     setLoading(false);
                     navigate(0);
                 }
@@ -148,7 +148,7 @@ export default function ({ data, data2, hasSubmit }: any) {
             method: "DELETE"
         });
         if (response.ok) {
-            console.log("Successfully delete club/organization entry");
+            
             navigate(0);
         }
     };

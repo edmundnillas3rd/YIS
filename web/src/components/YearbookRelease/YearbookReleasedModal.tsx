@@ -34,7 +34,7 @@ export default function ({
                 yearbookPaymentStatuses: data2['yearbookPaymentStatuses']
             });
 
-            console.log(data);
+            
             
 
             const foundStatus = data2['yearbookStatuses'].find((status: any) => status['name'] === data['yearbookStatus']);
@@ -93,11 +93,11 @@ export default function ({
                 setAmount(target.value);
                 break;
             case "status":
-                console.log(`Statuses ${target.value}`);
+                
                 setStatus(target.value);
                 break;
             case "paymentStatus":
-                console.log(`Payment Statuses ${target.value}`);
+                
 
                 setPaymentStatus(target.value);
                 break;

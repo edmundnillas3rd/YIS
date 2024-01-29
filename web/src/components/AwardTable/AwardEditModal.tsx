@@ -71,7 +71,7 @@ export default function ({
 
             if (response.ok) {
                 setLoading(false);
-                console.log("Successfully updated award entry");
+                
                 navigate(0);
             }
         }
@@ -107,7 +107,7 @@ export default function ({
 
         if (response.ok) {
             setLoading(false);
-            console.log("Successfully deleted award entry");
+            
             navigate(0);
         }
     };

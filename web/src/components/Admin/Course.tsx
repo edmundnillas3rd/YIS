@@ -83,7 +83,7 @@ export default function () {
             if (response.ok) {
                 navigate(0);
             } else {
-                console.log("error");
+                
 
             }
         } catch (error) {

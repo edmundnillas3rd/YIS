@@ -42,7 +42,7 @@ export default function () {
                     setCourses(courses);
                 }
 
-                console.log(studentUsers);
+                
                 
 
                 setStudents(studentUsers.map(({ ...attr }: any) => ({  uuid: uuid(), ...attr })));

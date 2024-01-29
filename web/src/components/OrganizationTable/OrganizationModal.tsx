@@ -83,7 +83,7 @@ export default function ({
             });
 
             if (response.ok) {
-                console.log("Successfully added a new club entry");
+                
                 navigate(0);
             } else {
                 const { error } = await response.json();

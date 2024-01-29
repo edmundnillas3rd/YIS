@@ -71,7 +71,7 @@ export default function ({
             });
 
             if (response.ok) {
-                console.log("Adding new Award success!");
+                
                 setLoading(true);
                 navigate(0);
             }
