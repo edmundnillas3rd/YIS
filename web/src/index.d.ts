@@ -22,4 +22,5 @@ interface Student {
     familyName: String;
     middleName: String;
     suffix: String;
+    course: String;
 }

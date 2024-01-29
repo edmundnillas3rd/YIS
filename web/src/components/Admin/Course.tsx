@@ -2,6 +2,7 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Container, Dropdown, Input, Table } from "../Globals";
 import { useNavigate } from "react-router-dom";
 import CourseModal from "./Course/CourseModal";
+import { v4 as uuid } from "uuid";
 
 export default function () {
 
@@ -28,7 +29,7 @@ export default function () {
 
                 if (courses && departments) {
                     setDepartments(departments);
-                    setCourses(courses);
+                    setCourses(courses.map(({ acronym, ...course }: any) => ({ uuid: uuid(), ...course, acronym: acronym ?? '' })));
                 }
 
             } catch (error) {

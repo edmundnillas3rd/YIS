@@ -1,5 +1,6 @@
 import { SyntheticEvent, useState } from "react";
-import { Button, Input, Spinner } from "../Globals";
+import { Button, Dropdown, Input, Spinner } from "../Globals";
+import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function () {
 
@@ -9,6 +10,9 @@ export default function () {
     const [loading1, setLoading1] = useState<boolean>(false);
     const [loading2, setLoading2] = useState<boolean>(false);
     const [loading3, setLoading3] = useState<boolean>(false);
+    const [year, setYear] = useState<string>("");
+
+    const years = generateYearRange();
 
     const onSubmitSoliHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
@@ -40,6 +44,8 @@ export default function () {
         const formData = new FormData();
 
         formData.append("graduating-students-sheet", userFile);
+        formData.append("year", year);
+
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/upload-users`, {
@@ -91,20 +97,29 @@ export default function () {
                 encType="multipart/form-data"
                 onSubmit={onSubmitSoliHandler}
             >
-                <h3 className="font-bold">
-                    Upload the spreadsheet/excel file containing all solicitations form that were released.
-                </h3>
-                <Input
-                    type="file"
-                    name="solicitation-sheet"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    onChange={(event: any) => {
-                        event.preventDefault();
-                        console.log(event.target.files);
-                        setFile(event.target.files[0]);
-                    }}
-                    width="w-1/2"
-                />
+                <section className="flex flex-row items-center gap-4 mt-5">
+
+
+                    <Input
+                        title="SOLICITATION FORM"
+                        type="file"
+                        name="solicitation-sheet"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        onChange={(event: any) => {
+                            event.preventDefault();
+                            console.log(event.target.files);
+                            setFile(event.target.files[0]);
+                        }}
+                        width="w-1/2"
+                    />
+
+
+
+
+                    <h3 className="text-grey-400">
+                        NOTE: Upload the spreadsheet/excel file containing all solicitations form that were released.
+                    </h3>
+                </section>
                 <Button>{!loading1 ?
                     "Upload" : (
                         <Spinner />
@@ -117,20 +132,37 @@ export default function () {
                 encType="multipart/form-data"
                 onSubmit={onSubmitUserHandler}
             >
-                <h3 className="font-bold">
-                    Upload the spreadsheet/excel file containing all graduating students from the registrar.
-                </h3>
-                <Input
-                    type="file"
-                    name="graduating-students-sheet"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    onChange={(event: any) => {
-                        event.preventDefault();
-                        console.log(event.target.files);
-                        setUserFile(event.target.files[0]);
-                    }}
-                    width="w-1/2"
-                />
+
+                <section className="flex flex-row items-center gap-4 mt-5">
+                    <Input
+                        title="USERS"
+                        type="file"
+                        name="graduating-students-sheet"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        onChange={(event: any) => {
+                            event.preventDefault();
+                            console.log(event.target.files);
+                            setUserFile(event.target.files[0]);
+                        }}
+                        width="w-1/2"
+                    />
+                    <Dropdown
+                        label="YEAR GRADUATED"
+                        value={years[0]}
+                        datas={years}
+                        name="year"
+                        onChange={(event: any) => {
+                            event.preventDefault();
+                            console.log(event.target.files);
+                            setYear(event.target.value);
+                        }}
+                        width="w-1/2"
+                    />
+                    <h3 className="text-grey-400">
+                        NOTE: Upload the spreadsheet/excel file containing all graduating students from the registrar.
+                    </h3>
+                </section>
+
                 <Button>{!loading2 ?
                     "Upload" : (
                         <Spinner />
@@ -142,20 +174,26 @@ export default function () {
                 encType="multipart/form-data"
                 onSubmit={onSubmitYearbookPhotoHandler}
             >
-                <h3 className="font-bold">
-                    Upload the spreadsheet/excel file containing all data for the yearbook-pictures.
-                </h3>
-                <Input
-                    type="file"
-                    name="yearbook-photos-sheet"
-                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    onChange={(event: any) => {
-                        event.preventDefault();
-                        console.log(event.target.files);
-                        setPhotosFile(event.target.files[0]);
-                    }}
-                    width="w-1/2"
-                />
+                <section className="flex flex-row items-center gap-4 mt-5">
+
+                    <Input
+                        title="YEARBOOK PICTURES"
+                        type="file"
+                        name="yearbook-photos-sheet"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        onChange={(event: any) => {
+                            event.preventDefault();
+                            console.log(event.target.files);
+                            setPhotosFile(event.target.files[0]);
+                        }}
+                        width="w-1/2"
+                    />
+                    <h3 className="text-grey-400">
+                        NOTE: Upload the spreadsheet/excel file containing all data for the yearbook-pictures.
+                    </h3>
+                </section>
+
+
                 <Button>{!loading3 ?
                     "Upload" : (
                         <Spinner />

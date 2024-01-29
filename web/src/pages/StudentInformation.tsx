@@ -72,7 +72,7 @@ export default function () {
 
             const coursesResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/courses`, {
                 credentials: "include"
-            })
+            });
 
             const [indexData, clubsData, awardsData, seminarsData, coursesData] = await Promise.all([
                 clubsRouteResponse.json(),
@@ -87,7 +87,7 @@ export default function () {
                 setClubsData(clubsData['clubs'].map((club: any) => ({ uuid: uuid(), ...club })));
                 setAwardsData(awardsData['awards'].map((award: any) => ({ uuid: uuid(), ...award })));
                 setSeminarsData(seminarsData['seminars'].map((seminar: any) => ({ uuid: uuid(), ...seminar })));
-                setCourses(coursesData['courses'])
+                setCourses(coursesData['courses']);
             }
 
         })();
@@ -100,7 +100,8 @@ export default function () {
                 firstName: currentUser.firstName,
                 familyName: currentUser.familyName,
                 middleName: currentUser.middleName,
-                suffix: currentUser.suffix
+                suffix: currentUser.suffix,
+                course: currentUser.course
             });
         }
     }, [currentUser]);
@@ -157,7 +158,7 @@ export default function () {
                 setStudent((state: any) => ({
                     ...state,
                     course: target.value
-                }))
+                }));
                 break;
         }
     };
@@ -245,8 +246,7 @@ export default function () {
         setDisable(true);
         console.log(student);
 
-        if (student?.familyName && student?.firstName && student?.middleName) {
-
+        try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/update-name`, {
                 method: "PUT",
                 credentials: "include",
@@ -261,6 +261,9 @@ export default function () {
                 console.log("Successfully updated user entry");
                 navigate(0);
             }
+        } catch (error) {
+            console.error(error);
+            
         }
     };
 
@@ -335,7 +338,7 @@ export default function () {
                 </section>
                 {student && (
                     <form
-                        className="flex flex-col md:flex-row flex-wrap gap-2"
+                        className="flex flex-col md:flex-row flex-wrap gap-2 items-center"
                         method="POST"
                         onSubmit={onSubmitHandler}>
                         <Input
@@ -364,7 +367,7 @@ export default function () {
                             required
 
                         />
-                        <section className="flex flex-col gap-1 items-center ">
+                        <section className="flex flex-col gap-1 items-center mt-5 ">
                             <Input
                                 title="MIDDLE NAME"
                                 id="middleName"
@@ -379,7 +382,7 @@ export default function () {
                             />
                             <span className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</span>
                         </section>
-                        <section className="flex flex-col gap-1 items-center">
+                        <section className="flex flex-col gap-1 items-center mt-5">
                             <Input
                                 title="SUFFIX"
                                 id="suffix"
@@ -394,11 +397,19 @@ export default function () {
                             />
                             <p className="text-zinc-500 font-bold">EX. SR, JR, I, II, III</p>
                         </section>
-                        <Dropdown
-                            label="COURSES"
-                            name="course"
-                            datas={courses}
-                        />
+                        <section>
+                            <Dropdown
+                                label="COURSES"
+                                name="course"
+                                datas={courses}
+                                value={student['course']}
+                                onChange={onInputChangeHandler}
+                                disabled={disable}
+                                required
+
+                            />
+                        </section>
+
                     </form>
                 )}
 
