@@ -25,7 +25,7 @@ export default function () {
 
 
                 if (courses && departments) {
-                    
+
 
                     setDepartments(departments);
                 }
@@ -76,7 +76,7 @@ export default function () {
             if (response.ok) {
                 navigate(0);
             } else {
-                
+
 
             }
         } catch (error) {
@@ -103,8 +103,10 @@ export default function () {
                 data2={departments}
             />
             <Container>
+                <h3 className="font-bold">MANAGE COLLEGE DEPARTMENTS</h3>
 
                 <form method="POST" onSubmit={onSubmitHandler}>
+
                     <section className="flex flex-row gap-1">
                         <Input
                             title="DEPARTMENT NAME"

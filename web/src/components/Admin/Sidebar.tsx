@@ -16,7 +16,7 @@ export default function () {
                 className={`flex justify-center items-center font-bold p-5 rounded hover:cursor-pointer hover:bg-red-600 hover:text-zinc-100`}
                 onClick={e => setCurrentIndex(0)}
             >
-                MANAGE SOLI FILES
+                MANAGE FILES
             </Link>
             <Link
                 to="/admin/settings/manage-students" replace

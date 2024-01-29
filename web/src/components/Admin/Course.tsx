@@ -83,7 +83,7 @@ export default function () {
             if (response.ok) {
                 navigate(0);
             } else {
-                
+
 
             }
         } catch (error) {
@@ -111,6 +111,7 @@ export default function () {
             />
             <Container>
 
+                <h3 className="font-bold">MANAGE COURSES</h3>
                 <form method="POST" onSubmit={onSubmitHandler}>
                     <section className="flex flex-row gap-1">
                         <Input

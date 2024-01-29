@@ -85,7 +85,8 @@ export async function getCurrentLogUser(req: Request, res: Response) {
         user.user_suffix AS suffix, 
         role.role_name AS role, 
         COALESCE(course_id, '') AS course,
-        COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS claimStatus
+        COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS claimStatus,
+        user.user_email as email
         FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
@@ -514,7 +515,7 @@ export async function uploadUserData(req: Request, res: Response) {
 
         const paymentStatus = await query(`
             SELECT yearbook_payment_status_id AS id, status_name AS name FROM yearbook_payment_status WHERE status_name = 'UNPAID' 
-        `)
+        `);
 
         const yearbookStatus = await query(`
             SELECT yearbook_status_id AS id, yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_name = 'PENDING'
@@ -633,6 +634,31 @@ export async function signupAdmin(req: Request, res: Response) {
 
     res.status(200).json({ message: "admin successfully registered!" });
 
+}
+
+export async function updateAdminInfo(req: Request, res: Response) {
+    const { email, password } = req.body;
+    const { userID } = req.session;
+
+
+    if ((password as string).length > 0) {
+
+        await query(`
+            UPDATE user
+            SET user_email = ?,
+            user_password = ?
+            WHERE user_id = ?
+        `, [email, password, userID]);
+    } else {
+        await query(`
+            UPDATE user
+            SET user_email = ?,
+            WHERE user_id = ?
+        `, [email, userID]);
+    }
+
+
+    res.status(200).end();
 }
 
 

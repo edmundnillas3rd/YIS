@@ -2,7 +2,7 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import { Input, Dropdown, Button, Table, Container } from "../Globals";
 import { useNavigate } from "react-router-dom";
 import ClubsModal from "./Clubs/ClubsModal";
-import PositionsModal from  "./Clubs/PositionsModal";
+import PositionsModal from "./Clubs/PositionsModal";
 
 export default function () {
 
@@ -25,7 +25,7 @@ export default function () {
                 const clubs = await fetch(`${import.meta.env.VITE_BASE_URL}/clubs`);
                 const clubsData = await clubs.json();
 
-                
+
 
                 if (clubsData) {
                     setClubs(clubsData.organizations);
@@ -104,12 +104,12 @@ export default function () {
     };
 
     const onClickHandler = async (data: any) => {
-        
+
         setCurrentNode(data);
     };
 
     const onClickPosHandler = async (data: any) => {
-        
+
         setCurrentPosNode(data);
     };
 
@@ -135,14 +135,15 @@ export default function () {
                 onClose={onCloseModal}
                 data={currentNode}
             />
-             <PositionsModal
+            <PositionsModal
                 hasCloseBtn={true}
                 isOpen={!!currentPosNode}
                 onClose={onCloseModal}
                 data={currentPosNode}
             />
             <form method="POST" onSubmit={onSubmitHandler}>
-                <h1>Add New Clubs</h1>
+                <h3 className="font-bold">MANAGE CLUBS AND POSITIONS</h3>
+
                 <section className="flex flex-row gap-1">
                     <Input
                         title="CLUB/ORGANIZATION NAME"
@@ -169,7 +170,7 @@ export default function () {
                         title="POSITION NAME"
                         id="positionName"
                         onChange={onChange}
-                        
+
                     />
                 </section>
                 <section className="flex flex-auto flex-row justify-end p-5">

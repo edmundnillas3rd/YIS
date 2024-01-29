@@ -1,6 +1,6 @@
 import * as FileSaver from "file-saver";
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Button } from "../Globals";
+import { Button, Container } from "../Globals";
 
 export default function () {
 
@@ -22,7 +22,7 @@ export default function () {
     }, []);
 
     return (
-        <section className="flex flex-auto flex-col gap-1 p-1">
+        <Container>
             <h1 className="font-bold">DOWNLOAD FILES</h1>
             <h1 className="font-bold mb-5">You can download all of the students information about their affiliations and awards here</h1>
             {departments.map(department => (
@@ -50,6 +50,6 @@ export default function () {
                     </section>
                 </section>
             ))}
-        </section>
+        </Container>
     );
 }

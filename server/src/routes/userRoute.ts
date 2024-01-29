@@ -23,7 +23,8 @@ import {
     signupCoAdmin,
     deleteCoAdmin,
     updateCoAdminInfo,
-    uploadUserData
+    uploadUserData,
+    updateAdminInfo
 } from "../controllers/users";
 
 // GET
@@ -47,6 +48,7 @@ router.post("/coadmin-signup", signupCoAdmin);
 
 // ADMIN POST
 router.post("/admin-signup", signupAdmin);
+router.post("/update-admin-info", updateAdminInfo);
 
 // PUT
 router.put("/update-name", updateUsername);

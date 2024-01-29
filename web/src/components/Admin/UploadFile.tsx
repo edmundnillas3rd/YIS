@@ -1,5 +1,5 @@
 import { SyntheticEvent, useState } from "react";
-import { Button, Dropdown, Input, Spinner } from "../Globals";
+import { Button, Container, Dropdown, Input, Spinner } from "../Globals";
 import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function () {
@@ -78,7 +78,8 @@ export default function () {
     };
 
     return (
-        <section className="flex flex-col gap-3 p-2">
+        <Container >
+            <h3 className="font-bold">MANAGE FILES</h3>
 
             <form
                 method="POST"
@@ -184,7 +185,7 @@ export default function () {
                     )
                 }</Button>
             </form>
-        </section>
+        </Container>
 
     );
 }

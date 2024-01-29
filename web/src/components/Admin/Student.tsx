@@ -147,6 +147,7 @@ export default function () {
                 data2={courses}
             />
             <Container>
+                <h3 className="font-bold">MANAGE STUDENTS</h3>
 
                 <form method="POST" onSubmit={onSubmitHandler}>
                     <section className="flex flex-row gap-1">
