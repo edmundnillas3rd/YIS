@@ -104,12 +104,11 @@ export default function () {
                     filteredData: formattedData
                 });
 
-                const { statuses } = soli;
-                const { yearbookPaymentStatuses } = yearbook;
+                const { statuses, paymentStatuses } = soli;
 
                 setStatuses({
                     statuses,
-                    yearbookPaymentStatuses: yearbookPaymentStatuses
+                    paymentStatuses
                 });
 
             }

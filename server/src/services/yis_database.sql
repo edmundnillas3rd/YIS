@@ -170,7 +170,7 @@ CREATE TABLE `user` (
   `user_suffix` varchar(45) DEFAULT NULL,
   `user_email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `user_password` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `user_year_graduated` smallint DEFAULT NULL,
+  `user_school_year` smallint DEFAULT NULL,
   `user_school_id` varchar(45) DEFAULT NULL,
   `role_id` varchar(36) NOT NULL,
   `course_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,

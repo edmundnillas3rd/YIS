@@ -26,7 +26,7 @@ export default function () {
     const [middleName, setMiddleName] = useState<string>("");
     const [course, setCourse] = useState<string>("");
     const [suffix, setSuffix] = useState<string>("");
-    const [yearGraduated, setYearGraduated] = useState<string>("");
+    const [schoolYear, setSchoolYear] = useState<string>("");
 
     const [cfFirstName, setCfFirstName] = useState<string>("");
     const [cfLastName, setCfLastName] = useState<string>("");
@@ -40,12 +40,6 @@ export default function () {
 
     const filteredTableData = useMemo(() => {
 
-        console.log(yearbooks.filter((item: any) => {
-            // console.log(item['yearGraduated'] === Number.parseInt(filter) as any);
-            return item['yearGraduated'] === Number.parseInt(filter as any) as any;
-        }));
-
-        
         if (searchedData?.length && searchedData.length > 0) {
 
             console.log("Executing", searchedData);
@@ -68,7 +62,7 @@ export default function () {
         // })
 
         return yearbooks.filter((item: any) => {
-            return item['yearGraduated'] === Number.parseInt(filter as any) as any;
+            return item['schoolYear'] === Number.parseInt(filter as any) as any;
         });
     }, [datas, filter, searchedData]);
 
@@ -81,10 +75,11 @@ export default function () {
 
             if (coursesData.courses && years) {
                 setCourse(coursesData.courses[0]['id']);
-                setYearGraduated(years[0].toString());
+                setSchoolYear(years[0].toString());
             }
 
             setFilter(years[0]);
+            
 
             setCourses(coursesData.courses);
             setRemaining(yearbookData['remaminingUnpaidOrUnClaimed']);
@@ -123,8 +118,8 @@ export default function () {
             case "course":
                 setCourse(target.value);
                 break;
-            case "yearGraduated":
-                setYearGraduated(target.value);
+            case "schoolYear":
+                setSchoolYear(target.value);
                 break;
             case "cfFirstName":
                 setCfFirstName(target.value);
@@ -168,7 +163,7 @@ export default function () {
                 middleName,
                 suffix,
                 course,
-                yearGraduated
+                schoolYear
             };
 
             try {
@@ -198,7 +193,7 @@ export default function () {
         "DATE RELEASED",
         "CARE OF",
         "CARE OF RELATION",
-        "YEAR GRADUATED"
+        "S.Y."
     ];
 
     const onSearchSubmit = async (event: SyntheticEvent) => {
@@ -226,7 +221,7 @@ export default function () {
         setFilter(target.value as any);
         setDatas({
             filteredData: yearbooks.filter((item: any) => {
-                return item['yearGraduated'] === Number.parseInt(target.value) as any;
+                return item['schoolYear'] === Number.parseInt(target.value) as any;
             })
         });
 
@@ -289,8 +284,8 @@ export default function () {
                         max={45}
                     />
                     <Dropdown
-                        label="YEAR GRADUATED"
-                        name="yearGraduated"
+                        label="SCHOOL YEAR"
+                        name="schoolYear"
                         datas={years}
                         onChange={onChange}
                     />
@@ -409,7 +404,7 @@ export default function () {
                         <Button onClick={onDownloadHandler}>Download</Button>
                     </section>
                     <Dropdown
-                        label=""
+                        label="S.Y."
                         name="filterSoli"
                         datas={years}
                         onChange={onChangeFilter}

@@ -9,6 +9,7 @@ export default function () {
     const [password, setPassword] = useState<string>("");
     const [errMessage, setErrMessage] = useState<string>("");
     const [loading, setLoading] = useState(false);
+    const [show, setShow] = useState(false);
 
     const navigate = useNavigate();
 
@@ -74,7 +75,7 @@ export default function () {
                     <input
                         id="password"
                         name="password"
-                        type="password"
+                        type={`${show ? "text" : "password"}`}
                         autoComplete="current-password"
                         required
                         className="block w-full rounded-b-md border-1 border-gray-300  border-t-gray-50 py-1.5 text-gray-700 shadow-sm ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -99,8 +100,14 @@ export default function () {
                             {loading ? "Loading..." : "Sign in"}
                         </button> */}
                 </section>
-                <div className="mt-2 text-sm">
-                    {/* <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a> */}
+                <div className="mt-2 w-1/2 text-sm flex flex-row gap-2 items-center flex-start">
+                    <input type="checkbox" name="show-pass" id="show-pass"
+                        onClick={(e: SyntheticEvent) => {
+                            e.preventDefault();
+                            setShow((state: any) => !state);
+                        }}
+                    />
+                    <div className="font-bold" id="show-pass">Show Password</div>
                 </div>
             </form>
         </Container>

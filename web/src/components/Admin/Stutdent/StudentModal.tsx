@@ -16,7 +16,7 @@ export default function ({
     const [middleName, setMiddleName] = useState<string>();
     const [suffix, setSuffix] = useState<string>();
     const [schoolID, setSchoolID] = useState<string>();
-    const [yearGraduated, setYearGraduated] = useState<string>();
+    const [schoolYear, setSchoolYear] = useState<string>();
     const [password, setPassword] = useState<string>('');
     const [course, setCourse] = useState<string>();
 
@@ -34,7 +34,7 @@ export default function ({
             setFamilyName(data['familyName']);
             setMiddleName(data['middleName']);
             setSuffix(data['suffix']);
-            setYearGraduated(data['yearGraduated']);
+            setSchoolYear(data['schoolYear']);
             setSchoolID(data['schoolID']);
 
 
@@ -72,8 +72,8 @@ export default function ({
             case "password":
                 setPassword(target.value);
                 break;
-            case "yearGraduated":
-                setYearGraduated(target.value);
+            case "schoolYear":
+                setSchoolYear(target.value);
                 break;
             case "course":
                 setCourse(target.value);
@@ -95,7 +95,7 @@ export default function ({
             suffix,
             schoolID,
             password,
-            yearGraduated,
+            schoolYear,
             course
         };
 
@@ -164,9 +164,9 @@ export default function ({
                     onChange={onChange}
                 />
                 <Input
-                    title="YEAR GRADUATED"
-                    id="yearGraduated"
-                    value={yearGraduated}
+                    title="SCHOOL YEAR"
+                    id="schoolYear"
+                    value={schoolYear}
                     onChange={onChange}
                 />
                 <Input

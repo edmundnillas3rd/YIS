@@ -61,7 +61,6 @@ export async function downloadSolicitation(req: Request, res: Response) {
 export async function downloadYearbookReleased(req: Request, res: Response) {
     const yearbook = await query(`
         SELECT 
-        *,
         yb.yearbook_id AS id, 
         CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, '')) AS fullName,
         COALESCE(course_id, 'N/A') AS course,
@@ -71,7 +70,7 @@ export async function downloadYearbookReleased(req: Request, res: Response) {
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
-        u.user_year_graduated AS yearGraduated
+        u.user_school_year AS schoolYear
         FROM yearbook yb
         LEFT JOIN user u
         ON yb.yearbook_id = u.user_id
@@ -104,7 +103,6 @@ export async function downloadYearbookReleased(req: Request, res: Response) {
 export async function downloadYearbookPhotos(req: Request, res: Response) {
     const yearbookPhotos = await query(`
         SELECT 
-        *,
         ybp.yearbook_photos_id AS id, 
         ybp.yearbook_photos_full_name AS fullName,
         ybp.yearbook_photos_full_payment as fullPayment,
@@ -160,7 +158,7 @@ export async function downloadStudentInfo(req: Request, res: Response) {
         u.user_middle_name AS middleName,
         u.user_family_name AS familyName,
         u.user_suffix AS suffix,
-        u.user_year_graduated AS yearGraduated,
+        u.user_school_year AS schoolYear,
         c.course_abbreviation AS course,
         coll.college_id AS departmentID,
         u.user_school_id AS schoolID
@@ -323,7 +321,7 @@ export async function updateGraduatingYear(req: Request, res: Response) {
 
     await query(`
         UPDATE user
-        SET user_year_graduated = ?
+        SET user_school_year = ?
     `, [year]);
 
     res.status(200).end();

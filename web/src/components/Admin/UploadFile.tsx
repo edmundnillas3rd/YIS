@@ -225,7 +225,7 @@ export default function () {
                         width="w-1/2"
                     />
                     <Dropdown
-                        label="YEAR GRADUATED"
+                        label="SCHOOL YEAR"
                         value={year}
                         datas={years}
                         name="year"

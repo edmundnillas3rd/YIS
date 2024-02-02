@@ -21,7 +21,7 @@ export async function index(req: Request, res: Response) {
     // SELECT yb.yearbook_id AS id, 
     // CONCAT(u.user_first_name, ' ', u.user_family_name, ' ', u.user_middle_name, ' ', u.user_suffix) AS fullName, 
     // c.course_abbreviation AS course,
-    // COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
+    // COALESCE(u.user_school_year, 'N/A') AS schoolYear,
     // ybs.yearbook_status_name AS yearbookStatus, 
     // COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
     // COALESCE(CONCAT(co.first_name, ' ', co.family_name, ' ', co.middle_name, ' ', co.suffix), 'N/A') AS carefOf
@@ -46,7 +46,7 @@ export async function index(req: Request, res: Response) {
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
-        u.user_year_graduated AS yearGraduated
+        u.user_school_year AS schoolYear
         FROM yearbook yb
         LEFT JOIN user u
         ON yb.yearbook_id = u.user_id
@@ -118,7 +118,7 @@ export async function downloadYearbook(req: Request, res: Response) {
         u.user_middle_name AS middleName,
         u.user_family_name AS familyName,
         u.user_suffix AS suffix,
-        u.user_year_graduated AS yearGraduated,
+        u.user_school_year schoolYear,
         c.course_abbreviation AS course,
         coll.college_id AS departmentID,
         u.user_school_id AS schoolID
@@ -343,7 +343,7 @@ export async function yearbookReleased(req: Request, res: Response) {
         middleName,
         suffix,
         course,
-        yearGraduated
+        schoolYear
     } = req.body;
 
     // User
@@ -435,10 +435,10 @@ export async function yearbookReleased(req: Request, res: Response) {
                 INNER JOIN user
                 ON yearbook.user_id = user.user_id
                 SET yearbook.yearbook_status_id = ?,
-                user.user_year_graduated = ?,
+                user.user_school_year = ?,
                 yearbook.yearbook_date_released = CURRENT_TIMESTAMP
                 WHERE yearbook.yearbook_id = ?
-            `, [releasedStatusID, yearGraduated, yearbookID]);
+            `, [releasedStatusID, schoolYear, yearbookID]);
 
             if (yearbookUpdateData.rows.length > 0) {
                 return res.status(200).json({
@@ -631,7 +631,7 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
     // INNER JOIN user
     // ON yearbook.user_id = user.user_id
     // SET yearbook.yearbook_status_id = ?,
-    // user.user_year_graduated = YEAR(CURRENT_TIMESTAMP),
+    // user.user_school_year = YEAR(CURRENT_TIMESTAMP),
     // yearbook.yearbook_date_released = CURRENT_TIMESTAMP
     // WHERE yearbook.yearbook_id = ?
     // `, [status, yearbookID]);
@@ -641,7 +641,7 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
     // INNER JOIN user
     // ON yearbook.user_id = user.user_id
     // SET yearbook.yearbook_status_id = ?,
-    // user.user_year_graduated = NULL,
+    // user.user_school_year = NULL,
     // yearbook.yearbook_date_released = NULL
     // WHERE yearbook.yearbook_id = ?
     // `, [status, yearbookID]);

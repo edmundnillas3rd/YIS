@@ -69,6 +69,10 @@ export async function index(req: Request, res: Response) {
         SELECT solicitation_returned_status_id AS id, status_name AS name FROM solicitation_returned_status
     `);
 
+    const paymentStatusResults = await query(`
+        SELECT solicitation_payment_status_id AS id, status_name AS name FROM solicitation_payment_status
+    `)
+
     const unpaidStudents = await query(`
         SELECT COUNT(*) as remainingStudents
         FROM solicitation_form_raw sfr
@@ -82,6 +86,7 @@ export async function index(req: Request, res: Response) {
     res.status(200).json({
         solis: rows,
         statuses: statusResults.rows,
+        paymentStatuses: paymentStatusResults.rows,
         remainingUnpaid: unpaidStudents.rows.length > 0 ? unpaidStudents.rows[0]['remainingStudents'] : 0
     });
 }
@@ -467,7 +472,7 @@ export async function uploadData(req: Request, res: Response) {
         //         user_suffix,
         //         user_email, 
         //         user_password,
-        //         user_year_graduated,
+        //         user_school_year,
         //         user_school_id,
         //         role_id,
         //         course_id

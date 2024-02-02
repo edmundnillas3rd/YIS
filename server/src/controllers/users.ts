@@ -20,7 +20,7 @@ export async function index(req: Request, res: Response) {
         u.user_middle_name AS middleName,
         u.user_family_name AS familyName,
         COALESCE(u.user_suffix, 'N/A') AS suffix,
-        COALESCE(u.user_year_graduated, 'N/A') AS yearGraduated,
+        COALESCE(u.user_school_year, 'N/A') AS schoolYear,
         COALESCE(c.course_abbreviation, 'N/A') AS course,
         COALESCE(u.user_school_id, 'N/A') AS schoolID
         FROM user u
@@ -174,7 +174,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         suffix,
         schoolID,
         password,
-        yearGraduated,
+        schoolYear,
         course
     } = req.body;
 
@@ -187,9 +187,9 @@ export async function signupUserStudent(req: Request, res: Response) {
         await query("INSERT INTO role VALUES (?, 'STUDENT')", [roleUUID[0]['id']]);
     }
 
-    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_year_graduated AS yearGraduated FROM user");
+    const existingUser = await query("SELECT CONCAT(user_first_name, ' ', user_middle_name, ' ', user_family_name) AS user_full_name, user_school_year AS schoolYear FROM user");
 
-    if (existingUser.rows[0].yearGraduated !== undefined && existingUser.rows[0].yearGraduated === schoolID) {
+    if (existingUser.rows[0].schoolYear !== undefined && existingUser.rows[0].schoolYear === schoolID) {
         return res.status(400).json({ error: "User already exist!" });
     }
 
@@ -206,7 +206,7 @@ export async function signupUserStudent(req: Request, res: Response) {
             user_middle_name, 
             user_suffix, 
             course_id,
-            user_year_graduated,
+            user_school_year
             user_school_id, 
             user_password, 
             role_id
@@ -229,7 +229,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         middleName,
         suffix,
         course,
-        yearGraduated,
+        schoolYear,
         schoolID,
         hashedPassword,
         roleUUID
@@ -490,7 +490,7 @@ export async function uploadUserData(req: Request, res: Response) {
                 user_family_name,
                 user_email,
                 user_password,
-                user_year_graduated,
+                user_school_year,
                 role_id
             ) VALUES (
                 ?,
@@ -695,7 +695,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         suffix,
         schoolID,
         password,
-        yearGraduated,
+        schoolYear,
         isCsp,
         course
     } = req.body;
@@ -711,7 +711,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         user_suffix = ?,
         user_school_id = ?,
         user_password = ?,
-        user_year_graduated = ?,
+        user_school_year = ?,
         course_id = ?,
         is_csp = ?
         WHERE user_id = ?
@@ -722,7 +722,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         suffix,
         schoolID,
         hashedPassword,
-        yearGraduated,
+        schoolYear,
         course,
         isCsp,
         id
