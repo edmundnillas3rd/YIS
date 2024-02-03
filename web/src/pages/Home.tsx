@@ -67,10 +67,10 @@ export default function Main() {
 
     const images = [
         "/assets/cjc-logo.png",
-        "/assets/norbert-building.png",
-        "/assets/envelope.png",
-        "/assets/graduation-photo.png",
-        "/assets/yearbook-stock.jpg"
+        "/assets/COLLEGES.jpg",
+        "/assets/solicitation.jpg",
+        "/assets/YEARBOOKPHOTOS.jpg",
+        "/assets/YEARBOOKRELEASE.jpg"
     ];
 
     useEffect(() => {
@@ -95,7 +95,7 @@ export default function Main() {
                 <Selection index={1} src="/assets/college-school-icon.png" url="/section/colleges" callbackFn={callbackFn}>
                     COLLEGES
                 </Selection>
-                <Selection index={1} src="/assets/cog-wheel.png" url="/section/account" callbackFn={callbackFn}>
+                <Selection index={0} src="/assets/cog-wheel.png" url="/section/account" callbackFn={callbackFn}>
                     ACCOUNT SETTINGS
                 </Selection>
                 {/* <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-preview" callbackFn={callbackFn}>
@@ -108,17 +108,17 @@ export default function Main() {
                             <p>ADMIN & STAFF</p>
                             <hr className="bg-zinc-950" />
                         </section>
-                        <Selection index={3} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                        <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
                             SOLICITATION
                         </Selection>
-                        <Selection index={4} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
+                        <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
                             YEARBOOK PHOTOS
                         </Selection>
                         {/* {currentUser && <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={(currentUser as any).claimStatus !== "RETURNED"}>
                     YEARBOOK RELEASED
                     {currentUser && (currentUser as any).claimStatus !== "RETURNED" && <p className="font-bold text-slate-500">(Please get the claim stub)</p>}
                 </Selection>} */}
-                        <Selection index={5} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
+                        <Selection index={4} src="/assets/yearbook-2.png" url="/section/yearbook-released" callbackFn={callbackFn} disabled={false}>
                             YEARBOOK RELEASED
                             <p className="font-bold text-slate-500">(Please get the claim stub)</p>
                         </Selection>
@@ -127,7 +127,7 @@ export default function Main() {
                     </>
                 )}
                 {currentUser && currentUser['role'] === "ADMIN" && (
-                    <Selection index={5} src="/assets/cog-wheel.png" url="/admin/settings" callbackFn={callbackFn} disabled={false}>
+                    <Selection index={0} src="/assets/cog-wheel.png" url="/admin/settings" callbackFn={callbackFn} disabled={false}>
                         SETTINGS
                     </Selection>
                 )

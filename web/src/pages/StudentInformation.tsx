@@ -94,7 +94,7 @@ export default function () {
     }, []);
 
     useEffect(() => {
-        
+
         if (currentUser) {
             setStudent({
                 firstName: currentUser.firstName,
@@ -125,7 +125,7 @@ export default function () {
     const onInputChangeHandler = (event: SyntheticEvent) => {
         const target = event.target as HTMLInputElement;
 
-        
+
 
         switch (target.name) {
             case "first-name":
@@ -135,7 +135,7 @@ export default function () {
                 }));
                 break;
             case "middleName":
-                
+
 
                 setStudent((state: any) => ({
                     ...state,
@@ -177,7 +177,7 @@ export default function () {
     };
 
     const onClickOrganization = async (data: any) => {
-        
+
         setDisplayOrgEdit(true);
         setCurrentOrgNode(data);
     };
@@ -192,14 +192,14 @@ export default function () {
     };
 
     const onClickAward = async (data: any) => {
-        
+
         setDisplayAwardEdit(true);
         setCurrentAwardNode(data);
     };
 
     const onClickAddAward = async (event: SyntheticEvent) => {
         event.preventDefault();
-        
+
         setDisplayAwardForm(true);
     };
 
@@ -210,7 +210,7 @@ export default function () {
     const onCloseEditOrg = async () => {
         setDisplayOrgEdit(false);
         setCurrentOrgNode(null);
-        
+
 
     };
 
@@ -220,14 +220,14 @@ export default function () {
     };
 
     const onClickSeminar = async (data: any) => {
-        
+
         setDisplayEditSeminar(true);
         setCurrentSeminarNode(data);
     };
 
     const onClickAddSeminar = async (event: SyntheticEvent) => {
         event.preventDefault();
-        
+
         setDisplaySeminarForm(true);
     };
 
@@ -244,7 +244,7 @@ export default function () {
         event.preventDefault();
         setLoading(true);
         setDisable(true);
-        
+
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/update-name`, {
@@ -258,12 +258,12 @@ export default function () {
 
             if (response.ok) {
                 setLoading(false);
-                
+
                 navigate(0);
             }
         } catch (error) {
             console.error(error);
-            
+
         }
     };
 
@@ -338,9 +338,23 @@ export default function () {
                 </section>
                 {student && (
                     <form
-                        className="flex flex-col md:flex-row flex-wrap gap-2 items-center"
+                        className="flex flex-col md:flex-row gap-1 items-center"
                         method="POST"
                         onSubmit={onSubmitHandler}>
+
+                        <Input
+                            title="FIRST NAME"
+                            id="first-name"
+                            onChange={onInputChangeHandler}
+                            value={student["firstName"]}
+                            disabled={disable}
+                            autoComplete="first-name"
+                            pattern={capitalizeRegex}
+                            min={3}
+                            max={45}
+                            required
+
+                        />
                         <Input
                             title="FAMILY NAME"
                             id="family-name"
@@ -355,94 +369,74 @@ export default function () {
 
                         />
                         <Input
-                            title="FIRST NAME"
-                            id="first-name"
+                            title="MIDDLE NAME"
+                            id="middleName"
                             onChange={onInputChangeHandler}
-                            value={student["firstName"]}
+                            value={student["middleName"]}
                             disabled={disable}
-                            autoComplete="first-name"
                             pattern={capitalizeRegex}
                             min={3}
                             max={45}
                             required
+                            footnote="(NOTE: SPELL OUT THE MIDDLE NAME)"
+                        />
+                        <Input
+                            title="SUFFIX"
+                            id="suffix"
+                            onChange={onInputChangeHandler}
+                            value={student['suffix']}
+                            disabled={disable}
+                            pattern={suffixRegex}
+                            min={3}
+                            max={45}
+                            footnote="EX. SR, JR, I, II, III"
+                        />
+                        <Dropdown
+                            label="COURSES"
+                            name="course"
+                            datas={courses}
+                            value={student['course']}
+                            onChange={onInputChangeHandler}
+                            disabled={disable}
+                            required
 
                         />
-                        <section className="flex flex-col gap-1 items-center mt-5 ">
-                            <Input
-                                title="MIDDLE NAME"
-                                id="middleName"
-                                onChange={onInputChangeHandler}
-                                value={student["middleName"]}
-                                disabled={disable}
-                                pattern={capitalizeRegex}
-                                min={3}
-                                max={45}
-                                required
-                                width="w-full"
-                            />
-                            <span className="text-zinc-500 font-bold">(NOTE: SPELL OUT THE MIDDLE NAME)</span>
-                        </section>
-                        <section className="flex flex-col gap-1 items-center mt-5">
-                            <Input
-                                title="SUFFIX"
-                                id="suffix"
-                                onChange={onInputChangeHandler}
-                                value={student['suffix']}
-                                disabled={disable}
-                                pattern={suffixRegex}
-                                min={3}
-                                max={45}
-                                width="w-full"
-
-                            />
-                            <p className="text-zinc-500 font-bold">EX. SR, JR, I, II, III</p>
-                        </section>
-                        <section>
-                            <Dropdown
-                                label="COURSES"
-                                name="course"
-                                datas={courses}
-                                value={student['course']}
-                                onChange={onInputChangeHandler}
-                                disabled={disable}
-                                required
-
-                            />
-                        </section>
 
                     </form>
                 )}
+                <section className="mt-10">
 
-                {/* Organization */}
-                <section className="flex flex-row gap-1 justify-between items-center">
-                    <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-                    <section className="flex flex-row gap-1">
-                        <Button onClick={onClickAddOrg}>Add Organization</Button>
-                        <Button onClick={onClickAddAward}>Add Award</Button>
-                        <Button onClick={onClickAddSeminar}>Add Seminar</Button>
-                        <Button
-                            onClick={onClickPreview}
-                        >
-                            Preview
-                            <FaEye />
-                        </Button>
+
+                    {/* Organization */}
+                    <section className="flex flex-row gap-1 justify-between items-center">
+                        <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
+                        <section className="flex flex-row gap-1">
+                            <Button onClick={onClickAddOrg}>Add Organization</Button>
+                            <Button onClick={onClickAddAward}>Add Award</Button>
+                            <Button onClick={onClickAddSeminar}>Add Seminar</Button>
+                            <Button
+                                onClick={onClickPreview}
+                            >
+                                Preview
+                                <FaEye />
+                            </Button>
+                        </section>
                     </section>
+                    {clubsData && <Table columns={organizationHeaders} datas={clubsData} onClickCallback={onClickOrganization} />}
+                    {/* Awards */}
+                    <section className="flex flex-row gap-1 justify-between items-center">
+                        <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
+
+                    </section>
+                    {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
+                    {/* Seminars */}
+                    <section className="flex flex-row gap-1 justify-between items-center">
+                        <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
+
+
+                    </section>
+                    {seminarsData && <Table columns={seminarsHeaders} datas={seminarsData} onClickCallback={onClickSeminar} />}
                 </section>
-                {clubsData && <Table columns={organizationHeaders} datas={clubsData} onClickCallback={onClickOrganization} />}
-                {/* Awards */}
-                <section className="flex flex-row gap-1 justify-between items-center">
-                    <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-
-                </section>
-                {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
-                {/* Seminars */}
-                <section className="flex flex-row gap-1 justify-between items-center">
-                    <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-
-
-                </section>
-                {seminarsData && <Table columns={seminarsHeaders} datas={seminarsData} onClickCallback={onClickSeminar} />}
-
             </Container>
         </>
 

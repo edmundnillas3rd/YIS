@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import SoliciitationModal from "../components/Solicitation/SoliciitationModal";
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
 import { searchStudentSolicitationStatus } from "../utilities/students";
+import SolicitationAddModal from "../components/Solicitation/SolicitationAddModal";
 
 export default function () {
     const [search, setSearch] = useState<string>("");
@@ -28,6 +29,7 @@ export default function () {
     const [remainingStudents, setRemainingStudents] = useState<string>();
     const [filter, setFilter] = useState("");
     const [searchedData, setSearchData] = useState([]);
+    const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
     // Student
     const [firstName, setFirstName] = useState<string>("");
@@ -53,11 +55,11 @@ export default function () {
         }
 
         if (filter === "RETURNED ALL" || filter === "UNRETURNED" || filter === "LOST") {
-            
+
 
             let filterData = solis.filter((soli: any) => (soli['returnedStatus'] === `${filter}`));
 
-            
+
 
 
             // setDatas((soli: any) => ({
@@ -87,7 +89,7 @@ export default function () {
 
 
             if (course && soli && yearbook) {
-                
+
 
                 setCourses(course.courses);
                 setCourse(course.courses[0]['id']);
@@ -251,12 +253,14 @@ export default function () {
 
     const onClick = async (data: any) => {
         setCurrentNode(datas.rawData.find((raw: any) => raw.id === data.id) as any);
-        
-
     };
 
     const onCloseModal = async () => {
         setCurrentNode(null);
+    };
+
+    const onCloseAddModal = async () => {
+        setShowAddModal(false);
     };
 
     const soliFilters = [
@@ -329,13 +333,24 @@ export default function () {
 
     return (
         <article className="flex flex-col">
-            <SoliciitationModal
-                hasCloseBtn={true}
-                isOpen={!!currentNode}
-                onClose={onCloseModal}
-                data={currentNode}
-                data2={statuses}
-            />
+            {statuses && courses && (
+                <>
+                    <SoliciitationModal
+                        hasCloseBtn={true}
+                        isOpen={!!currentNode}
+                        onClose={onCloseModal}
+                        data={currentNode}
+                        data2={statuses}
+                    />
+                    <SolicitationAddModal
+                        hasCloseBtn={true}
+                        isOpen={showAddModal}
+                        onClose={onCloseAddModal}
+                        data={statuses}
+                        data2={courses}
+                    />
+                </>
+            )}
             {/* <Container>
                 <form
                     className="flex flex-col gap-2"
@@ -433,7 +448,7 @@ export default function () {
                 </form>
             </Container> */}
             <Container>
-                <section className="flex flex-row">
+                <section className="flex flex-row gap-1">
                     <form
                         className="flex flex-auto flex-row justify-end items-center gap-2"
                         onSubmit={onSearchSubmit}
@@ -447,7 +462,10 @@ export default function () {
                         />
                         <Button >Search</Button>
                     </form>
-
+                    <Button onClick={(e: SyntheticEvent) => {
+                        e.preventDefault();
+                        setShowAddModal(true);
+                    }}>Add Solicitation Form</Button>
                     <section className="flex flex-row justify-end items-center gap-2 mx-2">
                         <h1>
                             Remaining unpaid and unreturned solis:

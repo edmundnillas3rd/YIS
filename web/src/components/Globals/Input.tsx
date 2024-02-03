@@ -5,12 +5,13 @@ export default function ({
     pattern,
     required,
     width = "",
+    footnote = "",
     ...otherProps }: any) {
     return (
-        <section className={`flex flex-col ${width}`}>
+        <section className={`flex flex-col relative ${width}`}>
             <label
                 htmlFor={id}
-                className={`block text-sm font-bold leading-6 text-gray-900 ${required ? "after:text-lg after:ml-1 after:text-red-400 after:content-['*'] " : " "}`}
+                className={`block text-sm font-bold leading-6 text-gray-900 ${required ? "after:text-red-400 after:content-['*'] " : ""}`}
             >
                 {title}
             </label>
@@ -23,6 +24,9 @@ export default function ({
                 required={required}
                 {...otherProps}
             />
+            <section className="flex flex-row justify-center absolute mt-16">
+                <span className="text-zinc-500 text-xs font-bold">{footnote}</span>
+            </section>
         </section>
     );
 }

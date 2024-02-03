@@ -1,12 +1,13 @@
-export default function ({ label, name, datas, value, ...otherProps }: any) {
+export default function ({ label, name, datas, value, required, ...otherProps }: any) {
     return (
         <section className="flex flex-col text-sm font-bold text-gray-900">
-            <label htmlFor={name}>{label}</label>
+            <label className={`${required ? "after:text-red-400 after:content-['*'] " : ""}`} htmlFor={name}>{label}</label>
             <select
-                className="block rounded-md border-0 py-1.5 pr-10 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm sm:leading-6"
+                className={`block rounded-md border-0 py-1.5 pr-10 ring-1 ring-slate-400 ring-inset ring-gray-30 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-sm sm:leading-6 `}
                 name={name}
                 id={name}
                 value={value}
+                required={required}
                 {...otherProps}
             >
                 {datas && datas.map((data: any, idx: number) => {

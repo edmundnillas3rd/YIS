@@ -13,13 +13,13 @@ export default function () {
     const [loading2, setLoading2] = useState<boolean>(false);
     const [loading3, setLoading3] = useState<boolean>(false);
     const [loading4, setLoading4] = useState<boolean>(false);
-    const [year, setYear] = useState<number>(0);
+    const [year, setYear] = useState<string>("");
 
     const years = generateYearRange();
 
     useEffect(() => {
         if (years.length > 0) {
-            setYear(years[0]);
+            setYear(years[0].toString() as string);
         }
     }, [years]);
 
@@ -235,11 +235,11 @@ export default function () {
                         }}
                         width="w-1/2"
                     />
-                    <Button onClick={onUpdateGraduatingYear}>{!loading4 ?
+                    {/* <Button onClick={onUpdateGraduatingYear}>{!loading4 ?
                         "Update" : (
                             <Spinner />
                         )
-                    }</Button>
+                    }</Button> */}
                     <h3 className="text-grey-400">
                         NOTE: Upload the spreadsheet/excel file containing all graduating students from the registrar.
                     </h3>

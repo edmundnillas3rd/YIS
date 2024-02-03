@@ -13,7 +13,8 @@ import {
     submitSolicitation,
     solicitationUpdate,
     uploadData,
-    downloadExcelSheet
+    downloadExcelSheet,
+    addSolicitation
 } from "../controllers/solicitationForms";
 
 // GET
@@ -24,6 +25,7 @@ router.get("/download-sheet", downloadExcelSheet)
 
 // POST
 router.post("/search-solicitation-form", searchSolicitationForm);
+router.post("/add-solicitation", addSolicitation);
 router.post("/submit-solicitation", submitSolicitation);
 router.post("/solicitation-claim", claimSolicitation);
 router.post("/upload-solicitation-file", upload.single("solicitation-sheet"), uploadData);

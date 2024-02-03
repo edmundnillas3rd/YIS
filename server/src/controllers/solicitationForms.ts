@@ -258,6 +258,81 @@ export async function searchSolicitationForm(req: Request, res: Response) {
     });
 }
 
+export async function addSolicitation(req: Request, res: Response) {
+    const { 
+        course,
+        name,
+        soliNum,
+        careOf,
+        careOfRelation,
+        returnedSolis,
+        unreturnedSolis,
+        lostOr,
+        dateReturned,
+        yearbookPayment,
+        orNum,
+        fullPayment,
+        paymentStatus,
+        soliStatus
+    } = req.body;
+
+    await query(`
+        INSERT INTO solicitation_form_raw (
+            solicitation_form_raw_id,
+            full_name,
+            course,
+            soli_numbers,
+            care_of,
+            care_of_relation,
+            solicitation_returned_status,
+            lost_or_number,
+            date_returned,
+            yearbook_payment,
+            or_number,
+            full_payment,
+            solicitation_payment_status_id,
+            solicitation_returned_status_id,
+            returned_solis,
+            unreturned_solis
+        ) VALUES (
+            UUID(),
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            NULLIF(?, ''),
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    `, [
+        name,
+        course,
+        soliNum,
+        careOf,
+        careOfRelation,
+        soliStatus,
+        lostOr,
+        dateReturned,
+        yearbookPayment,
+        orNum,
+        fullPayment,
+        paymentStatus,
+        soliStatus,
+        returnedSolis,
+        unreturnedSolis
+    ])
+
+    res.status(200).end();
+}
+
 export async function submitSolicitation(req: Request, res: Response) {
     const {
         careOf,
