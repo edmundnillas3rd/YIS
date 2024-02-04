@@ -41,19 +41,25 @@ export default function () {
     const [currentOrgNode, setCurrentOrgNode] = useState(null);
     const [displayOrgForm, setDisplayOrgForm] = useState(false);
     const [displayOrgEdit, setDisplayOrgEdit] = useState(false);
-    const [clubsData, setClubsData] = useState(null);
+    const [clubsData, setClubsData] = useState<any[] | null>(null);
 
     // For awards table
     const [currentAwardNode, setCurrentAwardNode] = useState(null);
     const [displayAwardForm, setDisplayAwardForm] = useState(false);
     const [displayAwardEdit, setDisplayAwardEdit] = useState(false);
-    const [awardsData, setAwardsData] = useState(null);
+    const [awardsData, setAwardsData] = useState<any[] | null>(null);
 
     // For seminars table
     const [currentSeminarNode, setCurrentSeminarNode] = useState(null);
     const [displaySeminarForm, setDisplaySeminarForm] = useState(false);
     const [displayEditSeminar, setDisplayEditSeminar] = useState(false);
-    const [seminarsData, setSeminarsData] = useState(null);
+    const [seminarsData, setSeminarsData] = useState<any[] | null>(null);
+
+    // Error Messages
+    const [errClubMsg, setErrClubsMsg] = useState<string>("");
+    const [errAwardMsg, setErrAwardsMsg] = useState<string>("");
+    const [errSeminarMsg, setErrSeminarsMsg] = useState<string>("");
+
 
     useEffect(() => {
         (async () => {
@@ -184,6 +190,12 @@ export default function () {
 
     const onClickAddOrg = async (event: SyntheticEvent) => {
         event.preventDefault();
+
+        if (clubsData!.length >= 5) {
+            setErrClubsMsg("Cannot add anymore clubs");
+            return;
+        }
+
         setDisplayOrgForm(true);
     };
 
@@ -199,6 +211,11 @@ export default function () {
 
     const onClickAddAward = async (event: SyntheticEvent) => {
         event.preventDefault();
+
+        if (awardsData!.length >= 5) {
+            setErrAwardsMsg("Cannot add anymore awards");
+            return;
+        }
 
         setDisplayAwardForm(true);
     };
@@ -227,6 +244,11 @@ export default function () {
 
     const onClickAddSeminar = async (event: SyntheticEvent) => {
         event.preventDefault();
+
+        if (seminarsData!.length >= 5) {
+            setErrSeminarsMsg("Cannot add anymore seminars");
+            return;
+        }
 
         setDisplaySeminarForm(true);
     };
@@ -410,6 +432,7 @@ export default function () {
                     {/* Organization */}
                     <section className="flex flex-row gap-1 justify-between items-center">
                         <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
+                        {errClubMsg &&  <p className="font-bold text-red-400">{errClubMsg}</p>}
                         <section className="flex flex-row gap-1">
                             <Button onClick={onClickAddOrg}>Add Organization</Button>
                             <Button onClick={onClickAddAward}>Add Award</Button>
@@ -426,14 +449,13 @@ export default function () {
                     {/* Awards */}
                     <section className="flex flex-row gap-1 justify-between items-center">
                         <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-
+                        {errAwardMsg && <p className="font-bold text-red-400">{errAwardMsg}</p>}
                     </section>
                     {awardsData && <Table columns={awardHeaders} datas={awardsData} onClickCallback={onClickAward} />}
                     {/* Seminars */}
                     <section className="flex flex-row gap-1 justify-between items-center">
                         <h3 className="opacity-60 font-bold">NOTE: ONLY FIVE ARE ALLOWED</h3>
-
-
+                        {errSeminarMsg && <p className="font-bold text-red-400">{errSeminarMsg}</p>}
                     </section>
                     {seminarsData && <Table columns={seminarsHeaders} datas={seminarsData} onClickCallback={onClickSeminar} />}
                 </section>
