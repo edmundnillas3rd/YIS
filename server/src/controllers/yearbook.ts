@@ -63,7 +63,7 @@ export async function index(req: Request, res: Response) {
         yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
         yps.status_name AS paymentStatus,
-        COALESCE(DATE_FORMAT(ybp.yearbook_photos_date_released, '%m-%d-%Y'), 'N/A') AS dateReleased
+        COALESCE(ybp.yearbook_photos_date_released, 'N/A') AS dateReleased
         FROM yearbook_photos ybp
         LEFT JOIN yearbook_status ybs
         ON ybp.yearbook_photos_status_id = ybs.yearbook_status_id
@@ -534,7 +534,7 @@ export async function yearbookPhotosUpload(req: Request, res: Response) {
 
 // PUT
 export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
-    const { id, status, date } = req.body;
+    const { id, fullName, status, paymentStatus, date } = req.body;
 
     const statusData = await query(`
         SELECT yearbook_status_name AS name FROM yearbook_status WHERE yearbook_status_id = ?
@@ -554,16 +554,20 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
         results = await query(`
             UPDATE yearbook_photos
             SET yearbook_photos_status_id = ?,
-            yearbook_photos_date_released = ?
+            yearbook_photos_full_name = ?,
+            yearbook_photos_date_released = ?,
+            yearbook_photos_payment_status_id = ?
             WHERE yearbook_photos_id = ?
-        `, [status, formattedDate, id]);
+        `, [status, fullName, formattedDate, paymentStatus, id]);
     } else if (statusName === "PENDING") {
         results = await query(`
             UPDATE yearbook_photos
             SET yearbook_photos_status_id = ?,
+            yearbook_photos_full_name = ?,
             yearbook_photos_date_released = NULL
+            yearbook_photos_payment_status_id = ?
             WHERE yearbook_photos_id = ?
-        `, [status, id]);
+        `, [status, fullName, paymentStatus, id]);
     }
 
     // let formattedDate: any = date;

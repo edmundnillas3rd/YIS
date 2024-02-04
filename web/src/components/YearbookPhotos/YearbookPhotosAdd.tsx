@@ -3,9 +3,6 @@ import { Button, Dropdown, Input, Modal } from "../Globals";
 
 export default function ({ isOpen, hasCloseBtn, onClose, data, data2 }: ModalProps) {
 
-
-    console.log(data, data2);
-
     const [yearbookPhoto, setYearbookPhoto] = useState<Object>({
         fullName: "",
         fullPayment: "",

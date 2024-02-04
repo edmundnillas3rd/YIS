@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Input, Table, Container, Button } from "../components/Globals";
 import { v4 as uuid } from "uuid";
 import YearbookPhotosModal from "../components/YearbookPhotos/YearbookPhotosModal";
@@ -6,6 +6,7 @@ import { searchStudentYearbookPhotoStatus } from "../utilities/students";
 import YearbookPhotosAdd from "../components/YearbookPhotos/YearbookPhotosAdd";
 
 export default function () {
+    const searchbarRef = useRef<HTMLInputElement>(null);
 
     const [students, setStudents] = useState<any>(null);
     const [searchedData, setSearchedData] = useState<any>(null);
@@ -60,7 +61,9 @@ export default function () {
     const onSubmitHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        const data = await searchStudentYearbookPhotoStatus(search);
+        const value = searchbarRef.current!.value;
+
+        const data = await searchStudentYearbookPhotoStatus(value);
         // setStudents(data.map((student: any) => ({ uuid: uuid(), ...student })));
         setSearchedData(data.map((student: any) => ({ uuid: uuid(), ...student })));
 
@@ -68,13 +71,11 @@ export default function () {
 
     const onChange = async (event: SyntheticEvent) => {
         event.preventDefault();
-        setSearchedData(students);
-        const target = event.target as HTMLInputElement;
 
-        switch (target.name) {
-            case "searchStudent":
-                setSearch(target.value);
-                break;
+        const target = event.target as HTMLInputElement;
+        
+        if (target.value.length === 0) {
+            setSearchedData(students);
         }
     };
 
@@ -94,6 +95,7 @@ export default function () {
                         onClose={onCloseStatus}
                         data={currentNode}
                         data2={statuses}
+                        data3={paymentStatuses}
                     />
                     <YearbookPhotosAdd
                         hasCloseBtn={true}
@@ -113,6 +115,7 @@ export default function () {
                             id="searchStudent"
                             onChange={onChange}
                             width="flex-auto"
+                            ref={searchbarRef}
                         />
                         <Button type="submit">Search</Button>
                     </form>

@@ -14,6 +14,7 @@ interface ModalProps {
     children?: React.ReactNode;
     data?: any;
     data2?: any;
+    data3?: any;
 };
 
 
