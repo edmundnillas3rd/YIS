@@ -594,7 +594,8 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
         paymentStatus,
         date,
         careOf,
-        relation
+        relation,
+        schoolYear
     } = req.body;
 
     let results: any;
@@ -609,6 +610,15 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
     if (date === "N/A") {
         formattedDate = null;
     }
+
+    await query(`
+            UPDATE user
+            SET user_school_year = ?
+            WHERE user_id = ?
+        `, [
+        schoolYear,
+        yearbookID
+    ]);
 
     if (statusName === "RELEASED") {
         results = await query(`
@@ -629,6 +639,8 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
             formattedDate,
             yearbookID
         ]);
+
+
     } else if (statusName === "PENDING") {
         results = await query(`
             UPDATE yearbook

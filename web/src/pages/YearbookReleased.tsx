@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Dropdown, Input, Container, Table } from "../components/Globals";
 import { v4 as uuid } from "uuid";
 import { generateYearRange } from "../utilities/generateYearRange";
@@ -8,7 +8,7 @@ import { searchStudentSolicitationStatus, searchStudentYearbookStatus } from "..
 import { read, writeFileXLSX } from "xlsx";
 
 export default function () {
-
+    const searchbarRef = useRef<HTMLInputElement>(null);
     const [search, setSearch] = useState<string>("");
     const [datas, setDatas] = useState({
         filteredData: []
@@ -199,7 +199,9 @@ export default function () {
     const onSearchSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
-        const data = await searchStudentYearbookStatus(search);
+        const value = searchbarRef.current!.value;
+
+        const data = await searchStudentYearbookStatus(value);
         const filteredData = data.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
 
 
@@ -208,10 +210,11 @@ export default function () {
 
     const onChangeSearch = async (event: SyntheticEvent) => {
         event.preventDefault();
-        setSearchData(yearbooks);
 
         const target = event.target as HTMLInputElement;
-        setSearch(target.value);
+        if (target.value.length === 0) {
+            setSearchData(yearbooks);
+        }
     };
 
     const onChangeFilter = async (event: SyntheticEvent) => {
@@ -392,6 +395,7 @@ export default function () {
                         <Input
                             placeholder="Search the name of student"
                             onChange={onChangeSearch}
+                            ref={searchbarRef}
                             width="flex-auto"
                         />
                         <Button >Search</Button>

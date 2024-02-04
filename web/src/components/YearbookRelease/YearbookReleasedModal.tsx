@@ -1,6 +1,7 @@
 import { SyntheticEvent, useEffect, useState } from "react";
 import { Button, Dropdown, Input, Modal } from "../Globals";
 import { useNavigate } from "react-router-dom";
+import { generateYearRange } from "../../utilities/generateYearRange";
 
 export default function ({
     isOpen,
@@ -22,8 +23,11 @@ export default function ({
     const [date, setDate] = useState<string>("");
     const [careOf, setCareOf] = useState<string>();
     const [relation, setRelation] = useState<string>();
+    const [schoolYear, setSchoolYear] = useState<string>("");
 
     const navigate = useNavigate();
+
+    const years = generateYearRange();
 
     useEffect(() => {
         if (data && data2) {
@@ -40,12 +44,15 @@ export default function ({
             const foundStatus = data2['yearbookStatuses'].find((status: any) => status['name'] === data['yearbookStatus']);
             const foundPaymentStatus = data2['yearbookPaymentStatuses'].find((status: any) => status['name'] === data['paymentStatus']);
             
+            console.log(data);
+            
             setPaymentStatus(foundPaymentStatus['id']);
             setStatus(foundStatus['id']);
             setDate(data['dateReleased']);
             setCareOf(data['careOf']);
             setRelation(data['careOfRelation']);
             setAmount(data['fullPayment']);
+            setSchoolYear(data['schoolYear']);
 
             if (data?.yearbookStatus && data?.paymentStatus) {
                 setCurrentStatus(data.yearbookStatus);
@@ -64,7 +71,8 @@ export default function ({
             paymentStatus,
             date,
             careOf,
-            relation
+            relation,
+            schoolYear
         };
 
         try {
@@ -107,6 +115,9 @@ export default function ({
                 break;
             case "relation":
                 setRelation(target.value);
+                break;
+            case "schoolYear":
+                setSchoolYear(target.value);
                 break;
         }
     };
@@ -163,6 +174,13 @@ export default function ({
                             id="relation"
                             onChange={onChange}
                             value={relation}
+                        />
+                        <Dropdown
+                            label="S.Y."
+                            name="schoolYear"
+                            datas={years}
+                            value={schoolYear}
+                            onChange={onChange}
                         />
                         <section className="flex flex-row justify-end mt-5">
                             <Button type="submit">Submit</Button>
