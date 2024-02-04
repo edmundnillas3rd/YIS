@@ -309,21 +309,21 @@ export async function downloadData(req: Request, res: Response) {
     const yearbookWorkbook = XLSX.utils.book_new();
 
     const sheet = XLSX.utils.json_to_sheet(students.rows);
-        XLSX.utils.book_append_sheet(
-            yearbookWorkbook,
-            sheet,
-            "ALL"
+    XLSX.utils.book_append_sheet(
+        yearbookWorkbook,
+        sheet,
+        "ALL"
     );
 
     // collegeDepartments.rows.forEach((department: any) => {
-        // const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
-// 
-        // const sheet = XLSX.utils.json_to_sheet(s);
-        // XLSX.utils.book_append_sheet(
-            // yearbookWorkbook,
-            // sheet,
-            // department.college
-        // );
+    // const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
+    // 
+    // const sheet = XLSX.utils.json_to_sheet(s);
+    // XLSX.utils.book_append_sheet(
+    // yearbookWorkbook,
+    // sheet,
+    // department.college
+    // );
     // });
 
     const buf = XLSX.write(yearbookWorkbook, {
@@ -606,24 +606,46 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
         formattedDate = null;
     }
 
-    results = await query(`
-        UPDATE yearbook
-        SET yearbook_status_id = ?,
-        yearbook_full_payment = ?,
-        yearbook_payment_status_id = ?,
-        yearbook_care_of = ?,
-        yearbook_care_of_relation = ?,
-        yearbook_date_released = ?
-        WHERE yearbook_id = ?
-    `, [
-        status,
-        amount,
-        paymentStatus,
-        careOf,
-        relation,
-        formattedDate,
-        yearbookID
-    ]);
+    if (statusName === "RELEASED") {
+        results = await query(`
+            UPDATE yearbook
+            SET yearbook_status_id = ?,
+            yearbook_full_payment = ?,
+            yearbook_payment_status_id = ?,
+            yearbook_care_of = ?,
+            yearbook_care_of_relation = ?,
+            yearbook_date_released = ?
+            WHERE yearbook_id = ?
+        `, [
+            status,
+            amount,
+            paymentStatus,
+            careOf,
+            relation,
+            formattedDate,
+            yearbookID
+        ]);
+    } else if (statusName === "PENDING") {
+        results = await query(`
+            UPDATE yearbook
+            SET yearbook_status_id = ?,
+            yearbook_full_payment = ?,
+            yearbook_payment_status_id = ?,
+            yearbook_care_of = ?,
+            yearbook_care_of_relation = ?,
+            yearbook_date_released = NULL
+            WHERE yearbook_id = ?
+        `, [
+            status,
+            amount,
+            paymentStatus,
+            careOf,
+            relation,
+            yearbookID
+        ]);
+    }
+
+
 
     // if (statusName === "RELEASED") {
     // results = await query(`
@@ -647,6 +669,42 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
     // `, [status, yearbookID]);
     // }
 
+    res.status(200).end();
+}
+
+export async function addYearbookPhoto(req: Request, res: Response) {
+    const {
+        fullName,
+        fullPayment,
+        paymentStatus,
+        yearbookStatus,
+        date
+    } = req.body;
+
+
+    await query(`
+        INSERT INTO yearbook_photos (
+            yearbook_photos_id,
+            yearbook_photos_full_name,
+            yearbook_photos_full_payment,
+            yearbook_photos_payment_status_id,
+            yearbook_photos_status_id,
+            yearbook_photos_date_released
+        ) VALUES (
+            UUID(),
+            ?,
+            ?,
+            ?,
+            ?,
+            NULLIF(?, '')
+        )
+    `, [
+        fullName,
+        fullPayment,
+        paymentStatus,
+        yearbookStatus,
+        date
+    ]);
     res.status(200).end();
 }
 

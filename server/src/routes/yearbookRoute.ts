@@ -3,7 +3,7 @@ import { Router } from "express";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 
-import { index, statusYearbookUpdate, yearbookReleased, statusYearbookPhotosUpdate, searchStudentYearbookPhoto, searchStudentYearbook, downloadYearbook, downloadData, yearbookPhotosUpload } from "../controllers/yearbook";
+import { index, statusYearbookUpdate, yearbookReleased, statusYearbookPhotosUpdate, searchStudentYearbookPhoto, searchStudentYearbook, downloadYearbook, downloadData, yearbookPhotosUpload, addYearbookPhoto } from "../controllers/yearbook";
 const router = Router();
 
 // GET
@@ -12,6 +12,7 @@ router.get("/:department_id/download-yearbook-info", downloadYearbook);
 router.get("/download-unpaid-unclaimed-sheet", downloadData);
 
 // POST
+router.post("/add-yearbook-photo", addYearbookPhoto);
 router.post("/search-yearbook-photo", searchStudentYearbookPhoto);
 router.post("/search-yearbook", searchStudentYearbook);
 router.post("/yearbook-released", yearbookReleased);

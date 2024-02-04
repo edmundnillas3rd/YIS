@@ -32,6 +32,7 @@ export default function ({
     const [dateReturned, setDateReturned] = useState<string>("");
     const [paymentStatus, setPaymentStatus] = useState<string>("");
     const [paymentAmount, setPaymentAmount] = useState<string>("");
+    const [fullPayment, setFullPayment] = useState<string>("");
     const [ornumber, setORNumber] = useState<string>("");
     const [lostOrNumber, setLostORNumber] = useState<string>("");
     const [soliNumber, setSoliNumber] = useState<string>("");
@@ -55,8 +56,6 @@ export default function ({
 
             setStatus(filteredStatus[0]['id']);
 
-            console.log(data2);
-            
             const filteredPaymentStatus = data2.paymentStatuses.filter((p: any) => (data['paymentStatus'] === p['name']));
 
             if (filteredPaymentStatus[0]['id']) {
@@ -65,12 +64,15 @@ export default function ({
                 setPaymentStatus("N/A");
             }
 
+            console.log(data);
+
 
             setID(data['id']);
             setFullName(data['fullName']);
             setCareOf(data['careOfFullName']);
             setRelation(data['careOfRelation']);
             setPaymentAmount(data['paymentAmount']);
+            setFullPayment(data['fullPayment']);
             setLostORNumber(data['lostORNumber']);
             setORNumber(data['ORnumber']);
             setDateReturned(data['dateReturned']);
@@ -104,13 +106,16 @@ export default function ({
             case "relation":
                 setRelation(target.value);
                 break;
-            case "payment":
+            case "paymentAmount":
                 setPaymentAmount(target.value);
                 break;
             case "ornumber":
                 setORNumber(target.value);
                 break;
-            case "lostORNumber":
+            case "fullPayment":
+                setFullPayment(target.value);
+                break;
+            case "lostORnumber":
                 setLostORNumber(target.value);
                 break;
             case "paymentStatus":
@@ -139,6 +144,7 @@ export default function ({
             returnedSolis,
             unreturnedSolis,
             paymentAmount,
+            fullPayment,
             paymentStatus,
             ornumber,
             lostOrNumber
@@ -219,70 +225,6 @@ export default function ({
                         disabled={disable}
                         onChange={onChange}
                     />
-                    <Input
-                        title="DATE RETURNED"
-                        id="dateReturned"
-                        value={dateReturned}
-                        disabled={disable}
-                        type="date"
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="SOLI #'s"
-                        id="soliNums"
-                        value={soliNumber}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="Care Of"
-                        id="careof"
-                        value={careOf}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="Care Of Relation"
-                        id="relation"
-                        value={relation}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="RETURNED SOLIS"
-                        id="returnedSolis"
-                        value={returnedSolis}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="UNRETURNED SOLIS"
-                        id="unreturnedSolis"
-                        value={unreturnedSolis}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="FULL PAYMENT"
-                        id="payment"
-                        value={paymentAmount}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="LOST OR NUMBER"
-                        id="lostORnumber"
-                        value={lostOrNumber}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
-                    <Input
-                        title="OR NUMBER"
-                        id="ornumber"
-                        value={ornumber}
-                        disabled={disable}
-                        onChange={onChange}
-                    />
                     <Dropdown
                         label="PAYMENT STATUS"
                         name="paymentStatus"
@@ -291,6 +233,91 @@ export default function ({
                         datas={paymentStatuses}
                         onChange={onChange}
                     />
+                    <Input
+                        title="SOLI #'s"
+                        id="soliNums"
+                        value={soliNumber}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="Care Of"
+                        id="careof"
+                        value={careOf}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="Care Of Relation"
+                        id="relation"
+                        value={relation}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="RETURNED SOLIS"
+                        id="returnedSolis"
+                        value={returnedSolis}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="UNRETURNED SOLIS"
+                        id="unreturnedSolis"
+                        value={unreturnedSolis}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+
+                    <Input
+                        title="LOST OR NUMBER"
+                        id="lostORnumber"
+                        value={lostOrNumber}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="DATE RETURNED"
+                        id="dateReturned"
+                        value={dateReturned}
+                        disabled={disable}
+                        type="date"
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="YEARBOOK PAYMENT"
+                        id="paymentAmount"
+                        value={paymentAmount}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+                    <Input
+                        title="OR NUMBER"
+                        id="ornumber"
+                        value={ornumber}
+                        disabled={disable}
+                        onChange={onChange}
+                        max={30}
+                    />
+
+                    <Input
+                        title="FULL PAYMENT"
+                        id="fullPayment"
+                        value={fullPayment}
+                        disabled={disable}
+                        onChange={onChange}
+                        pattern={"\\d*"}
+                        max={30}
+                    />
+
 
                 </section>
             )}

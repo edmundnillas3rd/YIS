@@ -1,4 +1,6 @@
-export default function ({
+import { forwardRef } from "react";
+
+const Input = forwardRef(function ({
     title,
     id,
     onChange,
@@ -6,7 +8,8 @@ export default function ({
     required,
     width = "",
     footnote = "",
-    ...otherProps }: any) {
+    ...otherProps }: any, ref) {
+
     return (
         <section className={`flex flex-col relative ${width}`}>
             <label
@@ -23,10 +26,13 @@ export default function ({
                 pattern={pattern}
                 required={required}
                 {...otherProps}
+                ref={ref}
             />
             <section className="flex flex-row justify-center absolute mt-16">
                 <span className="text-zinc-500 text-xs font-bold">{footnote}</span>
             </section>
         </section>
     );
-}
+});
+
+export default Input;

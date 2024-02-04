@@ -16,6 +16,7 @@ import { searchStudentSolicitationStatus } from "../utilities/students";
 import SolicitationAddModal from "../components/Solicitation/SolicitationAddModal";
 
 export default function () {
+    const searchbarRef = useRef<HTMLInputElement>(null);
     const [search, setSearch] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [courses, setCourses] = useState();
@@ -159,12 +160,23 @@ export default function () {
         }
     };
 
-    const onChangeSearch = async (event: SyntheticEvent) => {
+    const onClickHandler = async (event: SyntheticEvent) => {
         event.preventDefault();
         setFilter(null as any);
         setSearchData([]);
-        const target = event.target as HTMLInputElement;
-        setSearch(target.value);
+    };
+
+    const onChangeSearch = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const value = searchbarRef.current!.value;
+
+        if (value.length === 0) {
+            setFilter(null as any);
+            setSearchData([]);
+        }
+        // const target = event.target as HTMLInputElement;
+        // setSearch(target.value);
     };
 
     const onSubmit = async (event: SyntheticEvent) => {
@@ -240,8 +252,9 @@ export default function () {
     const onSearchSubmit = async (event: SyntheticEvent) => {
         event.preventDefault();
 
+        let value = searchbarRef.current!.value;
 
-        const data = await searchStudentSolicitationStatus(search, course);
+        const data = await searchStudentSolicitationStatus(value, course);
         const filteredData = data.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
         setDatas((state: any) => ({
             ...state,
@@ -456,9 +469,10 @@ export default function () {
                     >
                         <Input
                             placeholder="Search the name of student"
-                            pattern={capitalizeRegex}
                             onChange={onChangeSearch}
+                            // onClick={onClickHandler}
                             width="flex-auto"
+                            ref={searchbarRef}
                         />
                         <Button >Search</Button>
                     </form>

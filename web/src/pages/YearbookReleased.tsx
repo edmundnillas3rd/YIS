@@ -43,9 +43,9 @@ export default function () {
         if (searchedData?.length && searchedData.length > 0) {
 
             console.log("Executing", searchedData);
-            
+
             return searchedData;
-            
+
         }
 
 
@@ -79,7 +79,7 @@ export default function () {
             }
 
             setFilter(years[0]);
-            
+
 
             setCourses(coursesData.courses);
             setRemaining(yearbookData['remaminingUnpaidOrUnClaimed']);
@@ -217,7 +217,7 @@ export default function () {
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
         const target = event.target as HTMLInputElement;
-        
+
         setFilter(target.value as any);
         setDatas({
             filteredData: yearbooks.filter((item: any) => {

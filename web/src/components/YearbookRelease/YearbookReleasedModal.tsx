@@ -97,8 +97,6 @@ export default function ({
                 setStatus(target.value);
                 break;
             case "paymentStatus":
-                
-
                 setPaymentStatus(target.value);
                 break;
             case "dateReleased":
