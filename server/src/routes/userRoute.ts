@@ -25,7 +25,8 @@ import {
     updateCoAdminInfo,
     uploadUserData,
     updateAdminInfo,
-    updatePassword
+    updatePassword,
+    searchRegisteredStudent
 } from "../controllers/users";
 
 // GET
@@ -38,6 +39,7 @@ router.post("/info-submit", submitInfo);
 router.post("/user-signup", signupUserStudent);
 router.post("/user-login", loginUserStudent);
 router.post("/logout", logoutUser);
+router.post("/student-search-registered", searchRegisteredStudent);
 router.post("/student-search", searchStudent);
 router.post("/student-search-recipient", searchStudentRecipient);
 router.post("/student-search-paid", searchStudentPaid);

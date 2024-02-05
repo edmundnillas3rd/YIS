@@ -1,10 +1,19 @@
-import { SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Container, Dropdown, Input, Table } from "../Globals";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import StudentModal from "./Stutdent/StudentModal";
 
 export default function () {
+
+    const searchbarRef = useRef<HTMLInputElement>(null);
+    const [datas, setDatas] = useState<any>({
+        rawData: null,
+        filteredData: null
+    });
+    const [filter, setFilter] = useState("");
+    const [searchedData, setSearchData] = useState([]);
+
 
     const [firstName, setFirstName] = useState<string>("");
     const [middleName, setMiddleName] = useState<string>("");
@@ -42,10 +51,10 @@ export default function () {
                     setCourses(courses);
                 }
 
-                
-                
 
-                setStudents(studentUsers.map(({ ...attr }: any) => ({  uuid: uuid(), ...attr })));
+
+
+                setStudents(studentUsers.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr })));
                 setRawData(studentUsers);
 
             } catch (error) {
@@ -54,6 +63,35 @@ export default function () {
         })();
 
     }, []);
+
+    const filteredTableData = useMemo(() => {
+
+        if (searchedData.length > 0) {
+            return searchedData;
+        }
+
+        if (filter === "RETURNED ALL" || filter === "UNRETURNED" || filter === "LOST") {
+
+
+            let filterData = students.filter((soli: any) => (soli['returnedStatus'] === `${filter}`));
+
+
+
+
+            // setDatas((soli: any) => ({
+            //     ...soli,
+            //     filteredData: filterData
+            // }));
+
+            return filterData;
+        } else {
+            // setDatas((soli: any) => ({
+            //     ...soli,
+            //     filteredData: solis
+            // }));
+            return students;
+        }
+    }, [datas, students, filter, searchedData]);
 
     const attr = [
         "FIRST NAME",
@@ -129,6 +167,44 @@ export default function () {
         }
     };
 
+    const onSearchSubmit = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        let value = searchbarRef.current!.value;
+
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/users/student-search-registered`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ fullName: value })
+        })
+
+        const data = await response.json();
+        const filteredData = data.rows.map(({ ...attr }: any) => ({ uuid: uuid(), ...attr }));
+
+        setDatas((state: any) => ({
+            ...state,
+            filteredData
+        }));
+
+        setSearchData(filteredData);
+    };
+
+    const onChangeSearch = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const value = searchbarRef.current!.value;
+
+        if (value.length === 0) {
+            setFilter(null as any);
+            setSearchData([]);
+        }
+        // const target = event.target as HTMLInputElement;
+        // setSearch(target.value);
+    };
+
     const onClickHandler = async (data: any) => {
         setCurrentNode(data);
     };
@@ -200,12 +276,26 @@ export default function () {
                         <Button>Add</Button>
                     </section>
                 </form>
-                {students && (
+                <form
+                    className="flex flex-auto flex-row justify-end items-center gap-2"
+                    onSubmit={onSearchSubmit}
+                    method="POST"
+                >
+                    <Input
+                        placeholder="Search the name of student"
+                        onChange={onChangeSearch}
+                        // onClick={onClickHandler}
+                        width="flex-auto"
+                        ref={searchbarRef}
+                    />
+                    <Button >Search</Button>
+                </form>
+                {filteredTableData && (
                     <Table
-                        key={students.length}
+                        key={filteredTableData.length}
                         onClickCallback={onClickHandler}
                         columns={attr}
-                        datas={students}
+                        datas={filteredTableData}
                     />
                 )
                 }

@@ -206,7 +206,7 @@ export async function signupUserStudent(req: Request, res: Response) {
             user_middle_name, 
             user_suffix, 
             course_id,
-            user_school_year
+            user_school_year,
             user_school_id, 
             user_password, 
             role_id
@@ -331,6 +331,39 @@ export async function logoutUser(req: Request, res: Response) {
         }
     });
     res.status(200).json({ url: '/' });
+}
+
+export async function searchRegisteredStudent(req: Request, res: Response) {
+
+    const { fullName } = req.body;
+
+    const { rows } = await query(`
+        SELECT 
+        u.user_id AS id, 
+        u.user_first_name AS firstName,
+        u.user_middle_name AS middleName,
+        u.user_family_name AS familyName,
+        COALESCE(u.user_suffix, 'N/A') AS suffix,
+        COALESCE(u.user_school_year, 'N/A') AS schoolYear,
+        COALESCE(c.course_abbreviation, 'N/A') AS course,
+        COALESCE(u.user_school_id, 'N/A') AS schoolID
+        FROM user u
+        INNER JOIN role
+        ON u.role_id = role.role_id
+        LEFT JOIN course c
+        ON u.course_id = c.course_id
+        WHERE role.role_name = 'STUDENT' AND (REGEXP_LIKE(u.user_first_name, ?) OR REGEXP_LIKE(u.user_middle_name, ?) OR REGEXP_LIKE(u.user_family_name, ?) OR REGEXP_LIKE(u.user_suffix, ?))
+    `, [
+        fullName,
+        fullName,
+        fullName,
+        fullName
+    ])
+
+
+    res.status(200).json({
+        rows
+    });
 }
 
 export async function searchStudent(req: Request, res: Response) {
@@ -712,8 +745,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         user_school_id = ?,
         user_password = ?,
         user_school_year = ?,
-        course_id = ?,
-        is_csp = ?
+        course_id = ?
         WHERE user_id = ?
     `, [
         firstName,
@@ -724,7 +756,6 @@ export async function updateStudentInfo(req: Request, res: Response) {
         hashedPassword,
         schoolYear,
         course,
-        isCsp,
         id
     ]);
 
