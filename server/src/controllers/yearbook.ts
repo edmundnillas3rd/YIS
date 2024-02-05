@@ -560,7 +560,7 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
             UPDATE yearbook_photos
             SET yearbook_photos_status_id = ?,
             yearbook_photos_full_name = ?,
-            yearbook_photos_date_released = NULL
+            yearbook_photos_date_released = NULL,
             yearbook_photos_payment_status_id = ?
             WHERE yearbook_photos_id = ?
         `, [status, fullName, paymentStatus, id]);

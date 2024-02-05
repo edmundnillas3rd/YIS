@@ -286,10 +286,10 @@ export default function () {
             middleName,
             suffix,
             schoolYear
-        }
+        };
 
         console.log(data);
-        
+
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/add-yearbook`, {
@@ -299,15 +299,15 @@ export default function () {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(data)
-            })
+            });
 
             if (response.ok) {
                 navigate(0);
             }
         } catch (error) {
-            
+
         }
-    }
+    };
 
     return courses && (
         <article className="flex flex-col justify-center w-full">
@@ -473,29 +473,35 @@ export default function () {
                             placeholder="FIRST NAME"
                             ref={inputFirstNameRef}
                             required={true}
-                            // ref={searchbarRef}
+                        // ref={searchbarRef}
                         />
                         <Input
                             placeholder="FAMILY NAME"
                             ref={inputFamilyNameRef}
                             required={true}
 
-                            // ref={searchbarRef}
+                        // ref={searchbarRef}
                         />
                         <Input
                             placeholder="MIDDLE NAME"
                             ref={inputMiddleNameRef}
-                            // ref={searchbarRef}
+                        // ref={searchbarRef}
                         />
                         <Input
                             placeholder="SUFFIX"
                             ref={inputSuffixRef}
-                            // ref={searchbarRef}
+                        // ref={searchbarRef}
                         />
-                        <Dropdown
-                            datas={years}
-                            ref={selectYearRef}
-                        />
+                        <section className="flex flex-row justify-center items-center font-bold gap-1">
+                            <label htmlFor="schoolYear">
+                                S.Y.
+                            </label>
+                            <Dropdown
+                                name="schoolYears"
+                                datas={years}
+                                ref={selectYearRef}
+                            />
+                        </section>
                         {/* <Dropdown
                             datas={courses}
                             ref={selectCourseRef}

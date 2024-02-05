@@ -70,7 +70,7 @@ export default function ({
             }
 
             console.log(filteredStatus, filteredPaymentStatus);
-        
+
 
             setID(data['id']);
             setFullName(data['fullName']);
@@ -181,14 +181,14 @@ export default function ({
                 method: "DELETE",
                 credentials: "include"
             });
-            
+
             if (response.ok) {
                 navigate(0);
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     return (
         <Modal
@@ -211,15 +211,16 @@ export default function ({
                             Soli #'s {soli['soliNumber']}
                         </h3>
                         <section className="flex flex-row gap-1">
-                            <Button
-                                onClick={onDelete}
-                            >
-                                Delete
-                            </Button>
+
                             <Toggle
                                 name="Edit"
                                 onChange={onToggleChange}
                             >
+                                <Button
+                                    onClick={onDelete}
+                                >
+                                    Delete
+                                </Button>
                                 {!confirmSave && (
                                     <Button
                                         onClick={(e: any) => { setConfirmSave(true); }}
