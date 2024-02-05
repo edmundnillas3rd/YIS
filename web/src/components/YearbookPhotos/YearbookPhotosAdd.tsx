@@ -1,7 +1,11 @@
 import { SyntheticEvent, useState } from "react";
 import { Button, Dropdown, Input, Modal } from "../Globals";
+import { useNavigate } from "react-router-dom";
 
 export default function ({ isOpen, hasCloseBtn, onClose, data, data2 }: ModalProps) {
+
+    const navigate = useNavigate();
+
 
     const [yearbookPhoto, setYearbookPhoto] = useState<Object>({
         fullName: "",
@@ -34,6 +38,10 @@ export default function ({ isOpen, hasCloseBtn, onClose, data, data2 }: ModalPro
                 },
                 body: JSON.stringify(yearbookPhoto)
             });
+
+            if (response.ok) {
+                navigate(0);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -61,12 +69,12 @@ export default function ({ isOpen, hasCloseBtn, onClose, data, data2 }: ModalPro
                     onChange={onChange}
                     required={true}
                 />
-                <Input
+                {/* <Input
                     title="FULL PAYMENT"
                     id="fullPayment"
                     onChange={onChange}
                     required={true}
-                />
+                /> */}
                 <Dropdown
                     label="PAYMENT STATUS"
                     name="paymentStatus"

@@ -1,4 +1,6 @@
-export default function ({ label, name, datas, value, required, ...otherProps }: any) {
+import { forwardRef } from "react";
+
+const Dropdown = forwardRef(function ({ label, name, datas, value, required, ...otherProps }: any, ref) {
     return (
         <section className="flex flex-col text-sm font-bold text-gray-900">
             <label className={`${required ? "after:text-red-400 after:content-['*'] " : ""}`} htmlFor={name}>{label}</label>
@@ -9,6 +11,7 @@ export default function ({ label, name, datas, value, required, ...otherProps }:
                 value={value}
                 required={required}
                 {...otherProps}
+                ref={ref}
             >
                 {datas && datas.map((data: any, idx: number) => {
                     // if (data === defaultValue) {
@@ -24,4 +27,6 @@ export default function ({ label, name, datas, value, required, ...otherProps }:
             </select>
         </section>
     );
-}
+})
+
+export default Dropdown;

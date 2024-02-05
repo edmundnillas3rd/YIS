@@ -54,18 +54,23 @@ export default function ({
                 (data['returnedStatus'] === s['name'])
             );
 
-            setStatus(filteredStatus[0]['id']);
+            if (filteredStatus.length !== 0) {
+                setStatus(filteredStatus[0]['id']);
+            } else {
+                setStatus(data2.statuses[0]['id']);
+            }
 
             const filteredPaymentStatus = data2.paymentStatuses.filter((p: any) => (data['paymentStatus'] === p['name']));
 
-            if (filteredPaymentStatus[0]['id']) {
+
+            if (filteredPaymentStatus.length !== 0) {
                 setPaymentStatus(filteredPaymentStatus[0]['id']);
             } else {
-                setPaymentStatus("N/A");
+                setPaymentStatus(data2.paymentStatuses[0]['id']);
             }
 
-            console.log(data);
-
+            console.log(filteredStatus, filteredPaymentStatus);
+        
 
             setID(data['id']);
             setFullName(data['fullName']);

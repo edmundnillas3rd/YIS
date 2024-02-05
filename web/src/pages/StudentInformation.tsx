@@ -360,7 +360,7 @@ export default function () {
                 </section>
                 {student && (
                     <form
-                        className="flex flex-col md:flex-row gap-1 items-center"
+                        className="flex flex-col md:flex-row gap-7 md:gap-1 items-center"
                         method="POST"
                         onSubmit={onSubmitHandler}>
 

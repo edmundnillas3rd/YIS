@@ -186,9 +186,6 @@ export default function () {
 
     const yearbookReleasedHeaders = [
         "NAME",
-        "COURSE",
-        "FULL PAYMENT",
-        "YEARBOOK PAYMENT STATUS",
         "YEARBOOK STATUS",
         "DATE RELEASED",
         "CARE OF",

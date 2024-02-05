@@ -42,7 +42,6 @@ export default function () {
 
     const attr = [
         "FULL NAME",
-        "FULL PAYMENT",
         "PAYMENT STATUS",
         "YEARBOOK PHOTOS STATUS",
         "DATE RELEASED"

@@ -17,6 +17,10 @@ import SolicitationAddModal from "../components/Solicitation/SolicitationAddModa
 
 export default function () {
     const searchbarRef = useRef<HTMLInputElement>(null);
+    const inputFullNameRef = useRef<HTMLInputElement>(null);
+    const inputSoliNumRef = useRef<HTMLInputElement>(null);
+    const selectCourseRef = useRef<HTMLSelectElement>(null);
+
     const [search, setSearch] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [courses, setCourses] = useState();
@@ -177,6 +181,38 @@ export default function () {
         }
         // const target = event.target as HTMLInputElement;
         // setSearch(target.value);
+    };
+
+    const onSubmitSoli = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const fullName = inputFullNameRef.current!.value;
+        const soliNum = inputSoliNumRef.current!.value;
+        const course = selectCourseRef.current!.value;
+
+        const data = {
+            fullName,
+            soliNum,
+            course
+        };
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/add-solicitation`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+
+            if (response.ok) {
+                navigate(0);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
     };
 
     const onSubmit = async (event: SyntheticEvent) => {
@@ -476,10 +512,11 @@ export default function () {
                         />
                         <Button >Search</Button>
                     </form>
-                    <Button onClick={(e: SyntheticEvent) => {
+
+                    {/* <Button onClick={(e: SyntheticEvent) => {
                         e.preventDefault();
                         setShowAddModal(true);
-                    }}>Add Solicitation Form</Button>
+                    }}>Add Solicitation Form</Button> */}
                     <section className="flex flex-row justify-end items-center gap-2 mx-2">
                         <h1>
                             Remaining unpaid and unreturned solis:
@@ -494,6 +531,31 @@ export default function () {
                         datas={soliFilters}
                         onChange={onChangeFilter}
                     />
+                </section>
+                <section>
+                    <form
+                        className="flex flex-row gap-1 items-center"
+                        method="POST"
+                        onSubmit={onSubmitSoli}
+                    >
+                        <Input
+                            title="NAME OF STUDENT"
+                            id="name"
+                            ref={inputFullNameRef}
+                        />
+                        <Input
+                            title="SOLI FORM #"
+                            id="soliNum"
+                            ref={inputSoliNumRef}
+                        />
+                        <Dropdown
+                            label="COURSE"
+                            name="course"
+                            datas={courses}
+                            ref={selectCourseRef}
+                        />
+                        <section className="mt-5"><Button>Add Soli</Button></section>
+                    </form>
                 </section>
                 {filteredTableData && (
                     <Table

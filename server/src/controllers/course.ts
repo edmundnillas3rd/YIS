@@ -32,7 +32,7 @@ export async function addCourse(req: Request, res: Response) {
     const {
         name,
         abbreviation,
-        deparment
+        department
     } = req.body;
 
     await query(`
@@ -48,7 +48,7 @@ export async function addCourse(req: Request, res: Response) {
             ?
         )
     `, [
-        deparment,
+        department,
         name,
         abbreviation
     ])

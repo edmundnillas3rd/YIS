@@ -39,14 +39,11 @@ export async function index(req: Request, res: Response) {
     const yearbook = await query(`
         SELECT yb.yearbook_id AS id, 
         CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, '')) AS fullName,
-        COALESCE(course_id, 'N/A') AS course,
-        yb.yearbook_full_payment AS fullPayment,
-        yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
-        u.user_school_year AS schoolYear
+        COALESCE(u.user_school_year) AS schoolYear
         FROM yearbook yb
         LEFT JOIN user u
         ON yb.yearbook_id = u.user_id
@@ -59,7 +56,6 @@ export async function index(req: Request, res: Response) {
     const yearbookPhotos = await query(`
         SELECT ybp.yearbook_photos_id AS id, 
         ybp.yearbook_photos_full_name AS fullName,
-        ybp.yearbook_photos_full_payment as fullPayment,
         yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
         yps.status_name AS paymentStatus,
@@ -691,7 +687,6 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
 export async function addYearbookPhoto(req: Request, res: Response) {
     const {
         fullName,
-        fullPayment,
         paymentStatus,
         yearbookStatus,
         date
@@ -702,7 +697,6 @@ export async function addYearbookPhoto(req: Request, res: Response) {
         INSERT INTO yearbook_photos (
             yearbook_photos_id,
             yearbook_photos_full_name,
-            yearbook_photos_full_payment,
             yearbook_photos_payment_status_id,
             yearbook_photos_status_id,
             yearbook_photos_date_released
@@ -711,12 +705,10 @@ export async function addYearbookPhoto(req: Request, res: Response) {
             ?,
             ?,
             ?,
-            ?,
             NULLIF(?, '')
         )
     `, [
         fullName,
-        fullPayment,
         paymentStatus,
         yearbookStatus,
         date
@@ -740,7 +732,6 @@ export async function searchStudentYearbookPhoto(req: Request, res: Response) {
     `
     SELECT ybp.yearbook_photos_id AS id, 
         ybp.yearbook_photos_full_name AS fullName,
-        ybp.yearbook_photos_full_payment as fullPayment,
         yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
         yps.status_name AS paymentStatus,
@@ -756,7 +747,6 @@ export async function searchStudentYearbookPhoto(req: Request, res: Response) {
         SELECT 
         ybp.yearbook_photos_id AS id, 
         ybp.yearbook_photos_full_name AS fullName, 
-        ybp.yearbook_photos_full_payment as fullPayment,
         yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus, 
         COALESCE(ybp.yearbook_photos_date_released, 'N/A') AS dateReleased 
@@ -831,13 +821,11 @@ export async function searchStudentYearbook(req: Request, res: Response) {
     const { rows } = await query(`
         SELECT yb.yearbook_id AS id, 
         CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, ''), ' ', COALESCE(u.user_suffix, '')) AS fullName,
-        COALESCE(course_id, 'N/A') AS course,
-        yb.yearbook_full_payment AS fullPayment,
-        yps.status_name AS paymentStatus,
         ybs.yearbook_status_name AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
-        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation
+        COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
+        COALESCE(u.user_school_year, 'N/A') AS schoolYear
         FROM yearbook yb
         LEFT JOIN user u
         ON yb.yearbook_id = u.user_id

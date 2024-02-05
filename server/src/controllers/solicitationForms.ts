@@ -52,7 +52,7 @@ export async function index(req: Request, res: Response) {
             COALESCE(or_number, 'N/A') AS ORnumber,
             COALESCE(full_payment, 0) as fullPayment,
             COALESCE(sps.status_name, 'N/A') as paymentStatus,
-            srs.status_name AS returnedStatus
+            COALESCE(srs.status_name, 'N/A') AS returnedStatus
             FROM solicitation_form_raw sfr
             LEFT JOIN solicitation_payment_status sps
             ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
@@ -71,7 +71,7 @@ export async function index(req: Request, res: Response) {
 
     const paymentStatusResults = await query(`
         SELECT solicitation_payment_status_id AS id, status_name AS name FROM solicitation_payment_status
-    `)
+    `);
 
     const unpaidStudents = await query(`
         SELECT COUNT(*) as remainingStudents
@@ -162,21 +162,21 @@ export async function downloadExcelSheet(req: Request, res: Response) {
     const solicitationWorkbook = XLSX.utils.book_new();
 
     const sheet = XLSX.utils.json_to_sheet(students.rows);
-        XLSX.utils.book_append_sheet(
-            solicitationWorkbook,
-            sheet,
-            "ALL"
-        );
+    XLSX.utils.book_append_sheet(
+        solicitationWorkbook,
+        sheet,
+        "ALL"
+    );
 
     // collegeDepartments.rows.forEach((department: any) => {
-        // const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
-// 
-        // const sheet = XLSX.utils.json_to_sheet(s);
-        // XLSX.utils.book_append_sheet(
-            // solicitationWorkbook,
-            // sheet,
-            // department.college
-        // );
+    // const s = students.rows.filter((student: any) => student.COLLEGE === department.college);
+    // 
+    // const sheet = XLSX.utils.json_to_sheet(s);
+    // XLSX.utils.book_append_sheet(
+    // solicitationWorkbook,
+    // sheet,
+    // department.college
+    // );
     // });
 
     const buf = XLSX.write(solicitationWorkbook, {
@@ -234,7 +234,7 @@ export async function searchSolicitationForm(req: Request, res: Response) {
         COALESCE(or_number, 'N/A') AS ORnumber,
         COALESCE(full_payment, 0) as fullPayment,
         COALESCE(sps.status_name, 'N/A') as paymentStatus,
-        srs.status_name AS returnedStatus
+        COALESCE(srs.status_name, 'N/A') AS returnedStatus
         FROM solicitation_form_raw sfr
         LEFT JOIN solicitation_payment_status sps
         ON sfr.solicitation_payment_status_id = sps.solicitation_payment_status_id
@@ -259,21 +259,21 @@ export async function searchSolicitationForm(req: Request, res: Response) {
 }
 
 export async function addSolicitation(req: Request, res: Response) {
-    const { 
+    const {
         course,
-        name,
+        fullName,
         soliNum,
-        careOf,
-        careOfRelation,
-        returnedSolis,
-        unreturnedSolis,
-        lostOr,
-        dateReturned,
-        yearbookPayment,
-        orNum,
-        fullPayment,
-        paymentStatus,
-        soliStatus
+        // careOf,
+        // careOfRelation,
+        // returnedSolis,
+        // unreturnedSolis,
+        // lostOr,
+        // dateReturned,
+        // yearbookPayment,
+        // orNum,
+        // fullPayment,
+        // paymentStatus,
+        // soliStatus
     } = req.body;
 
     await query(`
@@ -281,54 +281,72 @@ export async function addSolicitation(req: Request, res: Response) {
             solicitation_form_raw_id,
             full_name,
             course,
-            soli_numbers,
-            care_of,
-            care_of_relation,
-            solicitation_returned_status,
-            lost_or_number,
-            date_returned,
-            yearbook_payment,
-            or_number,
-            full_payment,
-            solicitation_payment_status_id,
-            solicitation_returned_status_id,
-            returned_solis,
-            unreturned_solis
+            soli_numbers
         ) VALUES (
             UUID(),
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            NULLIF(?, ''),
-            ?,
-            ?,
-            ?,
-            ?,
             ?,
             ?,
             ?
         )
     `, [
-        name,
+        fullName,
         course,
         soliNum,
-        careOf,
-        careOfRelation,
-        soliStatus,
-        lostOr,
-        dateReturned,
-        yearbookPayment,
-        orNum,
-        fullPayment,
-        paymentStatus,
-        soliStatus,
-        returnedSolis,
-        unreturnedSolis
-    ])
+    ]);
+
+    // await query(`
+        // INSERT INTO solicitation_form_raw (
+            // solicitation_form_raw_id,
+            // full_name,
+            // course,
+            // soli_numbers,
+            // care_of,
+            // care_of_relation,
+            // solicitation_returned_status,
+            // lost_or_number,
+            // date_returned,
+            // yearbook_payment,
+            // or_number,
+            // full_payment,
+            // solicitation_payment_status_id,
+            // solicitation_returned_status_id,
+            // returned_solis,
+            // unreturned_solis
+        // ) VALUES (
+            // UUID(),
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // NULLIF(?, ''),
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // ?,
+            // ?
+        // )
+    // `, [
+        // name,
+        // course,
+        // soliNum,
+        // careOf,
+        // careOfRelation,
+        // soliStatus,
+        // lostOr,
+        // dateReturned,
+        // yearbookPayment,
+        // orNum,
+        // fullPayment,
+        // paymentStatus,
+        // soliStatus,
+        // returnedSolis,
+        // unreturnedSolis
+    // ]);
 
     res.status(200).end();
 }

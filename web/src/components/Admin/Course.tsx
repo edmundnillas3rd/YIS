@@ -28,6 +28,7 @@ export default function () {
                 const { courses, departments } = courseData;
 
                 if (courses && departments) {
+                    setDepartment(departments[0]['id']);
                     setDepartments(departments);
                     setCourses(courses.map(({ acronym, ...course }: any) => ({ uuid: uuid(), ...course, acronym: acronym ?? '' })));
                 }
@@ -56,6 +57,7 @@ export default function () {
                 setAbbreviation(target.value);
                 break;
             case "department":
+                console.log(target.value);
                 setDepartment(target.value);
                 break;
         }
@@ -120,13 +122,14 @@ export default function () {
                             onChange={onChange}
                         />
                         <Input
-                            title="COURSE ABBREVIATION"
+                            title="ACRONYM"
                             id="abbreviation"
                             onChange={onChange}
                         />
                         <Dropdown
                             label="DEPARTMENTS"
-                            id="department"
+                            name="department"
+                            value={department}
                             datas={departments}
                             onChange={onChange}
                         />
