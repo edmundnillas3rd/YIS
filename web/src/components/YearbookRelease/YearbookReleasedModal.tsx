@@ -102,7 +102,6 @@ export default function ({
                 setAmount(target.value);
                 break;
             case "status":
-
                 setStatus(target.value);
                 break;
             case "paymentStatus":
