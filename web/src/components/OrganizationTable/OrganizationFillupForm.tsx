@@ -192,7 +192,7 @@ export default function ({ data, data2, hasSubmit }: any) {
                         value={yearEnded}
                     />
                     {!loading ? (
-                        <Toggle name={`${typeof hasSubmit === "boolean" && !hasSubmit ? "Submit" : "Edit"}`} icon={<MdEdit />} onChange={onEditChange}>
+                        <Toggle name={`${typeof hasSubmit === "boolean" && !hasSubmit ? "Edit to Submit" : "Edit"}`} icon={<MdEdit />} onChange={onEditChange}>
                             {(!confirmSave && !confirmDelete) && (
                                 <>
                                     <Button onClick={(e: any) => { setConfirmDelete(true); }}>

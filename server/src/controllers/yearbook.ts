@@ -39,7 +39,7 @@ export async function index(req: Request, res: Response) {
     const yearbook = await query(`
         SELECT yb.yearbook_id AS id, 
         CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, '')) AS fullName,
-        ybs.yearbook_status_name AS yearbookStatus,
+        COALESCE(ybs.yearbook_status_name) AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,
@@ -585,9 +585,7 @@ export async function statusYearbookPhotosUpdate(req: Request, res: Response) {
 export async function statusYearbookUpdate(req: Request, res: Response) {
     const {
         yearbookID,
-        amount,
         status,
-        paymentStatus,
         date,
         careOf,
         relation,
@@ -620,16 +618,12 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
         results = await query(`
             UPDATE yearbook
             SET yearbook_status_id = ?,
-            yearbook_full_payment = ?,
-            yearbook_payment_status_id = ?,
             yearbook_care_of = ?,
             yearbook_care_of_relation = ?,
             yearbook_date_released = ?
             WHERE yearbook_id = ?
         `, [
             status,
-            amount,
-            paymentStatus,
             careOf,
             relation,
             formattedDate,
@@ -641,16 +635,12 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
         results = await query(`
             UPDATE yearbook
             SET yearbook_status_id = ?,
-            yearbook_full_payment = ?,
-            yearbook_payment_status_id = ?,
             yearbook_care_of = ?,
             yearbook_care_of_relation = ?,
             yearbook_date_released = NULL
             WHERE yearbook_id = ?
         `, [
             status,
-            amount,
-            paymentStatus,
             careOf,
             relation,
             yearbookID
@@ -680,6 +670,89 @@ export async function statusYearbookUpdate(req: Request, res: Response) {
     // WHERE yearbook.yearbook_id = ?
     // `, [status, yearbookID]);
     // }
+
+    res.status(200).end();
+}
+
+export async function deleteYearbook(req: Request, res: Response) {
+
+    const { yearbookID } = req.params;
+
+    await query(`
+        DELETE FROM yearbook
+        WHERE yearbook_id = ?
+    `, [
+        yearbookID
+    ]);
+    
+    res.status(200).end();
+}
+
+export async function addYearbook(req: Request, res: Response) {
+
+    const { firstName, middleName, lastName, suffix, schoolYear } = req.body;
+
+    const genUUID = await query("SELECT UUID()");
+
+    const UUID = genUUID.rows[0]['UUID()'];
+
+    await query(`
+        INSERT INTO yearbook (
+            yearbook_id
+        ) VALUES (
+            ?
+        )
+    `, [
+        UUID
+    ]);
+
+    const roleData = await query(`
+        SELECT role_id AS id, role_name AS name FROM role WHERE role_name = 'STUDENT'
+    `);
+
+    const roleID = roleData.rows[0]['id'];
+
+    await query(`
+        INSERT INTO user (
+            user_id,
+            user_first_name,
+            user_middle_name,
+            user_family_name,
+            user_suffix,
+            user_school_year,
+            role_id
+        ) VALUES (
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    `, [
+        UUID,
+        firstName,
+        middleName,
+        lastName,
+        suffix,
+        schoolYear,
+        roleID
+    ]);
+
+    res.status(200).end();
+}
+
+export async function deleteYearbookPhotos(req: Request, res: Response) {
+
+    const { id } = req.params;
+
+    await query(`
+        DELETE FROM yearbook_photos
+        WHERE yearbook_photos_id = ?
+    `, [
+        id
+    ])
 
     res.status(200).end();
 }
@@ -821,7 +894,7 @@ export async function searchStudentYearbook(req: Request, res: Response) {
     const { rows } = await query(`
         SELECT yb.yearbook_id AS id, 
         CONCAT(COALESCE(u.user_first_name, ''), ' ', COALESCE(u.user_middle_name, ''), ' ', COALESCE(u.user_family_name, ''), ' ', COALESCE(u.user_suffix, '')) AS fullName,
-        ybs.yearbook_status_name AS yearbookStatus,
+        COALESCE(ybs.yearbook_status_name, 'N/A') AS yearbookStatus,
         COALESCE(yb.yearbook_date_released, 'N/A') AS dateReleased,
         COALESCE(yb.yearbook_care_of, 'N/A') as careOf,
         COALESCE(yb.yearbook_care_of_relation, 'N/A') careOfRelation,

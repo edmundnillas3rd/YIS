@@ -173,6 +173,23 @@ export default function ({
         setDisable(!data);
     };
 
+    const onDelete = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/solicitation/${id}/delete-solicitation`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            
+            if (response.ok) {
+                navigate(0);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <Modal
             isOpen={isOpen}
@@ -193,25 +210,32 @@ export default function ({
                         <h3 className="font-bold">
                             Soli #'s {soli['soliNumber']}
                         </h3>
-                        <Toggle
-                            name="Edit"
-                            onChange={onToggleChange}
-                        >
-                            {!confirmSave && (
-                                <Button
-                                    onClick={(e: any) => { setConfirmSave(true); }}
-                                >
-                                    Save
-                                    <FaSave />
-                                </Button>
-                            )}
-                            {confirmSave && (
-                                <Confirm
-                                    onConfirm={onClickSave}
-                                    onCancel={(e: any) => setConfirmSave(false)}
-                                />
-                            )}
-                        </Toggle>
+                        <section className="flex flex-row gap-1">
+                            <Button
+                                onClick={onDelete}
+                            >
+                                Delete
+                            </Button>
+                            <Toggle
+                                name="Edit"
+                                onChange={onToggleChange}
+                            >
+                                {!confirmSave && (
+                                    <Button
+                                        onClick={(e: any) => { setConfirmSave(true); }}
+                                    >
+                                        Save
+                                        <FaSave />
+                                    </Button>
+                                )}
+                                {confirmSave && (
+                                    <Confirm
+                                        onConfirm={onClickSave}
+                                        onCancel={(e: any) => setConfirmSave(false)}
+                                    />
+                                )}
+                            </Toggle>
+                        </section>
                     </div>
                     <section className="flex flex-row gap-1">
                         <Input

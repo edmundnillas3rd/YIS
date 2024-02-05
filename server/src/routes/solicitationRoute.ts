@@ -14,7 +14,8 @@ import {
     solicitationUpdate,
     uploadData,
     downloadExcelSheet,
-    addSolicitation
+    addSolicitation,
+    deleteSolicitation
 } from "../controllers/solicitationForms";
 
 // GET
@@ -32,5 +33,7 @@ router.post("/upload-solicitation-file", upload.single("solicitation-sheet"), up
 
 // PUT
 router.put("/solicitation-update", solicitationUpdate);
+
+router.delete("/:id/delete-solicitation", deleteSolicitation);
 
 export default router;

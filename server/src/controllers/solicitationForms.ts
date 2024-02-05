@@ -757,3 +757,16 @@ export async function solicitationUpdate(req: Request, res: Response) {
 
     res.status(200).end();
 }
+
+export async function deleteSolicitation(req: Request, res: Response) {
+
+    const { id } = req.params;
+
+    await query(`
+        DELETE FROM solicitation_form_raw
+        WHERE solicitation_form_raw_id = ?
+    `, [
+        id
+    ])
+    res.status(200).end();
+}

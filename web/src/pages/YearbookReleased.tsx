@@ -6,8 +6,16 @@ import YearbookReleasedModal from "../components/YearbookRelease/YearbookRelease
 import { capitalizeRegex, suffixRegex } from "../utilities/regex";
 import { searchStudentSolicitationStatus, searchStudentYearbookStatus } from "../utilities/students";
 import { read, writeFileXLSX } from "xlsx";
+import { useNavigate } from "react-router-dom";
 
 export default function () {
+    const inputFirstNameRef = useRef<HTMLInputElement>(null);
+    const inputFamilyNameRef = useRef<HTMLInputElement>(null);
+    const inputMiddleNameRef = useRef<HTMLInputElement>(null);
+    const inputSuffixRef = useRef<HTMLInputElement>(null);
+    const selectYearRef = useRef<HTMLSelectElement>(null);
+    const selectCourseRef = useRef<HTMLSelectElement>(null);
+
     const searchbarRef = useRef<HTMLInputElement>(null);
     const [search, setSearch] = useState<string>("");
     const [datas, setDatas] = useState({
@@ -37,6 +45,8 @@ export default function () {
     const years = generateYearRange();
     const [filter, setFilter] = useState<number>();
     const [searchedData, setSearchData] = useState<any>([]);
+
+    const navigate = useNavigate();
 
     const filteredTableData = useMemo(() => {
 
@@ -216,7 +226,11 @@ export default function () {
 
     const onChangeFilter = async (event: SyntheticEvent) => {
         event.preventDefault();
+        setSearchData([]);
+
+
         const target = event.target as HTMLInputElement;
+        console.log("....", target.value);
 
         setFilter(target.value as any);
         setDatas({
@@ -256,6 +270,44 @@ export default function () {
             console.error(error);
         }
     };
+
+    const onSubmitYearbook = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        const firstName = inputFirstNameRef.current!.value;
+        const lastName = inputFamilyNameRef.current!.value;
+        const middleName = inputMiddleNameRef.current!.value;
+        const suffix = inputSuffixRef.current!.value;
+        const schoolYear = selectYearRef.current!.value;
+
+        const data = {
+            firstName,
+            lastName,
+            middleName,
+            suffix,
+            schoolYear
+        }
+
+        console.log(data);
+        
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/add-yearbook`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+
+            if (response.ok) {
+                navigate(0);
+            }
+        } catch (error) {
+            
+        }
+    }
 
     return courses && (
         <article className="flex flex-col justify-center w-full">
@@ -399,7 +451,7 @@ export default function () {
                     </form>
                     <section className="flex flex-row justify-end items-center gap-2">
                         <h1>
-                            Remaining unpaid and unclaimed yearbooks:
+                            Remaining unclaimed yearbooks:
                             <span className="font-bold"> {remainingStudents}</span>
                         </h1>
                         <Button onClick={onDownloadHandler}>Download</Button>
@@ -410,6 +462,46 @@ export default function () {
                         datas={years}
                         onChange={onChangeFilter}
                     />
+                </section>
+                <section className="flex flex-row gap-5">
+                    <form
+                        className="flex flex-auto flex-row items-center gap-2"
+                        onSubmit={onSubmitYearbook}
+                        method="POST"
+                    >
+                        <Input
+                            placeholder="FIRST NAME"
+                            ref={inputFirstNameRef}
+                            required={true}
+                            // ref={searchbarRef}
+                        />
+                        <Input
+                            placeholder="FAMILY NAME"
+                            ref={inputFamilyNameRef}
+                            required={true}
+
+                            // ref={searchbarRef}
+                        />
+                        <Input
+                            placeholder="MIDDLE NAME"
+                            ref={inputMiddleNameRef}
+                            // ref={searchbarRef}
+                        />
+                        <Input
+                            placeholder="SUFFIX"
+                            ref={inputSuffixRef}
+                            // ref={searchbarRef}
+                        />
+                        <Dropdown
+                            datas={years}
+                            ref={selectYearRef}
+                        />
+                        {/* <Dropdown
+                            datas={courses}
+                            ref={selectCourseRef}
+                        /> */}
+                        <Button >Add Yearbook</Button>
+                    </form>
                 </section>
             </Container>
 

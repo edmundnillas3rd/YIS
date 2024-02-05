@@ -38,20 +38,23 @@ export default function ({
                 yearbookPaymentStatuses: data2['yearbookPaymentStatuses']
             });
 
-            
-            
 
             const foundStatus = data2['yearbookStatuses'].find((status: any) => status['name'] === data['yearbookStatus']);
-            const foundPaymentStatus = data2['yearbookPaymentStatuses'].find((status: any) => status['name'] === data['paymentStatus']);
-            
+
             console.log(data);
-            
-            setPaymentStatus(foundPaymentStatus['id']);
-            setStatus(foundStatus['id']);
+
+            console.log(data['yearbookStatus']);
+
+            if (foundStatus === undefined) {
+                setStatus(data2['yearbookStatuses'][0]);
+            } else {
+                setStatus(foundStatus['id']);
+            }
+
+            // setStatus(foundStatus['id']);
             setDate(data['dateReleased']);
             setCareOf(data['careOf']);
             setRelation(data['careOfRelation']);
-            setAmount(data['fullPayment']);
             setSchoolYear(data['schoolYear']);
 
             if (data?.yearbookStatus && data?.paymentStatus) {
@@ -66,9 +69,7 @@ export default function ({
 
         const data = {
             yearbookID,
-            amount,
             status,
-            paymentStatus,
             date,
             careOf,
             relation,
@@ -101,7 +102,7 @@ export default function ({
                 setAmount(target.value);
                 break;
             case "status":
-                
+
                 setStatus(target.value);
                 break;
             case "paymentStatus":
@@ -119,6 +120,23 @@ export default function ({
             case "schoolYear":
                 setSchoolYear(target.value);
                 break;
+        }
+    };
+
+    const onDelete = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${yearbookID}/delete-yearbook`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                navigate(0);
+            }
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -142,20 +160,20 @@ export default function ({
                             value={status}
                             onChange={onChange}
                         />
-                         <Dropdown
+                        {/* <Dropdown
                             label="PAYMENT STATUS"
                             name="paymentStatus"
                             datas={statuses.yearbookPaymentStatuses}
                             value={paymentStatus}
                             onChange={onChange}
-                        />
-                         <Input
+                        /> */}
+                        {/* <Input
                             title="FULL PAYMENT"
                             id="amount"
                             pattern={"\\d+"}
                             onChange={onChange}
                             value={amount}
-                        />
+                        /> */}
                         <Input
                             title="DATE RELEASED"
                             id="dateReleased"
@@ -182,8 +200,9 @@ export default function ({
                             value={schoolYear}
                             onChange={onChange}
                         />
-                        <section className="flex flex-row justify-end mt-5">
+                        <section className="flex flex-row justify-end mt-5 gap-1">
                             <Button type="submit">Submit</Button>
+                            <Button onClick={onDelete}>Delete</Button>
                         </section>
                     </form>
                 </>

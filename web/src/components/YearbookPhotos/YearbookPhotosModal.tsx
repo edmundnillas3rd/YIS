@@ -17,7 +17,7 @@ export default function ({
     const [status, setStatus] = useState<string>("");
     const [paymentStatus, setPaymentStatus] = useState<string>("");
     const [date, setDate] = useState<string>();
-    const [student, setStudent] = useState();
+    const [student, setStudent] = useState<any>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export default function ({
                 if (s) {
                     setStatus(s['id'] as any);
                 } else {
-                    setStatus(data2[0]['id'])
+                    setStatus(data2[0]['id']);
                 }
             }
 
@@ -44,7 +44,7 @@ export default function ({
                 if (ps) {
                     setPaymentStatus(ps['id'] as any);
                 } else {
-                    setPaymentStatus(data3[0]['id'])
+                    setPaymentStatus(data3[0]['id']);
                 }
             }
         }
@@ -105,6 +105,24 @@ export default function ({
         }
     };
 
+    const onDelete = async (event: SyntheticEvent) => {
+        event.preventDefault();
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BASE_URL}/yearbooks/${student['id']}/delete-yearbook-photos`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+
+            if (response.ok) {
+                navigate(0);
+            }
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <Modal
             isOpen={isOpen}
@@ -146,8 +164,9 @@ export default function ({
                     type="date"
                     onChange={onChange}
                 />
-                <section className="flex flex-row justify-end mt-5">
+                <section className="flex flex-row justify-end mt-5 gap-1">
                     <Button type="submit">Update</Button>
+                    <Button onClick={onDelete}>Delete</Button>
                 </section>
             </form>
         </Modal>

@@ -14,7 +14,7 @@ const Input = forwardRef(function ({
         <section className={`flex flex-col relative ${width}`}>
             <label
                 htmlFor={id}
-                className={`block text-sm font-bold leading-6 text-gray-900 ${required ? "after:text-red-400 after:content-['*'] " : ""}`}
+                className={`block text-sm font-bold leading-6 text-gray-900 ${(required && id) ? "after:text-red-400 after:content-['*'] " : ""}`}
             >
                 {title}
             </label>
