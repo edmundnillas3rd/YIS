@@ -85,15 +85,10 @@ export async function getCurrentLogUser(req: Request, res: Response) {
         user.user_suffix AS suffix, 
         role.role_name AS role, 
         COALESCE(course_id, '') AS course,
-        COALESCE(solicitation_returned_status.status_name, "UNCLAIMED") AS claimStatus,
         user.user_email as email
         FROM user 
         INNER JOIN role
         ON user.role_id = role.role_id
-        LEFT JOIN solicitation_form
-        ON user.user_id = solicitation_form.user_id
-        LEFT JOIN solicitation_returned_status
-        ON solicitation_form.solicitation_returned_status_id = solicitation_returned_status.solicitation_returned_status_id
         WHERE user.user_id = ?
     `, [userID]);
     res.status(200).json({ id: userID, userData: rows[0] });
