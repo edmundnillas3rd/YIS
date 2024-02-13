@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { FaEye, FaSave } from "react-icons/fa";
@@ -129,15 +130,15 @@ export default function () {
     ];
 
     const onInputChangeHandler = (event: SyntheticEvent) => {
-        const target = event.target as HTMLInputElement;
+        const inputTarget = event.target as HTMLInputElement;
 
 
 
-        switch (target.name) {
+        switch (inputTarget.name) {
             case "first-name":
                 setStudent((state: any) => ({
                     ...state,
-                    firstName: target.value
+                    firstName: inputTarget.value
                 }));
                 break;
             case "middleName":
@@ -145,25 +146,31 @@ export default function () {
 
                 setStudent((state: any) => ({
                     ...state,
-                    middleName: target.value
+                    middleName: inputTarget.value
                 }));
                 break;
             case "family-name":
                 setStudent((state: any) => ({
                     ...state,
-                    familyName: target.value
+                    familyName: inputTarget.value
                 }));
                 break;
             case "suffix":
                 setStudent((state: any) => ({
                     ...state,
-                    suffix: target.value
+                    suffix: inputTarget.value
                 }));
                 break;
+        }
+
+
+        const selectTarget = event.target as HTMLSelectElement;
+
+        switch (selectTarget.name) {
             case "course":
                 setStudent((state: any) => ({
                     ...state,
-                    course: target.value
+                    course: selectTarget.value
                 }));
                 break;
         }

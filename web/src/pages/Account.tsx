@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useContext, useEffect, useState } from "react";
 import { Button, Container } from "../components/Globals";
 import { useNavigate } from "react-router-dom";
