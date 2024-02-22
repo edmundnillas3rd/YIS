@@ -1,3 +1,48 @@
+CREATE TABLE `college` (
+  `college_id` varchar(36) NOT NULL,
+  `college_name` varchar(100) NOT NULL,
+  `college_acronym` varchar(100) NOT NULL,
+  PRIMARY KEY (`college_id`),
+  UNIQUE KEY `college_id_UNIQUE` (`college_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `course` (
+  `course_id` varchar(36) NOT NULL,
+  `college_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `course_name` varchar(45) NOT NULL,
+  `course_abbreviation` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`course_id`),
+  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
+  KEY `course_college_fk_idx` (`college_id`),
+  CONSTRAINT `course_college_fk` FOREIGN KEY (`college_id`) REFERENCES `college` (`college_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `role` (
+  `role_id` varchar(36) NOT NULL,
+  `role_name` varchar(45) NOT NULL,
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY `role_id_UNIQUE` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `user` (
+  `user_id` varchar(36) NOT NULL,
+  `user_first_name` varchar(45) DEFAULT NULL,
+  `user_family_name` varchar(45) DEFAULT NULL,
+  `user_middle_name` varchar(45) DEFAULT NULL,
+  `user_suffix` varchar(45) DEFAULT NULL,
+  `user_email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `user_password` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `user_school_year` smallint DEFAULT NULL,
+  `user_school_id` varchar(45) DEFAULT NULL,
+  `role_id` varchar(36) NOT NULL,
+  `course_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `is_csp` int DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_id_UNIQUE` (`user_id`),
+  KEY `user_FK` (`role_id`),
+  KEY `user_FK_1` (`course_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `award` (
   `award_id` varchar(36) NOT NULL,
   `user_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -34,32 +79,6 @@ CREATE TABLE `club_position` (
   PRIMARY KEY (`club_position_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `college` (
-  `college_id` varchar(36) NOT NULL,
-  `college_name` varchar(100) NOT NULL,
-  `college_acronym` varchar(100) NOT NULL,
-  PRIMARY KEY (`college_id`),
-  UNIQUE KEY `college_id_UNIQUE` (`college_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `course` (
-  `course_id` varchar(36) NOT NULL,
-  `college_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `course_name` varchar(45) NOT NULL,
-  `course_abbreviation` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`course_id`),
-  UNIQUE KEY `course_id_UNIQUE` (`course_id`),
-  KEY `course_college_fk_idx` (`college_id`),
-  CONSTRAINT `course_college_fk` FOREIGN KEY (`college_id`) REFERENCES `college` (`college_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `role` (
-  `role_id` varchar(36) NOT NULL,
-  `role_name` varchar(45) NOT NULL,
-  PRIMARY KEY (`role_id`),
-  UNIQUE KEY `role_id_UNIQUE` (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `seminar` (
   `seminar_id` varchar(36) NOT NULL,
   `seminar_name` varchar(45) NOT NULL,
@@ -76,6 +95,19 @@ CREATE TABLE `sessions` (
   `expires` int unsigned NOT NULL,
   `data` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `solicitation_payment_status` (
+  `solicitation_payment_status_id` varchar(36) NOT NULL,
+  `status_name` varchar(45) NOT NULL,
+  PRIMARY KEY (`solicitation_payment_status_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `solicitation_returned_status` (
+  `solicitation_returned_status_id` varchar(36) NOT NULL,
+  `status_name` varchar(45) NOT NULL,
+  PRIMARY KEY (`solicitation_returned_status_id`),
+  UNIQUE KEY `solicitation_returned_status_id_UNIQUE` (`solicitation_returned_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `solicitation_form_raw` (
@@ -101,38 +133,6 @@ CREATE TABLE `solicitation_form_raw` (
   KEY `soli_payment_status_idx` (`solicitation_payment_status_id`),
   CONSTRAINT `soli_payment_status` FOREIGN KEY (`solicitation_payment_status_id`) REFERENCES `solicitation_payment_status` (`solicitation_payment_status_id`),
   CONSTRAINT `soli_returned_status` FOREIGN KEY (`solicitation_returned_status_id`) REFERENCES `solicitation_returned_status` (`solicitation_returned_status_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `solicitation_payment_status` (
-  `solicitation_payment_status_id` varchar(36) NOT NULL,
-  `status_name` varchar(45) NOT NULL,
-  PRIMARY KEY (`solicitation_payment_status_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `solicitation_returned_status` (
-  `solicitation_returned_status_id` varchar(36) NOT NULL,
-  `status_name` varchar(45) NOT NULL,
-  PRIMARY KEY (`solicitation_returned_status_id`),
-  UNIQUE KEY `solicitation_returned_status_id_UNIQUE` (`solicitation_returned_status_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `user` (
-  `user_id` varchar(36) NOT NULL,
-  `user_first_name` varchar(45) DEFAULT NULL,
-  `user_family_name` varchar(45) DEFAULT NULL,
-  `user_middle_name` varchar(45) DEFAULT NULL,
-  `user_suffix` varchar(45) DEFAULT NULL,
-  `user_email` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `user_password` char(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `user_school_year` smallint DEFAULT NULL,
-  `user_school_id` varchar(45) DEFAULT NULL,
-  `role_id` varchar(36) NOT NULL,
-  `course_id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `is_csp` int DEFAULT '0',
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `user_id_UNIQUE` (`user_id`),
-  KEY `user_FK` (`role_id`),
-  KEY `user_FK_1` (`course_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `yearbook` (
