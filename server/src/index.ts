@@ -44,7 +44,7 @@ const main = async () => {
             secret: process.env.SECRET as string,
             store: sessionStore,
             cookie: {
-                maxAge: 600000
+                maxAge: 2 * 60 * 60 * 1000
             },
             resave: false,
             saveUninitialized: false

@@ -34,9 +34,7 @@ export async function query(sql: string, values: any[] = []) {
 
 export default async function initializeMySQLConnection() {
 
-    if (process.env.NODE_ENV !== "production") {
-        pool = mysql.createPool(config);
-    }
+    pool = mysql.createPool(config);
 
     pool?.getConnection((err, connection) => {
         if (err) {

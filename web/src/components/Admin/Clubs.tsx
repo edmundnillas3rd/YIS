@@ -156,12 +156,12 @@ export default function () {
                     <Button>Add</Button>
                 </section>
             </form>
-            <Table
+           {clubs.length && <Table
                 key={clubs.length}
                 onClickCallback={onClickHandler}
                 columns={attr}
                 datas={clubs}
-            />
+            />}
 
             <form method="POST" onSubmit={onSubmitHandlerPositions}>
                 <h1>Add New Positions</h1>

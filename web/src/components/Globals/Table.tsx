@@ -46,7 +46,7 @@ export default function ({
     }, [datas, columns]);
 
     return (
-        <section className="border rounded-md border-slate-400 h-60">
+        <section className={`border rounded-md border-slate-400 ${currentTableData.length ? "" : "h-60"}`}>
             <table className="w-full table-auto p-2 rounded mb-5">
                 <tbody>
                     <tr className="p-2 border-b border-slate-400 mb-5">
