@@ -21,6 +21,7 @@ export default function () {
     const [suffix, setSuffix] = useState<string>("");
     const [schoolID, setSchoolID] = useState<string>("");
     const [schoolYear, setSchoolYear] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [course, setCourse] = useState<string>("");
 
@@ -122,6 +123,9 @@ export default function () {
             case "schoolID":
                 setSchoolID(target.value);
                 break;
+            case "email":
+                setEmail(target.value);
+                break;
             case "password":
                 setPassword(target.value);
                 break;
@@ -143,6 +147,7 @@ export default function () {
             familyName,
             suffix,
             schoolID,
+            email,
             password,
             schoolYear,
             course
@@ -252,6 +257,12 @@ export default function () {
                         <Input
                             title="SCHOOL ID"
                             id="schoolID"
+                            onChange={onChange}
+                        />
+                         <Input
+                            title="EMAIL"
+                            id="email"
+                            type="email"
                             onChange={onChange}
                         />
                         <Input

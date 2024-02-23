@@ -168,6 +168,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         familyName,
         suffix,
         schoolID,
+        email,
         password,
         schoolYear,
         course
@@ -202,7 +203,8 @@ export async function signupUserStudent(req: Request, res: Response) {
             user_suffix, 
             course_id,
             user_school_year,
-            user_school_id, 
+            user_school_id,
+            user_email, 
             user_password, 
             role_id
         ) VALUES (
@@ -215,6 +217,7 @@ export async function signupUserStudent(req: Request, res: Response) {
             ?, 
             ?, 
             ?,
+            ?,
             ?
         )
     `, [
@@ -226,6 +229,7 @@ export async function signupUserStudent(req: Request, res: Response) {
         course,
         schoolYear,
         schoolID,
+        email,
         hashedPassword,
         roleUUID
     ]);

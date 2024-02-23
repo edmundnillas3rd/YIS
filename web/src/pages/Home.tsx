@@ -108,7 +108,7 @@ export default function Main() {
                             <p>ADMIN & STAFF</p>
                             <hr className="bg-zinc-950" />
                         </section>
-                        <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn} disabled={disabled}>
+                        <Selection index={2} src="/assets/quote-request.png" url="/section/solicitation" callbackFn={callbackFn}>
                             SOLICITATION
                         </Selection>
                         <Selection index={3} src="/assets/yearbook.png" url="/section/yearbook-photos" callbackFn={callbackFn}>
