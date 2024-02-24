@@ -309,7 +309,7 @@ export default function () {
         }
     };
 
-    return courses && (
+    return (
         <article className="flex flex-col justify-center w-full">
             <YearbookReleasedModal
                 isOpen={displayYearbookModal}

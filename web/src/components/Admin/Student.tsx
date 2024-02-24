@@ -101,7 +101,8 @@ export default function () {
         "SUFFIX",
         "SCHOOL YEAR",
         "COURSE",
-        "SCHOOL ID"
+        "SCHOOL ID",
+        "EMAIL"
     ];
 
     const onChange = async (event: SyntheticEvent) => {
@@ -236,6 +237,7 @@ export default function () {
                             title="FIRST NAME"
                             id="firstName"
                             onChange={onChange}
+                            required
                         />
                         <Input
                             title="MIDDLE NAME"
@@ -246,6 +248,7 @@ export default function () {
                             title="FAMILY NAME"
                             id="familyName"
                             onChange={onChange}
+                            required
                         />
                         <Input
                             title="SUFFIX"
@@ -258,28 +261,33 @@ export default function () {
                             title="SCHOOL ID"
                             id="schoolID"
                             onChange={onChange}
+                            required
                         />
                          <Input
                             title="EMAIL"
                             id="email"
                             type="email"
                             onChange={onChange}
+                            required
                         />
                         <Input
                             title="PASSWORD"
                             id="password"
                             type="password"
                             onChange={onChange}
+                            required
                         />
                         <Input
                             title="SCHOOL YEAR"
                             id="schoolYear"
                             onChange={onChange}
+                            required
                         />
                         <Dropdown
                             label="COURSE"
                             datas={courses}
                             onChange={onChange}
+                            required
                         />
                     </section>
 

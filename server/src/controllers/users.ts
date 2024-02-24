@@ -22,7 +22,8 @@ export async function index(req: Request, res: Response) {
         COALESCE(u.user_suffix, 'N/A') AS suffix,
         COALESCE(u.user_school_year, 'N/A') AS schoolYear,
         COALESCE(c.course_abbreviation, 'N/A') AS course,
-        COALESCE(u.user_school_id, 'N/A') AS schoolID
+        COALESCE(u.user_school_id, 'N/A') AS schoolID,
+        u.user_email AS email
         FROM user u
         INNER JOIN role
         ON u.role_id = role.role_id
@@ -190,7 +191,7 @@ export async function signupUserStudent(req: Request, res: Response) {
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(`${(password as string).length === 0 ? process.env.DEFAULT_PASS : password}`, salt);
 
     roleUUID = queriedRole.rows[0].role_id;
     const userUUID = await query("SELECT UUID()");
@@ -726,6 +727,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         middleName,
         suffix,
         schoolID,
+        email,
         password,
         schoolYear,
         isCsp,
@@ -742,6 +744,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         user_family_name = ?,
         user_suffix = ?,
         user_school_id = ?,
+        user_email = ?,
         user_password = ?,
         user_school_year = ?,
         course_id = ?
@@ -752,6 +755,7 @@ export async function updateStudentInfo(req: Request, res: Response) {
         middleName,
         suffix,
         schoolID,
+        email,
         hashedPassword,
         schoolYear,
         course,

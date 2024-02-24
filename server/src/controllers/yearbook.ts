@@ -711,6 +711,8 @@ export async function addYearbook(req: Request, res: Response) {
     `);
 
     const roleID = roleData.rows[0]['id'];
+    const email = `${(firstName as string).toLowerCase()}${(lastName as string).toLowerCase()}@cjc.com`;
+    const pass = process.env.DEFAULT_PASS;
 
     await query(`
         INSERT INTO user (
@@ -720,8 +722,12 @@ export async function addYearbook(req: Request, res: Response) {
             user_family_name,
             user_suffix,
             user_school_year,
+            user_email,
+            user_password,
             role_id
         ) VALUES (
+            ?,
+            ?,
             ?,
             ?,
             ?,
@@ -737,6 +743,8 @@ export async function addYearbook(req: Request, res: Response) {
         lastName,
         suffix,
         schoolYear,
+        email,
+        pass,
         roleID
     ]);
 

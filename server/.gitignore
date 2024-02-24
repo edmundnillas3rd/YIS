@@ -1,5 +1,7 @@
 # Misc
 /uploads/
+*.cert
+*.key
 
 **/.vscode/
 **/dist/

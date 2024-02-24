@@ -19,6 +19,7 @@ export default function ({
     const [schoolYear, setSchoolYear] = useState<string>();
     const [password, setPassword] = useState<string>('');
     const [course, setCourse] = useState<string>();
+    const [email, setEmail] = useState<string>();
 
     const [courses, setCourses] = useState();
 
@@ -36,6 +37,7 @@ export default function ({
             setSuffix(data['suffix']);
             setSchoolYear(data['schoolYear']);
             setSchoolID(data['schoolID']);
+            setEmail(data['email']);
 
 
             const foundCourse = data2.find((c: any) => c['abbreviation'] === data['course']);
@@ -69,6 +71,9 @@ export default function ({
             case "schoolID":
                 setSchoolID(target.value);
                 break;
+            case "email":
+                setEmail(target.value);
+                break;
             case "password":
                 setPassword(target.value);
                 break;
@@ -94,6 +99,7 @@ export default function ({
             middleName,
             suffix,
             schoolID,
+            email,
             password,
             schoolYear,
             course
@@ -173,6 +179,13 @@ export default function ({
                     title="SCHOOL ID"
                     id="schoolID"
                     value={schoolID}
+                    onChange={onChange}
+                />
+                 <Input
+                    title="EMAIL"
+                    id="email"
+                    type="email"
+                    value={email}
                     onChange={onChange}
                 />
                 <Input

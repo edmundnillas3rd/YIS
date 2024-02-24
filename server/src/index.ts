@@ -1,10 +1,12 @@
 import express, { Express } from "express";
+import https from "https";
 import session from "express-session";
 import expressMySqlSession from "express-mysql-session";
 import cookieParser from "cookie-parser";
 import { MemoryStore } from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
+import fs from "fs";
 
 dotenv.config();
 const app: Express = express();
@@ -44,6 +46,8 @@ const main = async () => {
             secret: process.env.SECRET as string,
             store: sessionStore,
             cookie: {
+                secure: true,
+                sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
                 maxAge: 2 * 60 * 60 * 1000
             },
             resave: false,
@@ -58,9 +62,20 @@ const main = async () => {
     app.use("/yearbooks", yearbookRoute);
     app.use("/admin", adminRoute);
 
-    app.listen(process.env.PORT || 3000, () => {
-        console.info(`[server]: Listening on port ${process.env.PORT}`);
-    });
+    https
+        .createServer(
+            {
+                key: fs.readFileSync("server.key"),
+                cert: fs.readFileSync("server.cert"),
+            },
+            app
+        ).listen(process.env.PORT || 3000, function () {
+            console.info(`[server]: Listening on port ${process.env.PORT}`);
+        });
+
+    // app.listen(process.env.PORT || 3000, () => {
+    //     console.info(`[server]: Listening on port ${process.env.PORT}`);
+    // });
 };
 
 main().catch(error => console.error(error));
