@@ -1,7 +1,7 @@
 import MySQLStore from "express-mysql-session";
 import mysql from "mysql2";
 
-import { Pool } from "mysql2/typings/mysql/lib/Pool";
+import { Pool, PoolOptions } from "mysql2/typings/mysql/lib/Pool";
 
 let pool: Pool | null = null;
 
@@ -28,13 +28,21 @@ export async function query(sql: string, values: any[] = []) {
     return {
         rows: [],
         fields: []
-    }
+    };
 
 }
 
 export default async function initializeMySQLConnection() {
 
-    pool = mysql.createPool(config);
+    let options: PoolOptions = {
+        host: process.env.MYSQL_HOST,
+        user: process.env.MYSQL_USER,
+        password: process.env.MYSQL_PASSWORD,
+        database: process.env.MYSQL_DATABASE,
+        dateStrings: true
+    };
+    
+    pool = mysql.createPool(options);
 
     pool?.getConnection((err, connection) => {
         if (err) {
